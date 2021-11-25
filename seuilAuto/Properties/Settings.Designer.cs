@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Oui_Roger_Oui.Properties
+namespace seuilAuto.Properties
 {
 
 
