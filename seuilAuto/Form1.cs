@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Drawing.Imaging;
 
 using System.Runtime.InteropServices;
-using libImage;
+using Traitement;
 
 namespace seuilAuto
 {

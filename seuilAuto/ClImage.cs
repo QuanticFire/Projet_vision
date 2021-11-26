@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Drawing;
 
-namespace libImage
+namespace Traitement
 {
     public class ClImage
     {
@@ -30,7 +30,7 @@ namespace libImage
         // va-et-vient avec constructeur C#/C++
         // obligatoire dans toute nouvelle classe propre à l'application
 
-        [DllImport("libImage.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr objetLib();
 
         public IntPtr objetLibPtr()
@@ -39,7 +39,7 @@ namespace libImage
             return ClPtr;
         }
 
-        [DllImport("libImage.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr objetLibDataImg(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol);
 
         public IntPtr objetLibDataImgPtr(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol)
@@ -48,7 +48,7 @@ namespace libImage
             return ClPtr;
         }
 
-        [DllImport("libImage.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern double valeurChamp(IntPtr pImg, int i);
 
         public double objetLibValeurChamp(int i)
