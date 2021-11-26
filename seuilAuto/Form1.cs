@@ -10,9 +10,8 @@ using System.Windows.Forms;
 using System.Drawing.Imaging;
 
 using System.Runtime.InteropServices;
-using libImage;
+using Traitement;
 
-// commit test
 namespace seuilAuto
 {
     public partial class Form1 : Form
