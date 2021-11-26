@@ -12,6 +12,7 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using libImage;
 
+// commit test
 namespace seuilAuto
 {
     public partial class Form1 : Form
