@@ -29,7 +29,6 @@ namespace Traitement
 
         // va-et-vient avec constructeur C#/C++
         // obligatoire dans toute nouvelle classe propre à l'application
-
         [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr objetLib();
 
@@ -39,6 +38,7 @@ namespace Traitement
             return ClPtr;
         }
 
+        // Appel de la méthode pour le traitement par défaut
         [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr objetLibDataImg(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol);
 
@@ -48,6 +48,17 @@ namespace Traitement
             return ClPtr;
         }
 
+        //Appel de la méthode de traitement test
+
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr traitementTest(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, double[] parametres);
+
+        public IntPtr traitementTestPtr(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, double[] parametres)
+        {
+            ClPtr = traitementTest(nbChamps, data, stride, nbLig, nbCol, parametres);
+            return ClPtr;
+        }
+        // Appel de la méthode pour retrouver les signatures
         [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern double valeurChamp(IntPtr pImg, int i);
 
