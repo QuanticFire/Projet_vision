@@ -631,8 +631,7 @@ CImageNdg CImageNdg::morphologie(const std::string& methode, const std::string& 
 	return out;
 }
 
-// filtrage
-
+// filtrage : moyennage ou median
 CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj) {
 		
 	CImageNdg out(this->lireHauteur(),this->lireLargeur());

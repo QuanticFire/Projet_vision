@@ -67,10 +67,15 @@ namespace seuilAuto
             Bitmap bmp = new Bitmap(imageDepart.Image);
             ClImage Img = new ClImage();
 
+            // affectation des paramètres
+            double[] parametres = new double[parametersTextBox.Lines.Length];
+            for (int i = 0; i < parametersTextBox.Lines.Length; i++)
+                parametres[i] = Convert.ToDouble(parametersTextBox.Lines[i]);
+
             unsafe
             {
                 BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                Img.objetLibDataImgPtr(1, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
+                Img.traitementTestPtr(1, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width, parametres);
                 // 1 champ texte retour C++, le seuil auto
                 bmp.UnlockBits(bmpData);
             }

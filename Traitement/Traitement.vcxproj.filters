@@ -24,10 +24,10 @@
     <ClCompile Include="src\ImageNdg.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\libIHM.cpp">
+    <ClCompile Include="src\ImageClasse.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImageClasse.cpp">
+    <ClCompile Include="src\libTraitement.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClInclude Include="include\ImageNdg.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\libIHM.h">
+    <ClInclude Include="include\LibTraitement.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

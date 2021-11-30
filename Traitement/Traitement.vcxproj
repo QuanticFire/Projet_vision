@@ -148,11 +148,11 @@
     <ClCompile Include="src\ImageCouleur.cpp" />
     <ClCompile Include="src\ImageDouble.cpp" />
     <ClCompile Include="src\ImageNdg.cpp" />
-    <ClCompile Include="src\libIHM.cpp" />
+    <ClCompile Include="src\libTraitement.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ImageNdg.h" />
-    <ClInclude Include="include\libIHM.h" />
+    <ClInclude Include="include\LibTraitement.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

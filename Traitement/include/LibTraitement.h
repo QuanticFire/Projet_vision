@@ -1,0 +1,93 @@
+#pragma once
+
+/*
+Adaptation du projet seuillage auto aux besoins du projet OuiOui
+*/
+
+#include "ImageClasse.h"
+#include "ImageNdg.h"
+#include "ImageCouleur.h"
+#include "ImageDouble.h"
+
+#include <windows.h>
+
+class ClibTraitement {
+
+	///////////////////////////////////////
+private:
+	///////////////////////////////////////
+
+	// data nécessaires à l'IHM donc fonction de l'application ciblée
+	int						nbDataImg; // nb champs Texte de l'IHM
+	std::vector<double>		dataFromImg; // champs Texte de l'IHM
+	CImageCouleur*          imgPt;       // 
+
+	///////////////////////////////////////
+public:
+	///////////////////////////////////////
+
+	// constructeurs
+	_declspec(dllexport) ClibTraitement(); // par défaut
+
+	_declspec(dllexport) ClibTraitement(int nbChamps, byte* data, int stride, int nbLig, int nbCol); // par image format bmp C#
+
+	_declspec(dllexport) ~ClibTraitement();
+
+	// get et set 
+
+	_declspec(dllexport) int lireNbChamps() const {
+		return nbDataImg;
+	}
+
+	_declspec(dllexport) double lireChamp(int i) const {
+		return dataFromImg.at(i);
+	}
+
+	_declspec(dllexport) CImageCouleur* imgData() const {
+		return imgPt;
+	}
+
+	//méthodes supplémentaires
+	_declspec(dllexport) void Traitement2(int nbChamps, byte* data, int stride, int nbLig, int nbCol, double parametres[10]); //nouvelle méthode de traitement test
+};
+
+/****************************************************************************************************************
+
+DEBUT DES METHODES UTILISEES EN C#
+Rennomage des méthodes et constructeurs de la classe C++ pour contrôler ce qu'on envoie en C#
+
+****************************************************************************************************************/
+
+// Convention C pour que le constructeur C# puisse les voir selon leur calling convention
+extern "C" _declspec(dllexport) ClibTraitement* objetLib()
+{
+	ClibTraitement* pImg = new ClibTraitement();
+	return pImg;
+}
+
+// méthode de traitement par défaut: constructeur
+extern "C" _declspec(dllexport) ClibTraitement* objetLibDataImg(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
+{
+	ClibTraitement* pImg = new ClibTraitement(nbChamps,data,stride,nbLig,nbCol);
+	return pImg;
+}
+
+// méthode dee traitement supplémentaire
+extern "C" _declspec(dllexport) ClibTraitement* traitementTest(int nbChamps, byte* data, int stride, int nbLig, int nbCol, double parametres[10])
+{
+	ClibTraitement* pImg = new ClibTraitement();
+	pImg->Traitement2(nbChamps, data, stride, nbLig, nbCol, parametres);
+	return pImg;
+}
+
+// attention : nécessaire de savoir où trouver le bon paramètre (possiblilité d'enum en C# taduits en nombres en C.
+extern "C" _declspec(dllexport) double valeurChamp(ClibTraitement* pImg, int i)
+{
+	return pImg->lireChamp(i);
+}
+
+/****************************************************************************************************************
+
+FIN DES METHODES UTILISEES EN C#
+
+****************************************************************************************************************/
