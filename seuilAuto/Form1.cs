@@ -95,5 +95,41 @@ namespace seuilAuto
             // transférer C++ vers bmp
             imageSeuillee.Image = bmp;
         }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+        private void button_puzzle_Click(object sender, EventArgs e)
+        {
+            if (ouvrirImage.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    Bitmap bmp;
+                    Image img = Image.FromFile(ouvrirImage.FileName);
+                    bmp = new Bitmap(img);
+
+                    imageDepart.Width = bmp.Width;
+                    imageDepart.Height = bmp.Height;
+                    // pour centrer image dans panel
+                    if (imageDepart.Width < panel1.Width)
+                        imageDepart.Left = (panel1.Width - imageDepart.Width) / 2;
+
+                    if (imageDepart.Height < panel1.Height)
+                        imageDepart.Top = (panel1.Height - imageDepart.Height) / 2;
+
+                    imageDepart.Image = bmp;
+
+                    imageSeuillee.Hide();
+                    valeurSeuilAuto.Hide();
+                }
+                catch
+                {
+                    MessageBox.Show("erreur !");
+                }
+            }
+
+        }
     }
 }
