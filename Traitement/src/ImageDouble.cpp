@@ -22,7 +22,7 @@ CImageDouble::CImageDouble() {
 	this->m_pucPixel  = NULL;
 }
 
-CImageDouble::CImageDouble(int hauteur, int largeur) {
+CImageDouble::CImageDouble(int hauteur, int largeur, double valeur) {
 
 	this->m_iHauteur = hauteur;
 	this->m_iLargeur = largeur;
@@ -32,7 +32,7 @@ CImageDouble::CImageDouble(int hauteur, int largeur) {
 
 	this->m_pucPixel = new double[hauteur*largeur];
 	for (int i=0;i<hauteur*largeur;i++)
-		this->m_pucPixel[i] = 0;
+		this->m_pucPixel[i] = valeur;
 }
 
 CImageDouble::CImageDouble(const CImageDouble& im) {
@@ -531,3 +531,87 @@ CImageDouble CImageDouble::vecteurGradient(const std::string& axe) {
 
 	return out;
 }
+
+double CImageDouble::moyenne() const
+{
+	double somme = 0;
+	for (int i = 0; i < this->lireNbPixels(); i++)
+		somme += this->operator()(i);
+	somme /= this->lireNbPixels();
+	return somme;
+}
+
+CImageDouble CImageDouble::conv(const CImageDouble& kernel)
+{
+	CImageDouble out(this->lireHauteur() + kernel.lireHauteur() - 1, this->lireLargeur() + kernel.lireLargeur() - 1);
+	double sumjk = 0;
+	for (int j = 0; j < out.lireHauteur(); j++)
+	{
+		for (int k = 0; k < out.lireLargeur(); k++)
+		{
+			int lp = max(0, j + 1 - kernel.lireHauteur());
+			int hp = min(this->lireHauteur(), j);
+			int lq = max(0, k + 1 - kernel.lireLargeur());
+			int hq = min(this->lireLargeur(), k);
+			for (int p = lp; p <= hp; p++)
+				for (int q = lq; q <= hq; q++)
+					sumjk += kernel(j - p, k - q)*this->operator()(p, q);
+			out(j, k) = sumjk;
+			sumjk = 0;
+		}
+	}
+	return out;
+}
+
+
+CImageDouble CImageDouble::NormCorr(const CImageDouble & scene)
+{
+	CImageDouble out;
+	out.ecrireMin(INFINITY);
+	out.ecrireMax(0.0);
+	if ((scene.lireHauteur() < this->lireHauteur()) && (scene.lireLargeur() < this->lireLargeur()))
+		out.ecrireNom("patternPlusGrandQueScène!");
+	else
+	{
+		//allocations
+		CImageDouble a(*this);
+		CImageDouble a1(this->lireHauteur(), this->lireLargeur(), 1.0);
+		CImageDouble ar(this->lireHauteur(), this->lireLargeur());
+		CImageDouble b(scene);
+		CImageDouble bconv, bconv2;
+		CImageDouble b2(scene.lireHauteur(), scene.lireLargeur());
+		double moythis, moyscene, NbpixThis = this->lireNbPixels(), sum2a=0;
+		//normalisation et somme carrée des pixels du pattern
+		moythis = this->moyenne();
+		moyscene = scene.moyenne();
+		for (int i = 0; i < this->lireNbPixels(); i++) 
+		{
+			a(i) -= moythis;
+			ar(i) = this->operator()(this->lireNbPixels() - i);
+			sum2a += a(i)*a(i);
+		}
+		//normalisation et image carrée de la scène
+		for (int i = 0; i < scene.lireNbPixels(); i++) 
+		{
+			b(i) -= moyscene;
+			b2(i) = b(i)*b(i);
+		}
+		//convolutions et calcul corrélation
+		out = b.conv(ar);
+		bconv = b.conv(a1);
+		bconv2 = b2.conv(a1);
+		
+		for (int i = 0; i < bconv.lireNbPixels(); i++)
+			bconv(i) = max(bconv2(i) - bconv(i)*bconv(i) / NbpixThis, 0.0); //éviter des valeurs négatives à cause de la soustraction
+		for (int i = 0; i < out.lireNbPixels(); i++)
+		{
+			out(i) = out(i) / (sqrt(bconv(i)*sum2a));
+			if (out(i) < out.lireMin())		//changement de la dynamique
+				out.ecrireMin(out(i));
+			if (out(i) > out.lireMax())
+				out.ecrireMax(out(i));
+		}
+	}
+	return out;
+}
+//TODO faire du test avec ce norm corr, et surtout faire gaffe aux pattern pris (pas le centre askip)
