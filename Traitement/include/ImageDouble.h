@@ -31,7 +31,7 @@ class CImageDouble {
 
 		// constructeurs
 		_declspec(dllexport) CImageDouble(); // par défaut
-		_declspec(dllexport) CImageDouble(int hauteur, int largeur); // initialisation à 0
+		_declspec(dllexport) CImageDouble(int hauteur, int largeur, double valeur = 0.0); // initialisation (défaut 0)
 		_declspec(dllexport) CImageDouble(const CImageNdg& im, const std::string& methode = "normalise");  // choix "normalise"/"cast"/"integrale1"/"integrale2"
 		// image Ndg en entrée
 		_declspec(dllexport) CImageDouble(const CImageDouble& im); // image en entrée
@@ -115,6 +115,23 @@ class CImageDouble {
 
 		// Vecteur gradient
 		_declspec(dllexport) CImageDouble vecteurGradient(const std::string& axe = "norme"); // choix "norme"/"angle"
+
+		// fiktrage
+		_declspec(dllexport) CImageDouble filtrage(const std::string & methode, int N, double sigma);
+
+		_declspec(dllexport) std::vector<CImageDouble> pyramide(int hauteur, int tailleFiltre, double sigma);
+
+		//lignes de hough
+		_declspec(dllexport) CImageNdg houghExtractionLignes(const CImageNdg & img, const std::string & methode, int N, int M, int dim, int nombre, bool enregistrementCSV);
+
+		//moyenne de l'image
+		_declspec(dllexport) double moyenne() const;
+
+		//convolution de deux images
+		_declspec(dllexport) CImageDouble conv(const CImageDouble& kernel);
+		
+		//corrélationNormée entre deux images
+		CImageDouble NormCorr(const CImageDouble & scene);
 
 };
 
