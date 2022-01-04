@@ -1,0 +1,50 @@
+// code exemple de pattern matching ---------------------------------------------------------------
+#include <iostream>
+#include <cmath>
+#include <time.h>
+//#include <algorithm>
+
+#include "ImageCouleur.h"
+#include "ImageDouble.h"
+#include "ImageClasse.h"
+void main()
+{
+	 //test convolution
+	//CImageDouble a(7, 5, 0.3);
+	//CImageDouble b(5, 3, 1);
+	//CImageDouble c = a.convfast(b);
+	//for (int i = 0; i < c.lireNbPixels(); i++)
+	//{
+	//	printf("%0.2f ", c(i));
+	//	if ((i + 1) % 5 == 0)
+	//		printf("\n");
+	//}
+	
+	
+	time_t* start = new time_t;
+	time_t* stop = new time_t;
+	time(start);
+	//test sur une image, renvoi des coordonées X Y (placement depuis l'origine du pattern)
+	std::string name_scene("scene.bmp");
+	std::string name_pattern("pattern.bmp");
+
+	CImageCouleur imgC_scene(name_scene);
+	CImageCouleur imgC_pattern(name_pattern);
+	CImageNdg imgtest = imgC_scene.plan();
+	CImageDouble img_scene(imgC_scene.plan(),"cast");
+	CImageDouble img_pattern(imgC_pattern.plan(),"cast");
+	
+	CImageDouble img_corr = img_pattern.NormCorr(img_scene);
+	int n = 0, i, j;
+	// std:: find(0,img_corr.lireNbPixels(),img_corr.lireMax())
+	while ((img_corr(n) != img_corr.lireMax()) && (n < img_corr.lireNbPixels()))
+		n++;
+	i = n / img_corr.lireLargeur();
+	j = n % img_corr.lireLargeur();
+	time(stop);
+	printf("coordonée i: %d \ncoordonée j: %d\n", i, j);
+	printf("temps: %d", *stop - *start);
+											
+	system("pause");
+}
+// FIN DE l'EXEMPLE ----------------------------------------------------------------------

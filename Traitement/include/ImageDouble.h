@@ -116,6 +116,14 @@ class CImageDouble {
 		// Vecteur gradient
 		_declspec(dllexport) CImageDouble vecteurGradient(const std::string& axe = "norme"); // choix "norme"/"angle"
 
+		// fiktrage
+		_declspec(dllexport) CImageDouble filtrage(const std::string & methode, int N, double sigma);
+
+		_declspec(dllexport) std::vector<CImageDouble> pyramide(int hauteur, int tailleFiltre, double sigma);
+
+		//lignes de hough
+		_declspec(dllexport) CImageNdg houghExtractionLignes(const CImageNdg & img, const std::string & methode, int N, int M, int dim, int nombre, bool enregistrementCSV);
+
 		//moyenne de l'image
 		_declspec(dllexport) double moyenne() const;
 

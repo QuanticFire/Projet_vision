@@ -1,15 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <windows.h>
 #include <cmath>
 #include <vector>
 #include <limits>
 #include <stack>
+#include <algorithm>
 
 #include "ImageDouble.h"
 
-#define PI 3.14159265
+#define PI 3.14159265358979323846
 
 // constructeurs et destructeur
 CImageDouble::CImageDouble() {
@@ -185,8 +185,8 @@ CImageDouble CImageDouble::distance(std::string eltStructurant, double valBord) 
 
 	CImageDouble out(this->lireHauteur(), this->lireLargeur());
 	out.ecrireNom(this->lireNom() + "DF");
-	out.ecrireMax(FLT_MIN);
-	out.ecrireMin(FLT_MAX);
+	out.ecrireMax(DBL_MIN);
+	out.ecrireMin(DBL_MAX);
 
 	CImageDouble agrandie(this->lireHauteur() + 2, this->lireLargeur() + 2);
 	// gestion des bords ajoutés
@@ -212,15 +212,15 @@ CImageDouble CImageDouble::distance(std::string eltStructurant, double valBord) 
 		for (int i = 1; i<agrandie.lireHauteur() - 1; i++)
 			for (int j = 1; j<agrandie.lireLargeur() - 1; j++) {
 				double pixel = agrandie(i, j);
-				pixel = min(pixel, agrandie(i - 1, j) + 1);
-				pixel = min(pixel, agrandie(i, j - 1) + 1);
+				pixel = std::min(pixel, agrandie(i - 1, j) + 1);
+				pixel = std::min(pixel, agrandie(i, j - 1) + 1);
 				agrandie(i, j) = pixel;
 			}
 		for (int i = agrandie.lireHauteur() - 2; i >= 1; i--)
 			for (int j = agrandie.lireLargeur() - 2; j >= 1; j--) {
 				double pixel = agrandie(i, j);
-				pixel = min(pixel, agrandie(i + 1, j) + 1);
-				pixel = min(pixel, agrandie(i, j + 1) + 1);
+				pixel = std::min(pixel, agrandie(i + 1, j) + 1);
+				pixel = std::min(pixel, agrandie(i, j + 1) + 1);
 				agrandie(i, j) = pixel;
 			}
 		// conservation du centre
@@ -234,19 +234,19 @@ CImageDouble CImageDouble::distance(std::string eltStructurant, double valBord) 
 		for (int i = 1; i<agrandie.lireHauteur() - 1; i++)
 			for (int j = 1; j<agrandie.lireLargeur() - 1; j++) {
 				double pixel = agrandie(i, j);
-				pixel = min(pixel, agrandie(i - 1, j) + 1);
-				pixel = min(pixel, agrandie(i, j - 1) + 1);
-				pixel = min(pixel, agrandie(i - 1, j - 1) + 1);
-				pixel = min(pixel, agrandie(i - 1, j + 1) + 1);
+				pixel = std::min(pixel, agrandie(i - 1, j) + 1);
+				pixel = std::min(pixel, agrandie(i, j - 1) + 1);
+				pixel = std::min(pixel, agrandie(i - 1, j - 1) + 1);
+				pixel = std::min(pixel, agrandie(i - 1, j + 1) + 1);
 				agrandie(i, j) = pixel;
 			}
 		for (int i = agrandie.lireHauteur() - 2; i >= 1; i--)
 			for (int j = agrandie.lireLargeur() - 2; j >= 1; j--) {
 				double pixel = agrandie(i, j);
-				pixel = min(pixel, agrandie(i + 1, j) + 1);
-				pixel = min(pixel, agrandie(i, j + 1) + 1);
-				pixel = min(pixel, agrandie(i + 1, j + 1) + 1);
-				pixel = min(pixel, agrandie(i + 1, j - 1) + 1);
+				pixel = std::min(pixel, agrandie(i + 1, j) + 1);
+				pixel = std::min(pixel, agrandie(i, j + 1) + 1);
+				pixel = std::min(pixel, agrandie(i + 1, j + 1) + 1);
+				pixel = std::min(pixel, agrandie(i + 1, j - 1) + 1);
 				agrandie(i, j) = pixel;
 			}
 		// conservation du centre
@@ -263,6 +263,7 @@ CImageDouble CImageDouble::distance(std::string eltStructurant, double valBord) 
 	return out;
 }
 
+// conversion entre types		 
 CImageNdg CImageDouble::toNdg(const std::string& methode) {
 
 	CImageNdg out(this->lireHauteur(), this->lireLargeur());
@@ -292,150 +293,7 @@ CImageNdg CImageDouble::toNdg(const std::string& methode) {
 	return(out);
 }
 
-CImageDouble CImageDouble::maxiLocaux(int N, int M) const {
-
-	CImageDouble out(this->lireHauteur(), this->lireLargeur());
-
-	int ns2 = N / 2;
-	int ms2 = M / 2;
-
-	out.ecrireNom(this->lireNom() + "ML");
-	for (int i = 0; i<this->lireHauteur(); i++)
-		for (int j = 0; j<this->lireLargeur(); j++)
-			if (this->operator()(i, j) > 0) {	// test si le pixel existe i-taille/2
-				int dk = max(0, i - ns2);
-				int fk = min(i + ns2, this->lireHauteur() - 1);
-				int dl = max(0, j - ms2);
-				int fl = min(j + ms2, this->lireLargeur() - 1);
-
-				double maxVal = this->operator()(i, j);
-				bool flag = true;
-				int k = dk;
-				while ((k <= fk) && (flag == true)) {
-					int l = dl;
-					while ((l <= fl) && (flag == true)) {
-						if (this->operator()(k, l) > maxVal)
-							flag = false;
-						l++;
-					}
-					k++;
-				}
-				if (flag == true)
-					out(i, j) = 1;
-			}
-	out.m_vMax = 1;
-
-	return out;
-}
-
-
-CImageDouble CImageDouble::planHough() {
-
-	double hough_h = max(this->lireHauteur() / 2, this->lireLargeur() / 2)*sqrt(2.0);
-
-	CImageDouble H((int)(hough_h * 2), 180);
-	H.ecrireMin(0);
-	H.ecrireMax(0);
-
-	double cx = this->lireLargeur() / 2;
-	double cy = this->lireHauteur() / 2;
-
-	//HOUGH transformation  
-
-	for (int y = 0; y < this->lireHauteur(); y++)
-	{
-		for (int x = 0; x < this->lireLargeur(); x++)
-		{
-			if (this->operator()(y, x) > 0)
-				for (int t = 0; t < 180; t++)
-				{
-					double r = (((double)x - cx) * cos((double)t * (PI / 180)) + (((double)y - cy) * sin((double)t * (PI / 180))));
-					H(int(hough_h + r), t) += 1;
-				}
-		}
-	}
-
-	for (int p = 0; p < H.lireNbPixels(); p++)
-		if (H(p) > H.lireMax())
-			H.ecrireMax(H(p));
-			
-	return H;
-}
-
-CImageDouble CImageDouble::extractionLignes(int N, int M, double dimLigne, bool affichage) {
-	
-	// extraction des maxi locaux sur voisinage NxM
-	CImageDouble mL = this->maxiLocaux(N,M);
-	double hough_h = this->lireHauteur() / 2;
-
-	// extraction des lignes avec maxi local + seuil 
-
-	CImageDouble lignes(this->lireHauteur(), this->lireLargeur());
-	lignes.ecrireNom("lignes");
-
-	int nbLignes = 1;
-	std::stack<int> angles;
-	std::stack<double> rho;
-
-	for (int r = 0; r < this->lireHauteur(); r++)
-		for (int a = 0; a < this->lireLargeur(); a++)
-			if ((mL(r, a) >0) && (this->operator()(r, a) >= dimLigne))
-			{
-				lignes(r, a) = nbLignes++;
-				angles.push(a);
-				rho.push(r - hough_h);
-			}
-	if (affichage)
-	{
-		std::cout << nbLignes-1 << " lignes avec les infos suivants :" << std::endl;
-		while (!angles.empty())
-		{
-			std::cout << "(" << angles.top() << "," << rho.top() << ")";
-			angles.pop();
-			rho.pop();
-
-			if (!angles.empty())
-				std::cout << " ; ";
-		}
-		std::cout << std::endl;
-	}
-
-	lignes.m_vMin = 0;
-	lignes.m_vMax = nbLignes - 1;
-
-	return lignes;
-}
-
-CImageNdg CImageDouble::houghInverse(const CImageNdg& img) {
-
-	CImageNdg HI(img.lireHauteur(),img.lireLargeur(),0);
-	HI.ecrireNom(img.lireNom()+"HI");
-	HI.choixPalette(img.lirePalette());
-
-	double hough_h = max(img.lireHauteur() / 2, img.lireLargeur() / 2)*sqrt(2.0);
-
-	double cx = img.lireLargeur() / 2;
-	double cy = img.lireHauteur() / 2;
-
-	for (int y = 0; y < img.lireHauteur(); y++)
-	{
-		for (int x = 0; x < img.lireLargeur(); x++)
-		{
-			if (img(y, x) > 0)
-			{
-				for (int t = 0; t < 180; t++)
-				{
-					double r = (((double)x - cx) * cos((double)t * (PI / 180)) + (((double)y - cy) * sin((double)t * (PI / 180))));
-					if (this->operator()(int(hough_h + r), t) > 0)
-						HI(y, x) = (int)(this->operator()(int(hough_h + r), t)) % 255; 
-				}
-			}
-		}
-	}
-
-	return(HI);
-}
-
+// vecteur gradient
 CImageDouble CImageDouble::vecteurGradient(const std::string& axe) {
 	CImageDouble out(this->lireHauteur(), this->lireLargeur());
 
@@ -532,6 +390,659 @@ CImageDouble CImageDouble::vecteurGradient(const std::string& axe) {
 	return out;
 }
 
+// filtrage : moyen ou gaussien (approches par vecteur et transposée plus rapide)
+CImageDouble CImageDouble::filtrage(const std::string& methode, int N, double sigma) {
+
+	CImageDouble out(this->lireHauteur(), this->lireLargeur());
+	out.m_vMax = DBL_MIN;
+	out.m_vMin = DBL_MAX;
+
+	if (methode.compare("moyen") == 0) {
+		out.m_sNom = this->lireNom() + "FMo";
+		int nbBords = N / 2;
+
+		CImageDouble agrandie(this->lireHauteur() + nbBords * 2, this->lireLargeur() + nbBords * 2);
+
+		// gestion du coeur
+		for (int i = 0; i < this->lireHauteur(); i++)
+			for (int j = 0; j < this->lireLargeur(); j++) {
+				agrandie(i + nbBords, j + nbBords) = this->operator()(i, j);
+			}
+
+		// gestion des bords
+		for (int pix = 0; pix < agrandie.lireLargeur(); pix++) {
+			for (int t = nbBords - 1; t >= 0; t--)
+				agrandie(t, pix) = agrandie(nbBords, pix);
+			for (int t = agrandie.lireHauteur() - 1; t >= agrandie.lireHauteur() - 1 - nbBords; t--)
+				agrandie(t, pix) = agrandie(agrandie.lireHauteur() - 1 - nbBords, pix);
+		}
+		for (int pix = 0; pix < agrandie.lireHauteur(); pix++) {
+			for (int t = nbBords - 1; t >= 0; t--)
+				agrandie(pix, t) = agrandie(pix, nbBords);
+			for (int t = agrandie.lireLargeur() - 1; t >= agrandie.lireLargeur() - 1 - nbBords; t--)
+				agrandie(pix, t) = agrandie(pix, agrandie.lireLargeur() - 1 - nbBords);
+		}
+
+		CImageDouble agrandie2 = agrandie;
+
+		// colonnes
+		for (int i = nbBords; i < agrandie.lireHauteur() - nbBords; i++)
+			for (int j = nbBords; j < agrandie.lireLargeur() - nbBords; j++) {
+				double somme = 0;
+				double moy = 0;
+
+				for (int k = -nbBords; k <= nbBords; k++) {
+					moy += (double)agrandie(i - k, j);
+					somme += (double)1;
+				}
+				agrandie2(i, j) = moy / somme;
+			}
+		// lignes
+		for (int i = nbBords; i < agrandie.lireHauteur() - nbBords; i++)
+			for (int j = nbBords; j < agrandie.lireLargeur() - nbBords; j++) {
+				double somme = 0;
+				double moy = 0;
+
+				for (int l = -nbBords; l <= nbBords; l++) {
+					moy += (double)agrandie2(i, j - l);
+					somme += (double)1;
+				}
+				agrandie(i, j) = (moy / somme);
+			}
+		// image out
+		for (int i = nbBords; i < agrandie.lireHauteur() - nbBords; i++)
+			for (int j = nbBords; j < agrandie.lireLargeur() - nbBords; j++)
+			{
+				out(i - nbBords, j - nbBords) = agrandie(i, j);
+				if (out(i - nbBords, j - nbBords) < out.lireMin())
+					out.ecrireMin(out(i - nbBords, j - nbBords));
+				if (out(i - nbBords, j - nbBords) > out.lireMax())
+					out.ecrireMax(out(i - nbBords, j - nbBords));
+			}
+	}
+	else
+		if (methode.compare("gaussien") == 0)
+		{
+			out.m_sNom = this->lireNom() + "FGa";
+			// définition du noyau
+			double noyau[50]; // taille maxi pour optimisation 
+
+			double somme = 0; // normalisation
+			for (int i = 0; i < N; i++)
+			{
+				noyau[i] = exp(-((i - N / 2)*(i - N / 2)) / (2 * sigma*sigma));
+				somme += noyau[i];
+			}
+
+			// filtrage
+			int nbBords = N / 2;
+
+			CImageDouble agrandie(this->lireHauteur() + nbBords * 2, this->lireLargeur() + nbBords * 2);
+
+			// gestion du coeur
+			for (int i = 0; i < this->lireHauteur(); i++)
+				for (int j = 0; j < this->lireLargeur(); j++) {
+					agrandie(i + nbBords, j + nbBords) = this->operator()(i, j);
+				}
+
+			// gestion des bords
+			for (int pix = 0; pix < agrandie.lireLargeur(); pix++) {
+				for (int t = nbBords - 1; t >= 0; t--)
+					agrandie(t, pix) = agrandie(nbBords, pix);
+				for (int t = agrandie.lireHauteur() - 1; t >= agrandie.lireHauteur() - 1 - nbBords; t--)
+					agrandie(t, pix) = agrandie(agrandie.lireHauteur() - 1 - nbBords, pix);
+			}
+			for (int pix = 0; pix < agrandie.lireHauteur(); pix++) {
+				for (int t = nbBords - 1; t >= 0; t--)
+					agrandie(pix, t) = agrandie(pix, nbBords);
+				for (int t = agrandie.lireLargeur() - 1; t >= agrandie.lireLargeur() - 1 - nbBords; t--)
+					agrandie(pix, t) = agrandie(pix, agrandie.lireLargeur() - 1 - nbBords);
+			}
+
+			CImageDouble agrandie2 = agrandie;
+
+			// colonnes
+			for (int i = nbBords; i < agrandie.lireHauteur() - nbBords; i++)
+				for (int j = nbBords; j < agrandie.lireLargeur() - nbBords; j++) {
+					double somme = 0;
+					double moy = 0;
+
+					for (int k = -nbBords; k <= nbBords; k++) {
+						moy += (double)agrandie(i - k, j)*noyau[k + nbBords];
+						somme += noyau[k + nbBords];
+					}
+					agrandie2(i, j) = moy / somme;
+				}
+			// lignes
+			for (int i = nbBords; i < agrandie.lireHauteur() - nbBords; i++)
+				for (int j = nbBords; j < agrandie.lireLargeur() - nbBords; j++) {
+					double somme = 0;
+					double moy = 0;
+
+					for (int l = -nbBords; l <= nbBords; l++) {
+						moy += (double)agrandie2(i, j - l)*noyau[l + nbBords];
+						somme += noyau[l + nbBords];
+					}
+					agrandie(i, j) = (moy / somme);
+				}
+			// image out
+			for (int i = nbBords; i < agrandie.lireHauteur() - nbBords; i++)
+				for (int j = nbBords; j < agrandie.lireLargeur() - nbBords; j++)
+				{
+					out(i - nbBords, j - nbBords) = agrandie(i, j);
+					if (out(i - nbBords, j - nbBords) < out.lireMin())
+						out.ecrireMin(out(i - nbBords, j - nbBords));
+					if (out(i - nbBords, j - nbBords) > out.lireMax())
+						out.ecrireMax(out(i - nbBords, j - nbBords));
+				}
+		}
+
+	return out;
+}
+
+std::vector<CImageDouble> CImageDouble::pyramide(int hauteur, int tailleFiltre, double sigma)
+{
+	std::vector<CImageDouble> burt;
+
+	// propagation des min,max du niveau initial aux autres niveaux, sinon va modifier la dynamique des niveaux
+	burt.resize(hauteur);
+	burt.at(0) = *this;
+	burt.at(0).ecrireNom(this->lireNom() + std::to_string(0));
+
+	for (int niv = 1; niv < hauteur; niv++)
+	{
+		// filtrage gaussien qui améliore les résultats avant sous-échantillonage
+		CImageDouble niveau = burt.at(niv - 1).filtrage("gaussien", 5, 1);
+		CImageDouble inter(niveau.lireHauteur() / 2, niveau.lireLargeur() / 2);
+
+		inter.ecrireMax(this->lireMax()); // pour ne pas changer la dynamique entre niveaux
+		inter.ecrireMin(this->lireMin());
+		inter.ecrireNom(this->lireNom() + std::to_string(niv));
+
+		for (int i = 0; i < inter.lireHauteur(); i++)
+			for (int j = 0; j < inter.lireLargeur(); j++)
+				inter(i, j) = (niveau(2 * i, 2 * j) + niveau(2 * i + 1, 2 * j) + niveau(2 * i, 2 * j + 1) + niveau(2 * i + 1, 2 * j + 1)) / 4;
+
+		burt.at(niv) = inter;
+	}
+
+	return burt;
+}
+
+// transformée de Hough
+
+CImageDouble CImageDouble::maxiLocaux(int N, int M) const {
+
+	CImageDouble out(this->lireHauteur(), this->lireLargeur());
+
+	int ns2 = N / 2;
+	int ms2 = M / 2;
+
+	out.ecrireNom(this->lireNom() + "ML");
+	for (int i = 0; i<this->lireHauteur(); i++)
+		for (int j = 0; j<this->lireLargeur(); j++)
+			if (this->operator()(i, j) > 0) {	// test si le pixel existe i-taille/2
+				int dk = std::max(0, i - ns2);
+				int fk = std::min(i + ns2, this->lireHauteur() - 1);
+				int dl = std::max(0, j - ms2);
+				int fl = std::min(j + ms2, this->lireLargeur() - 1);
+
+				double maxVal = this->operator()(i, j);
+				bool flag = true;
+				int k = dk;
+				while ((k <= fk) && (flag == true)) {
+					int l = dl;
+					while ((l <= fl) && (flag == true)) {
+						if (this->operator()(k, l) > maxVal)
+							flag = false;
+						l++;
+					}
+					k++;
+				}
+				if (flag == true)
+					out(i, j) = 1;
+			}
+	out.m_vMax = 1;
+
+	return out;
+}
+
+CImageDouble CImageDouble::planHough() {
+
+	double hough_h = std::max(this->lireHauteur() / 2, this->lireLargeur() / 2)*sqrt(2.0);
+
+	CImageDouble H((int)(hough_h * 2), 180);
+	H.ecrireMin(0);
+	H.ecrireMax(0);
+
+	double cx = this->lireLargeur() / 2;
+	double cy = this->lireHauteur() / 2;
+
+	//HOUGH transformation  
+
+	for (int y = 0; y < this->lireHauteur(); y++)
+	{
+		for (int x = 0; x < this->lireLargeur(); x++)
+		{
+			if (this->operator()(y, x) > 0)
+				for (int t = 0; t < 180; t++)
+				{
+					double r = (((double)x - cx) * cos((double)t * (PI / 180)) + (((double)y - cy) * sin((double)t * (PI / 180))));
+					H(int(hough_h + r), t) += 1;
+				}
+		}
+	}
+
+	for (int p = 0; p < H.lireNbPixels(); p++)
+		if (H(p) > H.lireMax())
+			H.ecrireMax(H(p));
+
+	return H;
+}
+
+CImageDouble CImageDouble::extractionLignes(int N, int M, double dimLigne, bool affichage) {
+
+	// extraction des maxi locaux sur voisinage NxM
+	CImageDouble mL = this->maxiLocaux(N, M);
+	double hough_h = this->lireHauteur() / 2;
+
+	// extraction des lignes avec maxi local + seuil 
+
+	CImageDouble lignes(this->lireHauteur(), this->lireLargeur());
+	lignes.ecrireNom("lignes");
+
+	int nbLignes = 1;
+	std::stack<int> angles;
+	std::stack<double> rho;
+
+	for (int r = 0; r < this->lireHauteur(); r++)
+		for (int a = 0; a < this->lireLargeur(); a++)
+			if ((mL(r, a) >0) && (this->operator()(r, a) >= dimLigne))
+			{
+				lignes(r, a) = nbLignes++;
+				angles.push(a);
+				rho.push(r - hough_h);
+			}
+	if (affichage)
+	{
+		std::cout << nbLignes - 1 << " lignes avec les infos suivants :" << std::endl;
+		while (!angles.empty())
+		{
+			std::cout << "(" << angles.top() << "," << rho.top() << ")";
+			angles.pop();
+			rho.pop();
+
+			if (!angles.empty())
+				std::cout << " ; ";
+		}
+		std::cout << std::endl;
+	}
+
+	lignes.m_vMin = 0;
+	lignes.m_vMax = nbLignes - 1;
+
+	return lignes;
+}
+
+CImageNdg CImageDouble::houghInverse(const CImageNdg& img) {
+
+	CImageNdg HI(img.lireHauteur(), img.lireLargeur(), 0);
+	HI.ecrireNom(img.lireNom() + "HI");
+	HI.choixPalette(img.lirePalette());
+
+	double hough_h = std::max(img.lireHauteur() / 2, img.lireLargeur() / 2)*sqrt(2.0);
+
+	double cx = img.lireLargeur() / 2;
+	double cy = img.lireHauteur() / 2;
+
+	for (int y = 0; y < img.lireHauteur(); y++)
+	{
+		for (int x = 0; x < img.lireLargeur(); x++)
+		{
+			if (img(y, x) > 0)
+			{
+				for (int t = 0; t < 180; t++)
+				{
+					double r = (((double)x - cx) * cos((double)t * (PI / 180)) + (((double)y - cy) * sin((double)t * (PI / 180))));
+					if (this->operator()(int(hough_h + r), t) > 0)
+						HI(y, x) = (int)(this->operator()(int(hough_h + r), t)) % 255;
+				}
+			}
+		}
+	}
+
+	return(HI);
+}
+
+typedef struct pics {
+	int numero;
+	double angles;
+	double rhos;
+	double taille;
+} PICS;
+
+static bool myTri(PICS p1, PICS p2) {
+	return (p1.taille > p2.taille);
+}
+
+
+CImageNdg CImageDouble::houghExtractionLignes(const CImageNdg &img, const std::string& methode,  int N, int M, int dim, int nombre, bool enregistrementCSV) {
+	// HOUGH transform
+	double hough_h = std::max(img.lireHauteur() / 2, img.lireLargeur() / 2)*sqrt(2.0);
+	int DIAG = (int)(hough_h * 2);
+	CImageDouble planHough(DIAG, 180);
+
+	planHough.ecrireMin(0);
+	planHough.ecrireMax(0);
+
+	double cx = img.lireHauteur() / 2;
+	double cy = img.lireLargeur() / 2;
+
+	for (int x = 0; x < img.lireHauteur(); x++)
+	{
+		for (int y = 0; y < img.lireLargeur(); y++)
+		{
+			if (img(x, y) > 0)
+			{
+				for (int t = 0; t <= 179; t++)
+				{
+					double r = (((double)x - cx) * cos((double)t * (PI / 180)) + (((double)y - cy) * sin((double)t * (PI / 180))));
+					planHough(int(hough_h + r), t) += 1;
+				}
+			}
+		}
+
+	}
+
+	// filtrage gaussien
+	//planHough = planHough.filtrage("gaussien", 5, 1); // optionnel 
+
+	for (int p = 0; p < planHough.lireNbPixels(); p++)
+		if (planHough(p) > planHough.lireMax())
+			planHough.ecrireMax(planHough(p));
+	planHough.toNdg("expansion").sauvegarde("planHough");
+
+	// extraction maxi locaux
+	CImageDouble mL = planHough.maxiLocaux(N, M);
+
+	// Hough inverse
+	CImageNdg HI(img.lireHauteur(), img.lireLargeur(), 0);
+	HI.ecrireNom(img.lireNom() + "HI");
+	HI.choixPalette("binaire");
+
+	if (methode.compare("longueur") == 0) {
+		// extraction pics
+		int nbLignes = 1;
+
+		std::stack<PICS> pics;
+
+		for (int r = 0; r < DIAG; r++)
+			for (int a = 0; a <= 179; a++)
+				if ((mL(r, a) > 0) && (planHough(r, a) >= dim))
+				{
+					PICS pic;
+					pic.numero = nbLignes;
+					pic.angles = a;
+					pic.rhos = r - hough_h;
+					pic.taille = planHough(r, a);
+					pics.push(pic);
+					nbLignes += 1;
+				}
+
+		// dépilement pics
+
+		if (enregistrementCSV) {
+			std::string fichier = "res/" + img.lireNom() + "_Pics.csv";
+			std::ofstream f(fichier.c_str());
+
+			if (!f.is_open())
+				std::cout << "Impossible d'ouvrir le fichier en ecriture !" << std::endl;
+			else {
+				f << "Numero; Distance; Angle; Taille" << std::endl;
+				while (!pics.empty())
+				{
+					PICS pic = pics.top();
+					int label = pic.numero;
+					double angle = pic.angles;
+					double rho = pic.rhos;
+					double tai = pic.taille;
+
+					f << label << " ; " << rho << " ; " << angle << " ; " << tai << std::endl;
+					if (angle != 0)
+					{
+						for (int i = 0; i < img.lireHauteur(); i++)
+						{
+							double x = i - cx;
+							int y = (int)((rho - x*cos(angle * (PI / 180))) / sin(angle * (PI / 180)));
+							int j = (int)(y + cy);
+							if ((j >= 0) && (j < img.lireLargeur()))
+								HI(i, j) = label;
+						}
+						for (int j = 0; j < img.lireLargeur(); j++)
+						{
+							double y = j - cy;
+							int x = (int)((rho - y*sin(angle * (PI / 180))) / cos(angle * (PI / 180)));
+							int i = (int)(x + cx);
+							if ((i >= 0) && (i < img.lireHauteur()))
+								HI(i, j) = label;
+						}
+					}
+					else
+						if (angle != 90)
+						{
+							for (int j = 0; j < img.lireLargeur(); j++) {
+								double y = j - cy;
+								int x = (int)((rho - y*sin(angle*PI / 180)) / cos(angle*PI / 180));
+								int i = (int)(x + cx);
+								if ((i >= 0) && (i < img.lireHauteur()))
+									HI(i, j) = label;
+							}
+							for (int i = 0; i < img.lireHauteur(); i++)
+							{
+								double x = i - cx;
+								int y = (int)((rho - x*cos(angle * (PI / 180))) / sin(angle * (PI / 180)));
+								int j = (int)(y + cy);
+								if ((j >= 0) && (j < img.lireLargeur()))
+									HI(i, j) = label;
+							}
+						}
+					pics.pop();
+				}
+				f.close();
+			}
+		}
+		else {
+			while (!pics.empty())
+			{
+				PICS pic = pics.top();
+				int label = pic.numero;
+				double angle = pic.angles;
+				double rho = pic.rhos;
+				std::cout << label << " " << angle << " " << rho << std::endl;
+				if (angle != 0)
+				{
+					for (int i = 0; i < img.lireHauteur(); i++)
+					{
+						double x = i - cx;
+						int y = (int)((rho - x*cos(angle * (PI / 180))) / sin(angle * (PI / 180)));
+						int j = (int)(y + cy);
+						if ((j >= 0) && (j < img.lireLargeur()))
+							HI(i, j) = label;
+					}
+					for (int j = 0; j < img.lireLargeur(); j++)
+					{
+						double y = j - cy;
+						int x = (int)((rho - y*sin(angle * (PI / 180))) / cos(angle * (PI / 180)));
+						int i = (int)(x + cx);
+						if ((i >= 0) && (i < img.lireHauteur()))
+							HI(i, j) = label;
+					}
+				}
+				else
+					if (angle != 90)
+					{
+						for (int j = 0; j < img.lireLargeur(); j++) {
+							double y = j - cy;
+							int x = (int)((rho - y*sin(angle*PI / 180)) / cos(angle*PI / 180));
+							int i = (int)(x + cx);
+							if ((i >= 0) && (i < img.lireHauteur()))
+								HI(i, j) = label;
+						}
+						for (int i = 0; i < img.lireHauteur(); i++)
+						{
+							double x = i - cx;
+							int y = (int)((rho - x*cos(angle * (PI / 180))) / sin(angle * (PI / 180)));
+							int j = (int)(y + cy);
+							if ((j >= 0) && (j < img.lireLargeur()))
+								HI(i, j) = label;
+						}
+					}
+				pics.pop();
+			}
+		}
+	}
+	else
+		if (methode.compare("nombre") == 0) {
+			// extraction pics
+			int nbLignes = 1;
+
+			std::vector<PICS> pics;
+
+			for (int r = 0; r < DIAG; r++)
+				for (int a = 0; a <= 179; a++)
+					if ((mL(r, a) > 0) && (planHough(r, a) >= dim)) // base minimale pour comptabiliser une droite
+					{
+						PICS pic;
+						pic.numero = nbLignes;
+						pic.angles = a;
+						pic.rhos = r - hough_h;
+						pic.taille = planHough(r, a);
+						pics.push_back(pic);
+						nbLignes += 1;
+					}
+
+			int nbPics = std::min(nbLignes - 1, nombre); // si pas suffisamment de pics extrait
+														 // dépilement pics
+
+			sort(pics.begin(), pics.end(), myTri);
+
+			if (enregistrementCSV) {
+				std::string fichier = "res/" + img.lireNom() + "_Pics.csv";
+				std::ofstream f(fichier.c_str());
+
+				if (!f.is_open())
+					std::cout << "Impossible d'ouvrir le fichier en ecriture !" << std::endl;
+				else {
+					f << "Numero; Distance; Angle; Taille" << std::endl;
+					for (int p = 0; p < nbPics; p++)
+					{
+						PICS pic = pics.at(p);
+						int label = pic.numero;
+						double angle = pic.angles;
+						double rho = pic.rhos;
+						double tai = pic.taille;
+
+						f << label << " ; " << rho << " ; " << angle << " ; " << tai << std::endl;
+
+						if (angle != 0)
+						{
+							for (int i = 0; i < img.lireHauteur(); i++)
+							{
+								double x = i - cx;
+								int y = (int)((rho - x*cos(angle * (PI / 180))) / sin(angle * (PI / 180)));
+								int j = (int)(y + cy);
+								if ((j >= 0) && (j < img.lireLargeur()))
+									HI(i, j) = label;
+							}
+							for (int j = 0; j < img.lireLargeur(); j++)
+							{
+								double y = j - cy;
+								int x = (int)((rho - y*sin(angle * (PI / 180))) / cos(angle * (PI / 180)));
+								int i = (int)(x + cx);
+								if ((i >= 0) && (i < img.lireHauteur()))
+									HI(i, j) = label;
+							}
+						}
+						else
+							if (angle != 90)
+							{
+								for (int j = 0; j < img.lireLargeur(); j++) {
+									double y = j - cy;
+									int x = (int)((rho - y*sin(angle*PI / 180)) / cos(angle*PI / 180));
+									int i = (int)(x + cx);
+									if ((i >= 0) && (i < img.lireHauteur()))
+										HI(i, j) = label;
+								}
+								for (int i = 0; i < img.lireHauteur(); i++)
+								{
+									double x = i - cx;
+									int y = (int)((rho - x*cos(angle * (PI / 180))) / sin(angle * (PI / 180)));
+									int j = (int)(y + cy);
+									if ((j >= 0) && (j < img.lireLargeur()))
+										HI(i, j) = label;
+								}
+							}
+					}
+					f.close();
+				}
+			}
+			else {
+				for (int p = 0; p < nbPics; p++)
+				{
+					PICS pic = pics.at(p);
+					int label = pic.numero;
+					double angle = pic.angles;
+					double rho = pic.rhos;
+					double tai = pic.taille;
+
+					std::cout << label << " " << angle << " " << rho << " -> " << tai << std::endl;
+					if (angle != 0)
+					{
+						for (int i = 0; i < img.lireHauteur(); i++)
+						{
+							double x = i - cx;
+							int y = (int)((rho - x*cos(angle * (PI / 180))) / sin(angle * (PI / 180)));
+							int j = (int)(y + cy);
+							if ((j >= 0) && (j < img.lireLargeur()))
+								HI(i, j) = label;
+						}
+						for (int j = 0; j < img.lireLargeur(); j++)
+						{
+							double y = j - cy;
+							int x = (int)((rho - y*sin(angle * (PI / 180))) / cos(angle * (PI / 180)));
+							int i = (int)(x + cx);
+							if ((i >= 0) && (i < img.lireHauteur()))
+								HI(i, j) = label;
+						}
+					}
+					else
+						if (angle != 90)
+						{
+							for (int j = 0; j < img.lireLargeur(); j++) {
+								double y = j - cy;
+								int x = (int)((rho - y*sin(angle*PI / 180)) / cos(angle*PI / 180));
+								int i = (int)(x + cx);
+								if ((i >= 0) && (i < img.lireHauteur()))
+									HI(i, j) = label;
+							}
+							for (int i = 0; i < img.lireHauteur(); i++)
+							{
+								double x = i - cx;
+								int y = (int)((rho - x*cos(angle * (PI / 180))) / sin(angle * (PI / 180)));
+								int j = (int)(y + cy);
+								if ((j >= 0) && (j < img.lireLargeur()))
+									HI(i, j) = label;
+							}
+						}
+				}
+			}
+		}
+
+	return(HI);
+
+}
+
+
 double CImageDouble::moyenne() const
 {
 	double somme = 0;
@@ -544,20 +1055,19 @@ double CImageDouble::moyenne() const
 CImageDouble CImageDouble::conv(const CImageDouble& kernel)
 {
 	CImageDouble out(this->lireHauteur() + kernel.lireHauteur() - 1, this->lireLargeur() + kernel.lireLargeur() - 1);
-	double sumjk = 0;
 	for (int j = 0; j < out.lireHauteur(); j++)
 	{
 		for (int k = 0; k < out.lireLargeur(); k++)
 		{
-			int lp = max(0, j + 1 - kernel.lireHauteur());
-			int hp = min(this->lireHauteur(), j);
-			int lq = max(0, k + 1 - kernel.lireLargeur());
-			int hq = min(this->lireLargeur(), k);
-			for (int p = lp; p <= hp; p++)
-				for (int q = lq; q <= hq; q++)
-					sumjk += kernel(j - p, k - q)*this->operator()(p, q);
+			double sumjk = 0;
+			int lp = std::max(0, j + 1 - kernel.lireHauteur());
+			int hp = std::min(this->lireHauteur(), j + 1);
+			int lq = std::max(0, k + 1 - kernel.lireLargeur());
+			int hq = std::min(this->lireLargeur(), k + 1);
+			for (int p = lp; p < hp; p++)
+				for (int q = lq; q < hq; q++)
+					sumjk += kernel.m_pucPixel[(j - p)*kernel.m_iLargeur + (k - q)] * m_pucPixel[p*m_iLargeur + q];
 			out(j, k) = sumjk;
-			sumjk = 0;
 		}
 	}
 	return out;
@@ -567,31 +1077,33 @@ CImageDouble CImageDouble::conv(const CImageDouble& kernel)
 CImageDouble CImageDouble::NormCorr(const CImageDouble & scene)
 {
 	CImageDouble out;
-	out.ecrireMin(INFINITY);
-	out.ecrireMax(0.0);
+	out.m_vMax = -DBL_MAX;
+	out.m_vMin = DBL_MAX;
+
 	if ((scene.lireHauteur() < this->lireHauteur()) && (scene.lireLargeur() < this->lireLargeur()))
 		out.ecrireNom("patternPlusGrandQueScène!");
 	else
 	{
 		//allocations
+		out.ecrireNom(this->lireNom() + "Match" + scene.lireNom());
 		CImageDouble a(*this);
-		CImageDouble a1(this->lireHauteur(), this->lireLargeur(), 1.0);
-		CImageDouble ar(this->lireHauteur(), this->lireLargeur());
+		CImageDouble a1(this->lireHauteur(), this->lireLargeur(), 1.0); a1.ecrireNom("uns");
+		CImageDouble ar(this->lireHauteur(), this->lireLargeur()); ar.ecrireNom(this->lireNom() + "NormRenverse");
 		CImageDouble b(scene);
 		CImageDouble bconv, bconv2;
 		CImageDouble b2(scene.lireHauteur(), scene.lireLargeur());
-		double moythis, moyscene, NbpixThis = this->lireNbPixels(), sum2a=0;
+		double moythis, moyscene, NbpixThis = this->lireNbPixels(), sum2a = 0;
 		//normalisation et somme carrée des pixels du pattern
 		moythis = this->moyenne();
 		moyscene = scene.moyenne();
-		for (int i = 0; i < this->lireNbPixels(); i++) 
+		for (int i = 0; i < this->lireNbPixels(); i++)
 		{
 			a(i) -= moythis;
-			ar(i) = this->operator()(this->lireNbPixels() - i);
+			ar(i) = this->operator()(this->lireNbPixels() - i - 1) - moythis;
 			sum2a += a(i)*a(i);
 		}
 		//normalisation et image carrée de la scène
-		for (int i = 0; i < scene.lireNbPixels(); i++) 
+		for (int i = 0; i < scene.lireNbPixels(); i++)
 		{
 			b(i) -= moyscene;
 			b2(i) = b(i)*b(i);
@@ -600,9 +1112,10 @@ CImageDouble CImageDouble::NormCorr(const CImageDouble & scene)
 		out = b.conv(ar);
 		bconv = b.conv(a1);
 		bconv2 = b2.conv(a1);
-		
+  
 		for (int i = 0; i < bconv.lireNbPixels(); i++)
-			bconv(i) = max(bconv2(i) - bconv(i)*bconv(i) / NbpixThis, 0.0); //éviter des valeurs négatives à cause de la soustraction
+			bconv(i) = std::max(bconv2(i) - bconv(i)*bconv(i) / NbpixThis, 0.0); //éviter des valeurs négatives à cause de la soustraction
+
 		for (int i = 0; i < out.lireNbPixels(); i++)
 		{
 			out(i) = out(i) / (sqrt(bconv(i)*sum2a));
@@ -614,4 +1127,5 @@ CImageDouble CImageDouble::NormCorr(const CImageDouble & scene)
 	}
 	return out;
 }
-//TODO faire du test avec ce norm corr, et surtout faire gaffe aux pattern pris (pas le centre askip)
+
+#undef PICS
