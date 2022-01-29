@@ -182,6 +182,8 @@ class CImageNdg {
 
 		// histogramme
 		_declspec(dllexport) std::vector<unsigned long> histogramme(bool enregistrementCSV = false, int pas=1); // 1 : pas de quantification
+		_declspec(dllexport) std::vector<double> CImageNdg::histogramme_norm(bool enregistrementCSV = false, int pas = 1); // histo normalisé
+
 
 		// signatures
 		_declspec(dllexport) MOMENTS signatures(const std::vector<unsigned long>& h);

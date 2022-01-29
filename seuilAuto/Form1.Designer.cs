@@ -37,8 +37,6 @@
             this.imageSeuillee = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.bSeuillageAuto = new System.Windows.Forms.Button();
-            this.valeurSeuilAuto = new System.Windows.Forms.TextBox();
-            this.parametersTextBox = new System.Windows.Forms.TextBox();
             this.buttonPuzzle = new System.Windows.Forms.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.button_puzzle = new System.Windows.Forms.Button();
@@ -69,39 +67,39 @@
             // 
             // buttonOuvrir
             // 
-            this.buttonOuvrir.Location = new System.Drawing.Point(162, 443);
+            this.buttonOuvrir.Location = new System.Drawing.Point(252, 405);
             this.buttonOuvrir.Name = "buttonOuvrir";
-            this.buttonOuvrir.Size = new System.Drawing.Size(75, 23);
+            this.buttonOuvrir.Size = new System.Drawing.Size(144, 35);
             this.buttonOuvrir.TabIndex = 1;
-            this.buttonOuvrir.Text = "OpenFile";
+            this.buttonOuvrir.Text = "Ouvrir image piece";
             this.buttonOuvrir.UseVisualStyleBackColor = true;
             this.buttonOuvrir.Click += new System.EventHandler(this.buttonOuvrir_Click);
             // 
             // panel1
             // 
-            this.panel1.AutoScroll = true;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.imageDepart);
-            this.panel1.Location = new System.Drawing.Point(12, 17);
+            this.panel1.Location = new System.Drawing.Point(198, 38);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(400, 400);
+            this.panel1.Size = new System.Drawing.Size(270, 350);
             this.panel1.TabIndex = 2;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // panel2
             // 
-            this.panel2.AutoScroll = true;
-            this.panel2.Controls.Add(this.imageSeuillee);
             this.panel2.Controls.Add(this.pictureBox1);
-            this.panel2.Location = new System.Drawing.Point(472, 17);
+            this.panel2.Location = new System.Drawing.Point(733, 17);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(400, 400);
+            this.panel2.Size = new System.Drawing.Size(556, 400);
             this.panel2.TabIndex = 3;
             // 
             // imageSeuillee
             // 
-            this.imageSeuillee.Location = new System.Drawing.Point(0, 0);
+            this.imageSeuillee.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.imageSeuillee.Location = new System.Drawing.Point(733, 17);
             this.imageSeuillee.Name = "imageSeuillee";
-            this.imageSeuillee.Size = new System.Drawing.Size(400, 400);
+            this.imageSeuillee.Size = new System.Drawing.Size(556, 400);
+            this.imageSeuillee.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imageSeuillee.TabIndex = 1;
             this.imageSeuillee.TabStop = false;
             // 
@@ -118,33 +116,13 @@
             // 
             // bSeuillageAuto
             // 
-            this.bSeuillageAuto.Location = new System.Drawing.Point(418, 200);
+            this.bSeuillageAuto.Location = new System.Drawing.Point(582, 181);
             this.bSeuillageAuto.Name = "bSeuillageAuto";
             this.bSeuillageAuto.Size = new System.Drawing.Size(48, 34);
             this.bSeuillageAuto.TabIndex = 4;
             this.bSeuillageAuto.Text = "Go";
             this.bSeuillageAuto.UseVisualStyleBackColor = true;
             this.bSeuillageAuto.Click += new System.EventHandler(this.seuillageAuto_Click);
-            // 
-            // valeurSeuilAuto
-            // 
-            this.valeurSeuilAuto.Location = new System.Drawing.Point(656, 443);
-            this.valeurSeuilAuto.Name = "valeurSeuilAuto";
-            this.valeurSeuilAuto.Size = new System.Drawing.Size(62, 20);
-            this.valeurSeuilAuto.TabIndex = 0;
-            this.valeurSeuilAuto.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.valeurSeuilAuto.Visible = false;
-            // 
-            // parametersTextBox
-            // 
-            this.parametersTextBox.Location = new System.Drawing.Point(12, 422);
-            this.parametersTextBox.Margin = new System.Windows.Forms.Padding(2);
-            this.parametersTextBox.Multiline = true;
-            this.parametersTextBox.Name = "parametersTextBox";
-            this.parametersTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.parametersTextBox.Size = new System.Drawing.Size(78, 46);
-            this.parametersTextBox.TabIndex = 5;
-            this.parametersTextBox.Text = "21\r\n15";
             // 
             // buttonPuzzle
             // 
@@ -155,19 +133,22 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(895, 18);
+            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox2.Location = new System.Drawing.Point(394, 478);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(390, 398);
+            this.pictureBox2.Size = new System.Drawing.Size(556, 400);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 7;
             this.pictureBox2.TabStop = false;
             // 
             // button_puzzle
             // 
-            this.button_puzzle.Location = new System.Drawing.Point(985, 427);
+            this.button_puzzle.Location = new System.Drawing.Point(582, 884);
             this.button_puzzle.Name = "button_puzzle";
             this.button_puzzle.Size = new System.Drawing.Size(181, 40);
             this.button_puzzle.TabIndex = 9;
-            this.button_puzzle.Text = "Open Puzzle";
+            this.button_puzzle.Text = "Ouvrir puzzle";
             this.button_puzzle.UseVisualStyleBackColor = true;
             this.button_puzzle.Click += new System.EventHandler(this.button_puzzle_Click);
             // 
@@ -175,12 +156,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1459, 478);
+            this.ClientSize = new System.Drawing.Size(1496, 959);
+            this.Controls.Add(this.imageSeuillee);
             this.Controls.Add(this.button_puzzle);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.buttonPuzzle);
-            this.Controls.Add(this.parametersTextBox);
-            this.Controls.Add(this.valeurSeuilAuto);
             this.Controls.Add(this.bSeuillageAuto);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -195,7 +175,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -209,8 +188,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox imageSeuillee;
         private System.Windows.Forms.Button bSeuillageAuto;
-        private System.Windows.Forms.TextBox valeurSeuilAuto;
-        private System.Windows.Forms.TextBox parametersTextBox;
         private System.Windows.Forms.Button buttonPuzzle;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Button button_puzzle;

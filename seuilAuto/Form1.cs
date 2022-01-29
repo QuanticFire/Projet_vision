@@ -16,6 +16,10 @@ namespace seuilAuto
 {
     public partial class Form1 : Form
     {
+        // Image puzzle et piece en variable globale
+        Bitmap bmp_ref;
+        Bitmap bmp_piece;
+
         public Form1()
         {
             InitializeComponent();
@@ -26,18 +30,21 @@ namespace seuilAuto
 
         }
 
+        // Quand on appuie sur le bouton "open file"
         private void buttonOuvrir_Click(object sender, EventArgs e)
         {
             if (ouvrirImage.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    Bitmap bmp;
+                    // Récupération de l'image
                     Image img = Image.FromFile(ouvrirImage.FileName);
-                    bmp = new Bitmap(img);
+                    bmp_piece = new Bitmap(img);
 
-                    imageDepart.Width = bmp.Width;
-                    imageDepart.Height = bmp.Height;
+                    // Ajustement de la taille du panel par rapport à l'image
+                    imageDepart.Width = bmp_piece.Width;
+                    imageDepart.Height = bmp_piece.Height;
+                    
                     // pour centrer image dans panel
                     if (imageDepart.Width < panel1.Width)
                         imageDepart.Left = (panel1.Width - imageDepart.Width) / 2;
@@ -45,10 +52,13 @@ namespace seuilAuto
                     if (imageDepart.Height < panel1.Height)
                         imageDepart.Top = (panel1.Height - imageDepart.Height) / 2;
 
-                    imageDepart.Image = bmp;
+                    // Affichage de l'image
+                    imageDepart.Image = bmp_piece;
 
-                    imageSeuillee.Hide();
-                    valeurSeuilAuto.Hide();
+                    // Quand on affiche une nouvelle image, on cache l'ancienne image traitée pour garder une cohérence visuelle sur l'interface
+                    //imageSeuillee.Hide();
+                    imageSeuillee.Image = null;
+                    //valeurSeuilAuto.Hide();
                 }
                 catch
                 {
@@ -57,72 +67,61 @@ namespace seuilAuto
             }
         }
 
+        // Quand on appuie sur le bouton "go"
         private void seuillageAuto_Click(object sender, EventArgs e)
         {
-            // traitement donc transférer data bmp vers C++
-
             imageSeuillee.Show();
-            valeurSeuilAuto.Show();
+            //valeurSeuilAuto.Show();
 
-            Bitmap bmp = new Bitmap(imageDepart.Image);
-            ClImage Img = new ClImage();
+            
+            Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
+            ClImage Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
 
-            // affectation des paramètres
-            double[] parametres = new double[parametersTextBox.Lines.Length];
-            for (int i = 0; i < parametersTextBox.Lines.Length; i++)
-                parametres[i] = Convert.ToDouble(parametersTextBox.Lines[i]);
+            // affectation des paramètres (a supprimer en faisant attention aux changement wrapper et dll, ne sert a rien)
+            double[] parametres = { 0 }; // = new double[parametersTextBox.Lines.Length];
+            //for (int i = 0; i < parametersTextBox.Lines.Length; i++)
+            //   parametres[i] = Convert.ToDouble(parametersTextBox.Lines[i]);
 
             unsafe
             {
-                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                Img.traitementTestPtr(1, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width, parametres);
-                // 1 champ texte retour C++, le seuil auto
-                bmp.UnlockBits(bmpData);
+                // Génération d'objets permettant de passer les data des images au wrapper
+                BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                // Appel du wrapper pour traitement dans la dll
+                // Passage des données pour l'image puzzle de référence ET pour l'image piece
+                Img.traitementTestPtr(1, bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
+                
+                // ancien commentaire : 1 champ texte retour C++, le seuil auto
+                // Traitement terminé, libération des images
+                bmp_ref_copy.UnlockBits(bmpData);
+                bmp_piece.UnlockBits(bmpData_piece);
             }
-
-            valeurSeuilAuto.Text = Img.objetLibValeurChamp(0).ToString();
-
-            imageSeuillee.Width = bmp.Width;
-            imageSeuillee.Height = bmp.Height;
-
-            // pour centrer image dans panel
-            if (imageSeuillee.Width < panel1.Width)
-                imageSeuillee.Left = (panel1.Width - imageSeuillee.Width) / 2;
-
-            if (imageSeuillee.Height < panel1.Height)
-                imageSeuillee.Top = (panel1.Height - imageSeuillee.Height) / 2;
-
-            // transférer C++ vers bmp
-            imageSeuillee.Image = bmp;
+            
+            // Affichagr de l'image puzzle avec détection de pièce sur l'interface
+            imageSeuillee.Image = bmp_ref_copy;
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
 
         }
+
+        // Quand on appuie sur le bouton pour ouvrir le puzzle...
         private void button_puzzle_Click(object sender, EventArgs e)
         {
             if (ouvrirImage.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    Bitmap bmp;
+                    // Initialisations
                     Image img = Image.FromFile(ouvrirImage.FileName);
-                    bmp = new Bitmap(img);
+                    bmp_ref = new Bitmap(img);
 
-                    imageDepart.Width = bmp.Width;
-                    imageDepart.Height = bmp.Height;
-                    // pour centrer image dans panel
-                    if (imageDepart.Width < panel1.Width)
-                        imageDepart.Left = (panel1.Width - imageDepart.Width) / 2;
+                    pictureBox2.Image = bmp_ref; // Affichage de l'image
 
-                    if (imageDepart.Height < panel1.Height)
-                        imageDepart.Top = (panel1.Height - imageDepart.Height) / 2;
-
-                    imageDepart.Image = bmp;
-
-                    imageSeuillee.Hide();
-                    valeurSeuilAuto.Hide();
+                    //imageSeuillee.Hide();
+                    //valeurSeuilAuto.Hide();
                 }
                 catch
                 {

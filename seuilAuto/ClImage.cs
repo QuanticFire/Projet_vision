@@ -51,11 +51,13 @@ namespace Traitement
         //Appel de la méthode de traitement test
 
         [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr traitementTest(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, double[] parametres);
+        public static extern IntPtr traitementTest(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, double[] parametres, int nbChamps_p, IntPtr data_p, int stride_p, int nbLig_p, int nbCol_p);
 
-        public IntPtr traitementTestPtr(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, double[] parametres)
+        public IntPtr traitementTestPtr(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, double[] parametres, int nbChamps_p, IntPtr data_p, int stride_p, int nbLig_p, int nbCol_p)
         {
-            ClPtr = traitementTest(nbChamps, data, stride, nbLig, nbCol, parametres);
+            // nbChamps, data, stride, nbLig, NbCol, parametres : correspondent à l'image puzzle de référence
+            // les autres paramètres concernent l'image piece puzzle à détecter
+            ClPtr = traitementTest(nbChamps, data, stride, nbLig, nbCol, parametres, nbChamps_p, data_p, stride_p, nbLig_p, nbCol_p);
             return ClPtr;
         }
         // Appel de la méthode pour retrouver les signatures

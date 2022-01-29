@@ -151,6 +151,7 @@
     <ClCompile Include="src\libTraitement.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ImageCouleur.h" />
     <ClInclude Include="include\ImageDouble.h" />
     <ClInclude Include="include\ImageNdg.h" />
     <ClInclude Include="include\LibTraitement.h" />

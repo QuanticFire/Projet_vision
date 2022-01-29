@@ -99,6 +99,9 @@ class CImageCouleur {
 
 		// signatures
 		_declspec(dllexport) std::vector<MOMENTS> signatures();
+
+		// Fonction de detection piece pour le projet Vision IPSI3
+		_declspec(dllexport) CImageCouleur detection_piece(CImageCouleur piece);
 				
 };
 
