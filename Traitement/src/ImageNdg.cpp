@@ -8,6 +8,7 @@
 
 #include "ImageNdg.h"
 
+#define PI 3.14159265358979323846
 #define MAGIC_NUMBER_BMP ('B'+('M'<<8)) // signature bitmap windows
 
 // constructeurs et destructeur
@@ -699,4 +700,48 @@ CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj) {
 	return out;
 }
 
+CImageNdg CImageNdg::rotation(float angle, const std::string& taille)
+{
+	int iout, jout;
+	float icenter, jcenter, icenterbase, jcenterbase;
+	float costhe = cos(PI*angle / 180);
+	float sinthe = sin(PI*angle / 180);
+	float tant = tan(PI*angle / 360);
+	//taille des images intermédiaires
+	int diam = (int)(sqrt(this->lireHauteur() ^ 2 + this->lireLargeur() ^ 2));
 
+	if (taille.compare("idem") == 0) {
+		CImageNdg out(this->lireHauteur(), this->lireLargeur(), this->operator()(0)); //on prend la valeur "approchée" du fond
+		out.ecrireNom(this->lireNom() + "Rot");
+		CImageNdg transvec1(diam, diam), transvec2(diam, diam);
+
+		//centrage de l'image d'origine
+		icenterbase = (float)(this->lireHauteur() / 2.0);
+		jcenterbase = (float)(this->lireLargeur() / 2.0);
+
+		//premiere transvection
+		icenter = (float)(this->lireHauteur() / 2.0);
+		jcenter = (float)(this->lireLargeur() / 2.0);
+		for (int i = 0; i < this->lireHauteur(); i++)
+			for (int j = 0; j < this->lireLargeur(); j++)
+			{
+				iout = (int)((i - icenterbase) - tant*(j - jcenter) + icenter);
+				jout = (int)((j - jcenterbase)*costhe);
+				if (iout >= 0 && iout < out.lireHauteur() && jout >= 0 && jout < out.lireLargeur())
+					out(iout, jout) = this->operator()(i, j);
+			}
+		//deuxieme
+		icenter = (float)(this->lireHauteur() / 2.0);
+		jcenter = (float)(this->lireLargeur() / 2.0);
+		for (int i = 0; i < this->lireHauteur(); i++)
+			for (int j = 0; j < this->lireLargeur(); j++)
+			{
+				iout = (int)((i - icenterbase) - tant*(j - jcenter) + icenter);
+				jout = (int)((j - jcenterbase)*costhe);
+				if (iout >= 0 && iout < out.lireHauteur() && jout >= 0 && jout < out.lireLargeur())
+					out(iout, jout) = this->operator()(i, j);
+			}
+		return out;
+	}
+
+}

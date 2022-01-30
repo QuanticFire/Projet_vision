@@ -203,6 +203,8 @@ class CImageNdg {
 		// filtrage
 		_declspec(dllexport) CImageNdg filtrage(const std::string& methode = "moyennage", int Ni = 3, int Nj = 3); // choix "moyennage" / "median"
 
+		_declspec(dllexport) CImageNdg rotation(float angle, const std::string & taille);
+
 };
 
 #endif 
