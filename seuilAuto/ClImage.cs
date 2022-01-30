@@ -60,6 +60,19 @@ namespace Traitement
             ClPtr = traitementTest(nbChamps, data, stride, nbLig, nbCol, parametres, nbChamps_p, data_p, stride_p, nbLig_p, nbCol_p);
             return ClPtr;
         }
+
+        //Appel du traitement par PattermMatching
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr PatternMatching(IntPtr data, int stride, int nbLig, int nbCol, IntPtr data_p, int stride_p, int nbLig_p, int nbCol_p);
+
+        public IntPtr PatternMatchingPtr(IntPtr data, int stride, int nbLig, int nbCol, IntPtr data_p, int stride_p, int nbLig_p, int nbCol_p)
+        {
+            // nbChamps, data, stride, nbLig, NbCol, parametres : correspondent à l'image puzzle de référence
+            // les autres paramètres concernent l'image piece puzzle à détecter
+            ClPtr = PatternMatching(data, stride, nbLig, nbCol, data_p, stride_p, nbLig_p, nbCol_p);
+            return ClPtr;
+        }
+
         // Appel de la méthode pour retrouver les signatures
         [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern double valeurChamp(IntPtr pImg, int i);
