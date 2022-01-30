@@ -10,6 +10,28 @@
 
 #define MAGIC_NUMBER_BMP ('B'+('M'<<8)) // signature bitmap windows
 
+// Fonction de calcul de l'écart type d'un histogramme sous la forme d'un vector double
+double stdev(std::vector<double> h)
+{
+	int taille = h.size();
+	double moyenne = 0;
+	for (int i = 0; i < taille; i++)
+	{
+		moyenne = moyenne + h[i];
+	}
+	moyenne = moyenne / taille;
+
+	double ecart_type = 0;
+	for (int i = 0; i < taille; i++)
+	{
+		ecart_type = ecart_type + (h[i] - moyenne)*(h[i] - moyenne);
+	}
+
+	ecart_type = ecart_type / taille;
+	ecart_type = sqrt(ecart_type);
+	return ecart_type;
+}
+
 // constructeurs et destructeur
 CImageCouleur::CImageCouleur() {
 
@@ -159,6 +181,7 @@ void CImageCouleur::sauvegarde(const std::string& fixe) {
 
 	if (this->m_ppucPixel) {
 		std::string nomFichier = "../Res/";
+		//std::string nomFichier = "C:/Temp/"; // Modification temporaire du chemin d'enregistrement pour debug projet vision IPSI3
 		if (fixe.compare("") == 0)
 			nomFichier += this->lireNom() + ".bmp"; // force sauvegarde dans répertoire Res (doit exister)
 		else
@@ -393,4 +416,285 @@ std::vector<MOMENTS> CImageCouleur::signatures()
 	}
 
 	return mts;
+}
+
+CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece)
+{
+	// Création de l'image de sortie à partir de l'objet pointé (image de référence)
+	CImageCouleur ref(this->lireHauteur(), this->lireLargeur());
+	for (int i = 0; i < ref.lireHauteur(); i++)
+	{
+		for (int j = 0; j < ref.lireLargeur(); j++)
+		{
+			ref(i, j)[0] = this->operator()(i, j)[0];
+			ref(i, j)[1] = this->operator()(i, j)[1];
+			ref(i, j)[2] = this->operator()(i, j)[2];
+		}
+	}
+
+	// Séparation des plans de couleur
+	CImageNdg ref_plans[3];
+	ref_plans[0] = ref.plan(1);
+	ref_plans[1] = ref.plan(2);
+	ref_plans[2] = ref.plan(3);
+
+	// Initialisations
+	int ref_hauteur = ref.lireHauteur();
+	int ref_largeur = ref.lireLargeur();
+	int nb_piece_hauteur = 5;
+	int nb_piece_largeur = 9;
+	int pas_hauteur = int(floor(ref_hauteur / nb_piece_hauteur));
+	int pas_largeur = int(floor(ref_largeur / nb_piece_largeur));
+
+	int imagette_hauteur = int(floor(pas_hauteur / 2));
+	int imagette_largeur = int(floor(pas_largeur / 2));
+
+	// Création d'un tableau d'images noires qui vont acceuillir les quarts d'images des trois plans de la pièce
+	CImageNdg pieces_ref[3][5][9][2][2];
+	for (int plan = 0; plan < 3; plan++)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			for (int j = 0; j < 9; j++)
+			{
+				for (int v = 0; v < 2; v++)
+				{
+					for (int w = 0; w < 2; w++)
+					{
+						pieces_ref[plan][i][j][v][w] = CImageNdg(imagette_hauteur, imagette_largeur, 0);
+					}
+				}
+			}
+		}
+	}
+
+
+	// Parcours sur chaque plan
+	for (int plan = 0; plan < 3; plan++)
+	{
+		// Parcours sur chaque "pieces"
+		for (int i = 0; i < 5; i++)
+		{
+			for (int j = 0; j < 9; j++)
+			{
+				// Parcours sur chaque imagette de chaque piece
+				for (int v = 0; v < 2; v++)
+				{
+					for (int w = 0; w < 2; w++)
+					{
+						int hauteur_depart = i*pas_hauteur + v*imagette_hauteur;
+						int largeur_depart = j*pas_largeur + w*imagette_largeur;
+						int hauteur_fin = i*pas_hauteur + (v + 1)*imagette_hauteur;
+						int largeur_fin = j*pas_largeur + (w + 1)*imagette_largeur;
+
+						// Parcours sur chaque pixel de chaque imagette
+						for (int x = hauteur_depart; x < hauteur_fin - 1; x++)
+						{
+							for (int y = largeur_depart; y < largeur_fin - 1; y++)
+							{
+								//pieces_ref[plan][i][j](x, y) = ref_plans[plan](x, y);
+								pieces_ref[plan][i][j][v][w](x - hauteur_depart, y - largeur_depart) = ref_plans[plan](x, y);
+							}
+						}
+					}
+				}
+
+			}
+		}
+	}
+
+	/////////////////////////////////////// COMPARAISON AVEC LES REFERENCES ////////////////////////////////////
+
+	// Extraction des trois plans de la pièce
+	CImageNdg piece1 = piece.plan(1);
+	CImageNdg piece2 = piece.plan(2);
+	CImageNdg piece3 = piece.plan(3);
+
+	int hauteur = piece1.lireHauteur();
+	int largeur = piece1.lireLargeur();
+
+	// Création d'un tableau d'images noires qui vont acceuillir les quarts d'images des trois plans de la pièce
+	CImageNdg piece_array[3][4];
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			piece_array[j][i] = CImageNdg(floor(hauteur / 2), floor(largeur / 2), 0);
+		}
+	}
+
+	int hauteur_sur_2 = int(floor(hauteur / 2));
+	int largeur_sur_2 = int(floor(largeur / 2));
+
+	// On rempli les imagettes
+	for (int i = 0; i < hauteur_sur_2; i++)
+	{
+		for (int j = 0; j < largeur_sur_2; j++)
+		{
+			piece_array[0][0](i, j) = piece1(i, j);
+			piece_array[1][0](i, j) = piece2(i, j);
+			piece_array[2][0](i, j) = piece3(i, j);
+		}
+	}
+
+	for (int i = 0; i < hauteur_sur_2; i++)
+	{
+		for (int j = largeur_sur_2; j < largeur - 1; j++)
+		{
+			piece_array[0][1](i, j - largeur_sur_2) = piece1(i, j);
+			piece_array[1][1](i, j - largeur_sur_2) = piece2(i, j);
+			piece_array[2][1](i, j - largeur_sur_2) = piece3(i, j);
+		}
+	}
+
+	for (int i = hauteur_sur_2; i < hauteur - 1; i++)
+	{
+		for (int j = 0; j < largeur_sur_2; j++)
+		{
+			piece_array[0][2](i - hauteur_sur_2, j) = piece1(i, j);
+			piece_array[1][2](i - hauteur_sur_2, j) = piece2(i, j);
+			piece_array[2][2](i - hauteur_sur_2, j) = piece3(i, j);
+		}
+	}
+
+	for (int i = hauteur_sur_2; i < hauteur - 1; i++)
+	{
+		for (int j = largeur_sur_2; j < largeur - 1; j++)
+		{
+			piece_array[0][3](i - hauteur_sur_2, j - largeur_sur_2) = piece1(i, j);
+			piece_array[1][3](i - hauteur_sur_2, j - largeur_sur_2) = piece1(i, j);
+			piece_array[2][3](i - hauteur_sur_2, j - largeur_sur_2) = piece1(i, j);
+		}
+	}
+
+	// On se retrouve avec :
+	// Un tableau des pièces de référence : CImageNdg pieces_ref[3][5][9][2][2]
+	// Un tableau contenant les trois plans des 4 imagettes de la pièece test : CImageNdg piece_array[3][4]
+
+	// Démarrage des opérations de calcul de distance d'histogramme
+
+	// Calcul histogramme piece test
+	std::vector<double> P0_I0 = piece_array[0][0].histogramme_norm();
+	std::vector<double> P0_I1 = piece_array[0][1].histogramme_norm();
+	std::vector<double> P0_I2 = piece_array[0][2].histogramme_norm();
+	std::vector<double> P0_I3 = piece_array[0][3].histogramme_norm();
+
+	std::vector<double> P1_I0 = piece_array[1][0].histogramme_norm();
+	std::vector<double> P1_I1 = piece_array[1][1].histogramme_norm();
+	std::vector<double> P1_I2 = piece_array[1][2].histogramme_norm();
+	std::vector<double> P1_I3 = piece_array[1][3].histogramme_norm();
+
+	std::vector<double> P2_I0 = piece_array[2][0].histogramme_norm();
+	std::vector<double> P2_I1 = piece_array[2][1].histogramme_norm();
+	std::vector<double> P2_I2 = piece_array[2][2].histogramme_norm();
+	std::vector<double> P2_I3 = piece_array[2][3].histogramme_norm();
+
+	// Initialisation tableau des distances d'histogramme
+	double distances[45];
+	for (int i = 0; i < 45; i++)
+	{
+		distances[i] = 0;
+	}
+
+	// Initialisation tableau des écarts types d'histogramme
+	double stdev_histo[45];
+
+	// Initialisation d'un tableau contenant la distance totale
+	double total_dist[45];
+
+	// boucle sur chaque piece de référence
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+
+			// Calcul des histogrammes des imagettes de reference
+			std::vector<double> Ref_P0_I0 = pieces_ref[0][i][j][0][0].histogramme_norm();
+			std::vector<double> Ref_P0_I1 = pieces_ref[0][i][j][0][1].histogramme_norm();
+			std::vector<double> Ref_P0_I2 = pieces_ref[0][i][j][1][0].histogramme_norm();
+			std::vector<double> Ref_P0_I3 = pieces_ref[0][i][j][1][1].histogramme_norm();
+
+			std::vector<double> Ref_P1_I0 = pieces_ref[1][i][j][0][0].histogramme_norm();
+			std::vector<double> Ref_P1_I1 = pieces_ref[1][i][j][0][1].histogramme_norm();
+			std::vector<double> Ref_P1_I2 = pieces_ref[1][i][j][1][0].histogramme_norm();
+			std::vector<double> Ref_P1_I3 = pieces_ref[1][i][j][1][1].histogramme_norm();
+
+			std::vector<double> Ref_P2_I0 = pieces_ref[2][i][j][0][0].histogramme_norm();
+			std::vector<double> Ref_P2_I1 = pieces_ref[2][i][j][0][1].histogramme_norm();
+			std::vector<double> Ref_P2_I2 = pieces_ref[2][i][j][1][0].histogramme_norm();
+			std::vector<double> Ref_P2_I3 = pieces_ref[2][i][j][1][1].histogramme_norm();
+
+			// Calcul de la distance d'histogramme
+			for (int z = 0; z < 256; z++)
+			{
+				distances[i * 9 + j] = distances[i * 9 + j] + abs(P0_I0[z] - Ref_P0_I0[z]) + abs(P0_I1[z] - Ref_P0_I1[z]) + abs(P0_I2[z] - Ref_P0_I2[z]) + abs(P0_I3[z] - Ref_P0_I3[z]) + abs(P1_I0[z] - Ref_P1_I0[z]) + abs(P1_I1[z] - Ref_P1_I1[z]) + abs(P1_I2[z] - Ref_P1_I2[z]) + abs(P1_I3[z] - Ref_P1_I3[z]) + abs(P2_I0[z] - Ref_P2_I0[z]) + abs(P2_I1[z] - Ref_P2_I1[z]) + abs(P2_I2[z] - Ref_P2_I2[z]) + abs(P2_I3[z] - Ref_P2_I3[z]);
+			}
+
+			// Calcul de la distance par ecart type (69% de détection en solo)
+			stdev_histo[i * 9 + j] = abs(stdev(P0_I0) - stdev(Ref_P0_I0)) + abs(stdev(P0_I1) - stdev(Ref_P0_I1)) + abs(stdev(P0_I2) - stdev(Ref_P0_I2)) + abs(stdev(P0_I3) - stdev(Ref_P0_I3)) + abs(stdev(P1_I0) - stdev(Ref_P1_I0)) + abs(stdev(P1_I1) - stdev(Ref_P1_I1)) + abs(stdev(P1_I2) - stdev(Ref_P1_I2)) + abs(stdev(P1_I3) - stdev(Ref_P1_I3)) + abs(stdev(P2_I0) - stdev(Ref_P2_I0)) + abs(stdev(P2_I1) - stdev(Ref_P2_I1)) + abs(stdev(P2_I2) - stdev(Ref_P2_I2)) + abs(stdev(P2_I3) - stdev(Ref_P2_I3));
+
+			// Calcul de la distance totale
+			// 89% de détection avec 0.007
+			total_dist[i * 9 + j] = stdev_histo[i * 9 + j] + 0.005 * distances[i * 9 + j];
+			//cout << "dist stdev : " << stdev_histo[i * 9 + j] << '\n';
+			//cout << "dist histo : " << distances[i * 9 + j] << '\n';
+			//cout << "dist tot : " << total_dist[i * 9 + j] << '\n';
+		}
+	}
+
+	double distance_min = 999999;
+	int index_distance_min = -1;
+	for (int i = 0; i < 45; i++)
+	{
+		if (total_dist[i] < distance_min)
+		{
+			distance_min = total_dist[i];
+			index_distance_min = i;
+		}
+	}
+
+	//cout << " verdict : " << index_distance_min + 1;
+
+	int pos_hauteur = int(floor(index_distance_min / 9));
+	int pos_largeur = (index_distance_min) % 9;
+
+	// Création d'un cadre rouge sur l'image au niveau de la pièce détectée
+	for (int i = pos_hauteur*pas_hauteur; i < (pos_hauteur + 1)*pas_hauteur; i++)
+	{
+		// Côté gauche
+		for (int shift = 1; shift < 10; shift++)
+		{
+			ref(i, pos_largeur*pas_largeur + shift)[0] = 255;
+			ref(i, pos_largeur*pas_largeur + shift)[1] = 0;
+			ref(i, pos_largeur*pas_largeur + shift)[2] = 0;
+		}
+
+		// Côté droit
+		for (int shift = 1; shift < 10; shift++)
+		{
+			ref(i, (pos_largeur + 1)*pas_largeur - shift)[0] = 255;
+			ref(i, (pos_largeur + 1)*pas_largeur - shift)[1] = 0;
+			ref(i, (pos_largeur + 1)*pas_largeur - shift)[2] = 0;
+		}
+	}
+	for (int i = pos_largeur*pas_largeur; i < (pos_largeur + 1)*pas_largeur; i++)
+	{
+		// Côté haut
+		for (int shift = 1; shift < 10; shift++)
+		{
+			ref(pos_hauteur*pas_hauteur + shift, i)[0] = 255;
+			ref(pos_hauteur*pas_hauteur + shift, i)[1] = 0;
+			ref(pos_hauteur*pas_hauteur + shift, i)[2] = 0;
+		}
+
+		// Côté bas
+		for (int shift = 1; shift < 10; shift++)
+		{
+			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[0] = 255;
+			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[1] = 0;
+			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[2] = 0;
+		}
+	}
+
+	return ref;
 }

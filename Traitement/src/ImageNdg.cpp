@@ -252,6 +252,35 @@ std::vector<unsigned long> CImageNdg::histogramme(bool enregistrementCSV, int pa
 	return h;
 }
 
+// Histogramme normalisé
+
+std::vector<double> CImageNdg::histogramme_norm(bool enregistrementCSV, int pas) {
+
+	std::vector<double> h;
+
+	h.resize(256 / pas, 0);
+	for (int i = 0; i<this->lireNbPixels(); i++)
+		h[this->operator()(i) / pas] += 1L;
+
+	for (int i = 0; i < 256; i++)
+		h[i] = h[i] / this->lireNbPixels();
+
+	if (enregistrementCSV) {
+		std::string fichier = "../Res/" + this->lireNom() + ".csv";
+		std::ofstream f(fichier.c_str());
+
+		if (!f.is_open())
+			std::cout << "Impossible d'ouvrir le fichier en ecriture !" << std::endl;
+		else {
+			for (int i = 0; i<(int)h.size(); i++)
+				f << h[i] << std::endl;
+		}
+		f.close();
+	}
+
+	return h;
+}
+
 // signatures globales
 
 MOMENTS CImageNdg::signatures(const std::vector<unsigned long>& h) {
