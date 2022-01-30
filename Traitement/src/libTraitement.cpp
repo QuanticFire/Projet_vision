@@ -9,6 +9,8 @@
 #include <stack>
 
 #include "libTraitement.h"
+//copy /y "D:\Alexis\Documents\Visual Studio 2015\Projects\Projet_vision\Traitement\fftw\libfftw3 - 3.dll" "D:\Alexis\Documents\Visual Studio 2015\Projects\Projet_vision\seuilAuto\bin\Debug\"
+
 
 ClibTraitement::ClibTraitement() {
 

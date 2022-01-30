@@ -733,9 +733,9 @@ CImageNdg CImageNdg::rotation(float angle, const std::string& taille)
 {
 	int iout, jout;
 	float icenter, jcenter, icenterbase, jcenterbase;
-	float costhe = cos(PI*angle / 180);
-	float sinthe = sin(PI*angle / 180);
-	float tant = tan(PI*angle / 360);
+	float costhe = (float)cos(PI*angle / 180);
+	float sinthe = (float)sin(PI*angle / 180);
+	float tant = (float)tan(PI*angle / 360);
 	//taille des images intermédiaires
 	int diam = (int)(sqrt(this->lireHauteur() ^ 2 + this->lireLargeur() ^ 2));
 
@@ -772,5 +772,7 @@ CImageNdg CImageNdg::rotation(float angle, const std::string& taille)
 			}
 		return out;
 	}
-
+	CImageNdg vide;
+	vide.ecrireNom("Taille non bien définie!");
+	return vide;
 }

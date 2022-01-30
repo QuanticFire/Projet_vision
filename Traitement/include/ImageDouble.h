@@ -130,6 +130,9 @@ class CImageDouble {
 		//convolution de deux images
 		_declspec(dllexport) CImageDouble conv(const CImageDouble& kernel);
 		
+		// convolution avec fft, n'est important que pour avoir un temps de traitement plus raisonnable
+		_declspec(dllexport) CImageDouble convfft(const CImageDouble & kernel);
+
 		//corrélationNormée entre deux images
 		CImageDouble NormCorr(const CImageDouble & scene);
 

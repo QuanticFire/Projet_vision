@@ -519,7 +519,7 @@ CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece)
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			piece_array[j][i] = CImageNdg(floor(hauteur / 2), floor(largeur / 2), 0);
+			piece_array[j][i] = CImageNdg(hauteur / 2, largeur / 2, 0);
 		}
 	}
 
