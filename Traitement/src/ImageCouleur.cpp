@@ -692,17 +692,17 @@ CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece, double* score,
 		// Côté gauche
 		for (int shift = 1; shift < 10; shift++)
 		{
-			ref(i, pos_largeur*pas_largeur + shift)[0] = 255;
-			ref(i, pos_largeur*pas_largeur + shift)[1] = 0;
-			ref(i, pos_largeur*pas_largeur + shift)[2] = 0;
+			ref(i, pos_largeur*pas_largeur + shift)[0] = 20;
+			ref(i, pos_largeur*pas_largeur + shift)[1] = 220;
+			ref(i, pos_largeur*pas_largeur + shift)[2] = 20;
 		}
 
 		// Côté droit
 		for (int shift = 1; shift < 10; shift++)
 		{
-			ref(i, (pos_largeur + 1)*pas_largeur - shift)[0] = 255;
-			ref(i, (pos_largeur + 1)*pas_largeur - shift)[1] = 0;
-			ref(i, (pos_largeur + 1)*pas_largeur - shift)[2] = 0;
+			ref(i, (pos_largeur + 1)*pas_largeur - shift)[0] = 20;
+			ref(i, (pos_largeur + 1)*pas_largeur - shift)[1] = 220;
+			ref(i, (pos_largeur + 1)*pas_largeur - shift)[2] = 20;
 		}
 	}
 	for (int i = pos_largeur*pas_largeur; i < (pos_largeur + 1)*pas_largeur; i++)
@@ -710,17 +710,17 @@ CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece, double* score,
 		// Côté haut
 		for (int shift = 1; shift < 10; shift++)
 		{
-			ref(pos_hauteur*pas_hauteur + shift, i)[0] = 255;
-			ref(pos_hauteur*pas_hauteur + shift, i)[1] = 0;
-			ref(pos_hauteur*pas_hauteur + shift, i)[2] = 0;
+			ref(pos_hauteur*pas_hauteur + shift, i)[0] = 20;
+			ref(pos_hauteur*pas_hauteur + shift, i)[1] = 220;
+			ref(pos_hauteur*pas_hauteur + shift, i)[2] = 20;
 		}
 
 		// Côté bas
 		for (int shift = 1; shift < 10; shift++)
 		{
-			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[0] = 255;
-			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[1] = 0;
-			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[2] = 0;
+			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[0] = 20;
+			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[1] = 220;
+			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[2] = 20;
 		}
 	}
 
