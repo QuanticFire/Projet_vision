@@ -9,6 +9,8 @@
 #include <stack>
 
 #include "libTraitement.h"
+//copy /y "D:\Alexis\Documents\Visual Studio 2015\Projects\Projet_vision\Traitement\fftw\libfftw3 - 3.dll" "D:\Alexis\Documents\Visual Studio 2015\Projects\Projet_vision\seuilAuto\bin\Debug\"
+
 
 ClibTraitement::ClibTraitement() {
 
@@ -160,7 +162,7 @@ void ClibTraitement::Traitement2(int nbChamps, byte * data, int stride, int nbLi
 
 	**********************************************************************************************************************/
 
-	// Traitement sur image niveaux de gris qui était présent par le passé
+	// Traitement sur image niveaux de gris qui était présent par le passé, simple filtrage
 
 	//CImageNdg moyen;
 	//moyen = this->imgPt->plan().filtrage("moyennage", (int)parametres[0], (int)parametres[1]);
@@ -203,4 +205,93 @@ void ClibTraitement::Traitement2(int nbChamps, byte * data, int stride, int nbLi
 		}
 		pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
 	}
+}
+
+void ClibTraitement::TraitementMatching(byte * data, int stride, int nbLig, int nbCol, byte * data_p, int stride_p, int nbLig_p, int nbCol_p)
+{
+	// --------------------------- Construction de l'image ClibTraitement ----------------------------------
+	// affectation des signatures (dataFromImg) et taille (nbChamps)
+	this->nbDataImg = 2;
+	this->dataFromImg.resize(this->nbDataImg);
+
+	this->imgPt = new CImageCouleur(nbLig, nbCol);
+	CImageCouleur out(nbLig, nbCol);
+	// byte* data est la donnée des images
+	byte* pixPtr = (byte*)data;
+
+	for (int y = 0; y < nbLig; y++)
+	{
+		for (int x = 0; x < nbCol; x++)	//rvb
+		{
+			this->imgPt->operator()(y, x)[0] = pixPtr[3 * x + 2];
+			this->imgPt->operator()(y, x)[1] = pixPtr[3 * x + 1];
+			this->imgPt->operator()(y, x)[2] = pixPtr[3 * x];
+		}
+		pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
+	}
+
+	CImageCouleur pattern(nbLig_p, nbCol_p);
+	byte* pixPtr_p = (byte*)data_p;
+	for (int y = 0; y < nbLig_p; y++)
+	{
+		for (int x = 0; x < nbCol_p; x++)
+		{
+			pattern(y, x)[0] = pixPtr_p[3 * x + 2];
+			pattern(y, x)[1] = pixPtr_p[3 * x + 1];
+			pattern(y, x)[2] = pixPtr_p[3 * x];
+		}
+		pixPtr_p += stride_p;
+	}
+
+
+	/*********************************************************************************************************************
+
+	DEBUT DE L'ALGORITHME DE TRAITEMENT
+
+	**********************************************************************************************************************/
+
+	CImageDouble img_scene(this->imgPt->plan(), "cast");
+	CImageDouble img_pattern(pattern.plan(), "cast");
+
+	CImageDouble img_corr = img_pattern.NormCorr(img_scene);
+	int n = 0, i, j;
+	// n = std:: find(0,img_corr.lireNbPixels(),img_corr.lireMax()); // ne marche pas :c
+	while ((img_corr(n) != img_corr.lireMax()) && (n < img_corr.lireNbPixels()))
+		n++;
+	i = n / img_corr.lireLargeur() - img_pattern.lireHauteur() / 2;
+	j = n % img_corr.lireLargeur() - img_pattern.lireLargeur() / 2;
+	
+	// renvoi des coordonées trouvées dans le C#
+	this->dataFromImg.at(0) = i;
+	this->dataFromImg.at(1) = j;
+
+	//// Copie de l'image résultante dans out pour renvoyer au C#
+	//for (int i = 0; i < img_corr.lireNbPixels(); i++)
+	//{
+	//	out(i)[0] = detection_ref(i)[0];
+	//	out(i)[1] = detection_ref(i)[1];
+	//	out(i)[2] = detection_ref(i)[2];
+	//}
+
+
+	/*********************************************************************************************************************
+
+	FIN DU TRAITEMENT,
+	AFFICHAGE RETOUR VERS LE C#
+
+	**********************************************************************************************************************/
+
+	//pas de modifs donc pas besoin de modifier l'image à nouveau
+
+	//pixPtr = (byte*)data;
+	//for (int y = 0; y < nbLig; y++)
+	//{
+	//	for (int x = 0; x < nbCol; x++)
+	//	{
+	//		pixPtr[3 * x + 2] = out(y, x)[0];
+	//		pixPtr[3 * x + 1] = out(y, x)[1];
+	//		pixPtr[3 * x] = out(y, x)[2];
+	//	}
+	//	pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
+	//}
 }

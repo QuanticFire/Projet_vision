@@ -49,6 +49,7 @@ public:
 
 	//méthodes supplémentaires
 	_declspec(dllexport) void Traitement2(int nbChamps, byte* data, int stride, int nbLig, int nbCol, double parametres[10], int nbChamps_p, byte * data_p, int stride_p, int nbLig_p, int nbCol_p); //nouvelle méthode de traitement test
+	_declspec(dllexport) void TraitementMatching(byte * data, int stride, int nbLig, int nbCol, byte * data_p, int stride_p, int nbLig_p, int nbCol_p);
 };
 
 /****************************************************************************************************************
@@ -72,11 +73,18 @@ extern "C" _declspec(dllexport) ClibTraitement* objetLibDataImg(int nbChamps, by
 	return pImg;
 }
 
-// méthode dee traitement supplémentaire
+// méthode de traitement supplémentaire
 extern "C" _declspec(dllexport) ClibTraitement* traitementTest(int nbChamps, byte* data, int stride, int nbLig, int nbCol, double parametres[10], int nbChamps_p, byte * data_p, int stride_p, int nbLig_p, int nbCol_p)
 {
 	ClibTraitement* pImg = new ClibTraitement();
 	pImg->Traitement2(nbChamps, data, stride, nbLig, nbCol, parametres, nbChamps_p, data_p, stride_p, nbLig_p, nbCol_p);
+	return pImg;
+}
+
+extern "C" _declspec(dllexport) ClibTraitement* PatternMatching(byte* data, int stride, int nbLig, int nbCol, byte * data_p, int stride_p, int nbLig_p, int nbCol_p)
+{
+	ClibTraitement* pImg = new ClibTraitement();
+	pImg->TraitementMatching(data, stride, nbLig, nbCol, data_p, stride_p, nbLig_p, nbCol_p);
 	return pImg;
 }
 

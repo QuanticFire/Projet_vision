@@ -7,6 +7,7 @@
 #include <stack>
 #include <algorithm>
 
+#include "fftw3.h"
 #include "ImageDouble.h"
 
 #define PI 3.14159265358979323846
@@ -1073,6 +1074,101 @@ CImageDouble CImageDouble::conv(const CImageDouble& kernel)
 	return out;
 }
 
+// convolution avec fft, n'est important que pour avoir un temps de traitement plus raisonnable
+CImageDouble CImageDouble::convfft(const CImageDouble& kernel)
+{
+	//padding supplémentaire pour eviter les effets de bord
+	int hauteur = (this->lireHauteur() + kernel.lireHauteur() + 2) / 2;
+	int largeur = (this->lireLargeur() + kernel.lireLargeur() + 2) / 2;
+	CImageDouble out(this->lireHauteur() + kernel.lireHauteur() - 1, this->lireLargeur() + kernel.lireLargeur() - 1);
+	double* outdata = new double[4 * hauteur*largeur]; //approximation en taille de la convolution réelle
+
+													   //padding sur les images pour éviter le cyclique
+	CImageDouble thispad(hauteur * 2, largeur * 2);
+	CImageDouble kernelpad(hauteur * 2, largeur * 2);
+
+	int	offsetthisi = (hauteur * 2 - this->lireHauteur()) / 2;
+	int offsetthisj = (largeur * 2 - this->lireLargeur()) / 2;
+	int offsetkerneli = (hauteur * 2 - kernel.lireHauteur()) / 2;
+	int offsetkernelj = (largeur * 2 - kernel.lireLargeur()) / 2;
+
+	for (int i = 0; i < this->lireHauteur(); i++)
+		for (int j = 0; j < this->lireLargeur(); j++)
+			thispad(offsetthisi + i, offsetthisj + j) = this->operator()(i, j);
+	for (int i = 0; i < kernel.lireHauteur(); i++)
+		for (int j = 0; j < kernel.lireLargeur(); j++)
+			kernelpad(offsetkerneli + i, offsetkernelj + j) = kernel(i, j);
+
+	// DFTs avec fftw
+	fftw_complex *thisdft, *kerneldft, *outdft;
+	fftw_plan thisplan, kernelplan, outplan;
+	// allocation de cette façon car passage réel complexe donne une dimension h*(l/2+1)
+	thisdft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * 2 * hauteur*(largeur + 1));
+	kerneldft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * 2 * hauteur*(largeur + 1));
+	outdft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * 2 * hauteur*(largeur + 1));
+
+	CImageDouble test(this->lireHauteur() + kernel.lireHauteur() - 1, this->lireLargeur() + kernel.lireLargeur() - 1);
+
+	// une estimantion suffit généralement.
+	thisplan = fftw_plan_dft_r2c_2d(2 * hauteur, 2 * largeur, thispad.m_pucPixel, thisdft, FFTW_ESTIMATE);
+	kernelplan = fftw_plan_dft_r2c_2d(2 * hauteur, 2 * largeur, kernelpad.m_pucPixel, kerneldft, FFTW_ESTIMATE);
+
+	fftw_execute(thisplan);
+	fftw_execute(kernelplan);
+
+	//convolution au sens fft
+	for (int n = 0; n < 2 * hauteur*(largeur + 1); n++)
+	{
+		outdft[n][0] = thisdft[n][0] * kerneldft[n][0] - thisdft[n][1] * kerneldft[n][1];
+		outdft[n][1] = thisdft[n][0] * kerneldft[n][1] + thisdft[n][1] * kerneldft[n][0];
+	}
+
+	//transformée inverse
+	outplan = fftw_plan_dft_c2r_2d(2 * hauteur, 2 * largeur, outdft, outdata, FFTW_ESTIMATE);
+	fftw_execute(outplan);
+
+	int x, y;
+	int paddingx = (2 * hauteur - out.lireHauteur());
+	int paddingy = (2 * largeur - out.lireLargeur());
+
+	//normalisation et suppression du padding
+	for (int i = 0; i < out.lireHauteur(); i++)
+		for (int j = 0; j < out.lireLargeur(); j++)
+		{
+			x = i;
+			y = j;
+			if (i <= hauteur - paddingx && j < largeur - paddingy) { x = i; y = j; }
+			if (i > hauteur - paddingx && j < largeur - paddingy) { x = i + paddingx; y = j; }
+			if (i <= hauteur - paddingx && j >= largeur - paddingy) { x = i; y = j + paddingy; }
+			if (i > hauteur - paddingx && j >= largeur - paddingy) { x = i + paddingx; y = j + paddingy; }
+			test(i, j) = outdata[y + 2 * largeur*x] / (4 * hauteur*largeur);
+		}
+
+	// centrage
+	for (int i = 0; i < out.lireHauteur(); i++)
+		for (int j = 0; j < out.lireLargeur(); j++)
+		{
+			x = i;
+			y = j;
+			if (i<out.m_iHauteur / 2 && j<out.m_iLargeur / 2) { x = i + out.m_iHauteur / 2; y = j + out.m_iLargeur / 2; }
+			if (i >= out.m_iHauteur / 2 && j<out.m_iLargeur / 2) { x = i - out.m_iHauteur / 2; y = j + out.m_iLargeur / 2; }
+			if (i<out.m_iHauteur / 2 && j >= out.m_iLargeur / 2) { x = i + out.m_iHauteur / 2; y = j - out.m_iLargeur / 2; }
+			if (i >= out.m_iHauteur / 2 && j >= out.m_iLargeur / 2) { x = i - out.m_iHauteur / 2; y = j - out.m_iLargeur / 2; }
+			out(i, j) = test(x, y);
+		}
+
+	//libération
+	fftw_destroy_plan(thisplan);
+	fftw_destroy_plan(kernelplan);
+	fftw_destroy_plan(outplan);
+	fftw_free(thisdft);
+	fftw_free(kerneldft);
+	fftw_free(outdft);
+	free(outdata);
+
+
+	return out;
+}
 
 CImageDouble CImageDouble::NormCorr(const CImageDouble & scene)
 {
@@ -1109,9 +1205,9 @@ CImageDouble CImageDouble::NormCorr(const CImageDouble & scene)
 			b2(i) = b(i)*b(i);
 		}
 		//convolutions et calcul corrélation
-		out = b.conv(ar);
-		bconv = b.conv(a1);
-		bconv2 = b2.conv(a1);
+		out = b.convfft(ar);
+		bconv = b.convfft(a1);
+		bconv2 = b2.convfft(a1);
   
 		for (int i = 0; i < bconv.lireNbPixels(); i++)
 			bconv(i) = std::max(bconv2(i) - bconv(i)*bconv(i) / NbpixThis, 0.0); //éviter des valeurs négatives à cause de la soustraction
