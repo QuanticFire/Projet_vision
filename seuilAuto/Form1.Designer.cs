@@ -34,18 +34,21 @@
             this.buttonOuvrir = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.imageSeuillee = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.imageSeuillee = new System.Windows.Forms.PictureBox();
             this.bSeuillageAuto = new System.Windows.Forms.Button();
             this.buttonPuzzle = new System.Windows.Forms.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.button_puzzle = new System.Windows.Forms.Button();
+            this.dudTraitSel = new System.Windows.Forms.DomainUpDown();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imageSeuillee)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageSeuillee)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ouvrirImage
@@ -59,7 +62,7 @@
             this.imageDepart.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.imageDepart.Cursor = System.Windows.Forms.Cursors.Default;
             this.imageDepart.ImageLocation = "";
-            this.imageDepart.Location = new System.Drawing.Point(0, 0);
+            this.imageDepart.Location = new System.Drawing.Point(-98, 0);
             this.imageDepart.Name = "imageDepart";
             this.imageDepart.Size = new System.Drawing.Size(0, 0);
             this.imageDepart.TabIndex = 0;
@@ -67,7 +70,7 @@
             // 
             // buttonOuvrir
             // 
-            this.buttonOuvrir.Location = new System.Drawing.Point(252, 405);
+            this.buttonOuvrir.Location = new System.Drawing.Point(154, 394);
             this.buttonOuvrir.Name = "buttonOuvrir";
             this.buttonOuvrir.Size = new System.Drawing.Size(144, 35);
             this.buttonOuvrir.TabIndex = 1;
@@ -79,7 +82,7 @@
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.imageDepart);
-            this.panel1.Location = new System.Drawing.Point(198, 38);
+            this.panel1.Location = new System.Drawing.Point(100, 38);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(270, 350);
             this.panel1.TabIndex = 2;
@@ -88,37 +91,37 @@
             // panel2
             // 
             this.panel2.Controls.Add(this.pictureBox1);
-            this.panel2.Location = new System.Drawing.Point(733, 17);
+            this.panel2.Location = new System.Drawing.Point(635, 17);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(556, 400);
             this.panel2.TabIndex = 3;
-            // 
-            // imageSeuillee
-            // 
-            this.imageSeuillee.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.imageSeuillee.Location = new System.Drawing.Point(733, 17);
-            this.imageSeuillee.Name = "imageSeuillee";
-            this.imageSeuillee.Size = new System.Drawing.Size(556, 400);
-            this.imageSeuillee.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.imageSeuillee.TabIndex = 1;
-            this.imageSeuillee.TabStop = false;
             // 
             // pictureBox1
             // 
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.pictureBox1.ImageLocation = "";
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Location = new System.Drawing.Point(-98, 0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(0, 0);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
+            // imageSeuillee
+            // 
+            this.imageSeuillee.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.imageSeuillee.Location = new System.Drawing.Point(635, 17);
+            this.imageSeuillee.Name = "imageSeuillee";
+            this.imageSeuillee.Size = new System.Drawing.Size(556, 400);
+            this.imageSeuillee.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imageSeuillee.TabIndex = 1;
+            this.imageSeuillee.TabStop = false;
+            // 
             // bSeuillageAuto
             // 
-            this.bSeuillageAuto.Location = new System.Drawing.Point(582, 181);
+            this.bSeuillageAuto.Location = new System.Drawing.Point(451, 143);
             this.bSeuillageAuto.Name = "bSeuillageAuto";
-            this.bSeuillageAuto.Size = new System.Drawing.Size(48, 34);
+            this.bSeuillageAuto.Size = new System.Drawing.Size(95, 75);
             this.bSeuillageAuto.TabIndex = 4;
             this.bSeuillageAuto.Text = "Go";
             this.bSeuillageAuto.UseVisualStyleBackColor = true;
@@ -135,7 +138,7 @@
             // 
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(394, 478);
+            this.pictureBox2.Location = new System.Drawing.Point(252, 457);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(556, 400);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -144,7 +147,7 @@
             // 
             // button_puzzle
             // 
-            this.button_puzzle.Location = new System.Drawing.Point(582, 884);
+            this.button_puzzle.Location = new System.Drawing.Point(427, 863);
             this.button_puzzle.Name = "button_puzzle";
             this.button_puzzle.Size = new System.Drawing.Size(181, 40);
             this.button_puzzle.TabIndex = 9;
@@ -152,11 +155,33 @@
             this.button_puzzle.UseVisualStyleBackColor = true;
             this.button_puzzle.Click += new System.EventHandler(this.button_puzzle_Click);
             // 
+            // dudTraitSel
+            // 
+            this.dudTraitSel.Items.Add("Histogramme");
+            this.dudTraitSel.Items.Add("Pattern matching");
+            this.dudTraitSel.Location = new System.Drawing.Point(6, 32);
+            this.dudTraitSel.Name = "dudTraitSel";
+            this.dudTraitSel.Size = new System.Drawing.Size(128, 20);
+            this.dudTraitSel.TabIndex = 10;
+            this.dudTraitSel.Text = "(Selection Traitement)";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.dudTraitSel);
+            this.groupBox1.Location = new System.Drawing.Point(421, 248);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(173, 71);
+            this.groupBox1.TabIndex = 12;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Type de traitement";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1496, 959);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(1312, 959);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.imageSeuillee);
             this.Controls.Add(this.button_puzzle);
             this.Controls.Add(this.pictureBox2);
@@ -171,9 +196,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.imageSeuillee)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageSeuillee)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -191,6 +217,8 @@
         private System.Windows.Forms.Button buttonPuzzle;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Button button_puzzle;
+        private System.Windows.Forms.DomainUpDown dudTraitSel;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
 

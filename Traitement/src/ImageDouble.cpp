@@ -1208,7 +1208,7 @@ CImageDouble CImageDouble::NormCorr(const CImageDouble & scene)
 		out = b.convfft(ar);
 		bconv = b.convfft(a1);
 		bconv2 = b2.convfft(a1);
-  
+
 		for (int i = 0; i < bconv.lireNbPixels(); i++)
 			bconv(i) = std::max(bconv2(i) - bconv(i)*bconv(i) / NbpixThis, 0.0); //éviter des valeurs négatives à cause de la soustraction
 
