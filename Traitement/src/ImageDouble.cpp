@@ -1107,7 +1107,7 @@ CImageDouble CImageDouble::convfft(const CImageDouble& kernel)
 	kerneldft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * 2 * hauteur*(largeur + 1));
 	outdft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * 2 * hauteur*(largeur + 1));
 
-	CImageDouble test(2 * hauteur, 2 * largeur);
+	CImageDouble test(this->lireHauteur() + kernel.lireHauteur() - 1, this->lireLargeur() + kernel.lireLargeur() - 1);
 
 	// une estimantion suffit généralement.
 	thisplan = fftw_plan_dft_r2c_2d(2 * hauteur, 2 * largeur, thispad.m_pucPixel, thisdft, FFTW_ESTIMATE);
@@ -1126,22 +1126,35 @@ CImageDouble CImageDouble::convfft(const CImageDouble& kernel)
 	//transformée inverse
 	outplan = fftw_plan_dft_c2r_2d(2 * hauteur, 2 * largeur, outdft, outdata, FFTW_ESTIMATE);
 	fftw_execute(outplan);
-	for (int n = 0; n < test.lireNbPixels(); n++)
-		test(n) = outdata[n];
 
 	int x, y;
-	//normalisation et centrage
+	int paddingx = (2 * hauteur - out.lireHauteur());
+	int paddingy = (2 * largeur - out.lireLargeur());
+
+	//normalisation et suppression du padding
 	for (int i = 0; i < out.lireHauteur(); i++)
 		for (int j = 0; j < out.lireLargeur(); j++)
 		{
 			x = i;
 			y = j;
-			if (i<hauteur && j<largeur) { x = i + hauteur; y = j + largeur; }
-			if (i >= hauteur && j<largeur) { x = i - hauteur; y = j + largeur; }
-			if (i<hauteur && j >= largeur) { x = i + hauteur; y = j - largeur; }
-			if (i >= hauteur && j >= largeur) { x = i - hauteur; y = j - largeur; }
-			out(i, j) = outdata[y + 2 * largeur*x] / (4 * hauteur*largeur);
-			//out(i, j) = outdata[j + 2*largeur*i];
+			if (i <= hauteur - paddingx && j < largeur - paddingy) { x = i; y = j; }
+			if (i > hauteur - paddingx && j < largeur - paddingy) { x = i + paddingx; y = j; }
+			if (i <= hauteur - paddingx && j >= largeur - paddingy) { x = i; y = j + paddingy; }
+			if (i > hauteur - paddingx && j >= largeur - paddingy) { x = i + paddingx; y = j + paddingy; }
+			test(i, j) = outdata[y + 2 * largeur*x] / (4 * hauteur*largeur);
+		}
+
+	// centrage
+	for (int i = 0; i < out.lireHauteur(); i++)
+		for (int j = 0; j < out.lireLargeur(); j++)
+		{
+			x = i;
+			y = j;
+			if (i<out.m_iHauteur / 2 && j<out.m_iLargeur / 2) { x = i + out.m_iHauteur / 2; y = j + out.m_iLargeur / 2; }
+			if (i >= out.m_iHauteur / 2 && j<out.m_iLargeur / 2) { x = i - out.m_iHauteur / 2; y = j + out.m_iLargeur / 2; }
+			if (i<out.m_iHauteur / 2 && j >= out.m_iLargeur / 2) { x = i + out.m_iHauteur / 2; y = j - out.m_iLargeur / 2; }
+			if (i >= out.m_iHauteur / 2 && j >= out.m_iLargeur / 2) { x = i - out.m_iHauteur / 2; y = j - out.m_iLargeur / 2; }
+			out(i, j) = test(x, y);
 		}
 
 	//libération

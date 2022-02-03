@@ -642,7 +642,7 @@ CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece)
 		}
 	}
 
-	double distance_min = 999999;
+	double distance_min = DBL_MAX;
 	int index_distance_min = -1;
 	for (int i = 0; i < 45; i++)
 	{
