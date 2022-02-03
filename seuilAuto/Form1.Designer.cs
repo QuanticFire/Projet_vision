@@ -144,7 +144,7 @@
             // 
             // button_puzzle
             // 
-            this.button_puzzle.Location = new System.Drawing.Point(427, 863);
+            this.button_puzzle.Location = new System.Drawing.Point(549, 863);
             this.button_puzzle.Name = "button_puzzle";
             this.button_puzzle.Size = new System.Drawing.Size(181, 40);
             this.button_puzzle.TabIndex = 9;

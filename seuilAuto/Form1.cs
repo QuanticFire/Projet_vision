@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
@@ -20,12 +22,12 @@ namespace seuilAuto
         // Image puzzle et piece en variable globale
         Bitmap bmp_ref;
         Bitmap bmp_piece;
+        ClImage Img;
+        int th_finished = 0; // permet de savoir si le thread à terminé son éxécution
 
         public Form1()
         {
             InitializeComponent();
-
-            
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -33,10 +35,123 @@ namespace seuilAuto
 
         }
 
+        // Fonction d'affichage de l'image d'attente. Exécution dans thread
+        private void affiche_wait_image()
+        {
+            Image wait = Image.FromFile("wait.bmp");
+            Bitmap bmp_wait = new Bitmap(wait);
+            imageSeuillee.Image = bmp_wait;
+        }
+
+        // Fonction de détection de piece puzzle. Est éxécutée dans un thread
+        private void traitement_bouton_go()
+        {
+            if (dudTraitSel.Text == "Histogramme")
+            {
+                //imageSeuillee.Show();
+                //valeurSeuilAuto.Show();
+
+
+                Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
+                Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
+
+                // affectation des paramètres (a supprimer en faisant attention aux changement wrapper et dll, ne sert a rien)
+                double[] parametres = { 0 }; // = new double[parametersTextBox.Lines.Length];
+                                             //for (int i = 0; i < parametersTextBox.Lines.Length; i++)
+                                             //   parametres[i] = Convert.ToDouble(parametersTextBox.Lines[i]);
+
+                unsafe
+                {
+                    // Génération d'objets permettant de passer les data des images au wrapper
+                    BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                    // Appel du wrapper pour traitement dans la dll
+                    // Passage des données pour l'image puzzle de référence ET pour l'image piece
+                    Img.traitementTestPtr(2, bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
+
+                    // ancien commentaire : 1 champ texte retour C++, le seuil auto
+                    // Traitement terminé, libération des images
+                    bmp_ref_copy.UnlockBits(bmpData);
+                    bmp_piece.UnlockBits(bmpData_piece);
+                }
+
+                // Affichagr de l'image puzzle avec détection de pièce sur l'interface
+                imageSeuillee.Image = bmp_ref_copy;
+                
+            }
+            else if (dudTraitSel.Text == "Pattern matching")
+            {
+                //imageSeuillee.Show();
+                Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
+                Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
+
+                unsafe
+                {
+                    // Génération d'objets permettant de passer les data des images au wrapper
+                    BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                    // Appel du wrapper pour traitement dans la dll
+                    // Passage des données pour l'image puzzle de référence ET pour l'image piece
+                    Img.PatternMatchingPtr(bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
+
+                    // Traitement terminé, libération des images
+                    bmp_ref_copy.UnlockBits(bmpData);
+                    bmp_piece.UnlockBits(bmpData_piece);
+                }
+                // Lecture des coordonnées auxquelles l'algo de pattern matching détecte l'image
+                //double coord_x = Img.objetLibValeurChamp(0);
+                //double coord_y = Img.objetLibValeurChamp(1);
+
+                // Coordonnées temporaires de détection pour implémentation de l'affichage sur l'interface de la coordonnée détectée
+                double coord_x = 1000;
+                double coord_y = 1000;
+
+                //MessageBox.Show(coord_x.ToString());
+                //MessageBox.Show(coord_y.ToString());
+
+                // Affichagr de l'image puzzle avec détection de pièce sur l'interface
+                Color myRgbColor = new Color();
+                myRgbColor = Color.Red;
+
+                for (int i = 0; i < 50; i++)
+                {
+                    for (int j = 0; j < 50; j++)
+                    {
+                        if (i == j)
+                        {
+                            for (int shift = 0; shift < 10; shift++)
+                            {
+                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
+                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
+                            }
+
+                            for (int shift = 0; shift < 10; shift++)
+                            {
+                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
+                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
+                            }
+
+
+                            //bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i), Convert.ToInt32(coord_y - j), myRgbColor);
+                            //bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i), Convert.ToInt32(coord_y + j), myRgbColor);
+                        }
+
+                    }
+                }
+
+                imageSeuillee.Image = bmp_ref_copy;
+            }
+            th_finished = 1;
+        }
+
         // Quand on appuie sur le bouton "open file"
         private void buttonOuvrir_Click(object sender, EventArgs e)
         {
+            MessageBox.Show(System.IO.Directory.GetCurrentDirectory());
             labelScore.Hide();
+
             if (ouvrirImage.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -74,106 +189,38 @@ namespace seuilAuto
         // Quand on appuie sur le bouton "go"
         private void seuillageAuto_Click(object sender, EventArgs e)
         {
+            //imageSeuillee.Show();
+
+            // Affichage de l'image d'attente. Utilisation d'un thread sinon ne fonctionne pas
+            Thread th;
+            th = new Thread(new ThreadStart(affiche_wait_image));
+            th.Start();
+
             labelScore.Show();
-            if (dudTraitSel.Text == "Histogramme")
+
+            // Lancement du traitement de la piece. Lancement dans un autre thread, sinon cela plante l'interface et n'affiche pas l'image d'attente
+            th_finished = 0;
+            Thread th_trait;
+            th_trait = new Thread(new ThreadStart(traitement_bouton_go));
+            th_trait.Start();
+            
+            // Attente de la fin de l'éxécution des thread précédent par utilisation d'une variable globale
+            while (th_finished != 1)
             {
-                imageSeuillee.Show();
-                //valeurSeuilAuto.Show();
-
-
-                Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
-                ClImage Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
-
-                // affectation des paramètres (a supprimer en faisant attention aux changement wrapper et dll, ne sert a rien)
-                double[] parametres = { 0 }; // = new double[parametersTextBox.Lines.Length];
-                                             //for (int i = 0; i < parametersTextBox.Lines.Length; i++)
-                                             //   parametres[i] = Convert.ToDouble(parametersTextBox.Lines[i]);
-
-                unsafe
-                {
-                    // Génération d'objets permettant de passer les data des images au wrapper
-                    BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                    BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-
-                    // Appel du wrapper pour traitement dans la dll
-                    // Passage des données pour l'image puzzle de référence ET pour l'image piece
-                    Img.traitementTestPtr(2, bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
-
-                    // ancien commentaire : 1 champ texte retour C++, le seuil auto
-                    // Traitement terminé, libération des images
-                    bmp_ref_copy.UnlockBits(bmpData);
-                    bmp_piece.UnlockBits(bmpData_piece);
-                }
-
-                labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
-                labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
-
-                // Affichagr de l'image puzzle avec détection de pièce sur l'interface
-                imageSeuillee.Image = bmp_ref_copy;
-            }
-            else if (dudTraitSel.Text == "Pattern matching")
-            {
-                imageSeuillee.Show();
-                Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
-                ClImage Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
-
-                unsafe
-                {
-                    // Génération d'objets permettant de passer les data des images au wrapper
-                    BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                    BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-
-                    // Appel du wrapper pour traitement dans la dll
-                    // Passage des données pour l'image puzzle de référence ET pour l'image piece
-                    Img.PatternMatchingPtr(bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
-
-                    // Traitement terminé, libération des images
-                    bmp_ref_copy.UnlockBits(bmpData);
-                    bmp_piece.UnlockBits(bmpData_piece);
-                }
-                // Lecture des coordonnées auxquelles l'algo de pattern matching détecte l'image
-                //double coord_x = Img.objetLibValeurChamp(0);
-                //double coord_y = Img.objetLibValeurChamp(1);
-
-                // Coordonnées temporaires de détection pour implémentation de l'affichage sur l'interface de la coordonnée détectée
-                double coord_x = 1000;
-                double coord_y = 1000;
-
-                //MessageBox.Show(coord_x.ToString());
-                //MessageBox.Show(coord_y.ToString());
-
-                // Affichagr de l'image puzzle avec détection de pièce sur l'interface
-                Color myRgbColor = new Color();
-                myRgbColor = Color.Red;
-
-                for (int i = 0; i < 50; i++)
-                {
-                    for(int j = 0; j < 50; j++)
-                    {
-                        if(i == j)
-                        {
-                            for(int shift = 0; shift < 10; shift++)
-                            {
-                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
-                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
-                            }
-
-                            for (int shift = 0; shift < 10; shift++)
-                            {
-                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
-                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
-                            }
-
-
-                            //bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i), Convert.ToInt32(coord_y - j), myRgbColor);
-                            //bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i), Convert.ToInt32(coord_y + j), myRgbColor);
-                        }
-
-                    }
-                }
                 
-                imageSeuillee.Image = bmp_ref_copy;
+                // Affichage dans les label ne fonctionnent pas quand effectuée dans thread, donc faite ici une fois son execution terminée
+                try
+                {
+                    labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
+                    labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
+                }
+                catch
+                {
+                    break;
+                }
             }
+            th_finished = 0;
+            
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
