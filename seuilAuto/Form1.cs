@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
+using System.IO;
 
 using System.Runtime.InteropServices;
 using Traitement;
@@ -23,6 +24,8 @@ namespace seuilAuto
         public Form1()
         {
             InitializeComponent();
+
+            
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -194,6 +197,11 @@ namespace seuilAuto
                     MessageBox.Show("erreur !");
                 }
             }
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
 
         }
     }

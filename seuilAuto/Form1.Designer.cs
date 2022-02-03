@@ -37,7 +37,6 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.imageSeuillee = new System.Windows.Forms.PictureBox();
             this.bSeuillageAuto = new System.Windows.Forms.Button();
-            this.buttonPuzzle = new System.Windows.Forms.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.button_puzzle = new System.Windows.Forms.Button();
             this.dudTraitSel = new System.Windows.Forms.DomainUpDown();
@@ -62,9 +61,9 @@
             this.imageDepart.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.imageDepart.Cursor = System.Windows.Forms.Cursors.Default;
             this.imageDepart.ImageLocation = "";
-            this.imageDepart.Location = new System.Drawing.Point(-98, 0);
+            this.imageDepart.Location = new System.Drawing.Point(-1, -1);
             this.imageDepart.Name = "imageDepart";
-            this.imageDepart.Size = new System.Drawing.Size(0, 0);
+            this.imageDepart.Size = new System.Drawing.Size(270, 350);
             this.imageDepart.TabIndex = 0;
             this.imageDepart.TabStop = false;
             // 
@@ -101,9 +100,10 @@
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.pictureBox1.ImageLocation = "";
-            this.pictureBox1.Location = new System.Drawing.Point(-98, 0);
+            this.pictureBox1.Location = new System.Drawing.Point(-535, 21);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(0, 0);
+            this.pictureBox1.Size = new System.Drawing.Size(270, 350);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -126,13 +126,6 @@
             this.bSeuillageAuto.Text = "Go";
             this.bSeuillageAuto.UseVisualStyleBackColor = true;
             this.bSeuillageAuto.Click += new System.EventHandler(this.seuillageAuto_Click);
-            // 
-            // buttonPuzzle
-            // 
-            this.buttonPuzzle.Location = new System.Drawing.Point(0, 0);
-            this.buttonPuzzle.Name = "buttonPuzzle";
-            this.buttonPuzzle.Size = new System.Drawing.Size(75, 23);
-            this.buttonPuzzle.TabIndex = 8;
             // 
             // pictureBox2
             // 
@@ -185,14 +178,14 @@
             this.Controls.Add(this.imageSeuillee);
             this.Controls.Add(this.button_puzzle);
             this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.buttonPuzzle);
             this.Controls.Add(this.bSeuillageAuto);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.buttonOuvrir);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Seuillage en deux classes";
+            this.Text = "Projet Vision Oui-Oui";
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
@@ -214,7 +207,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox imageSeuillee;
         private System.Windows.Forms.Button bSeuillageAuto;
-        private System.Windows.Forms.Button buttonPuzzle;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Button button_puzzle;
         private System.Windows.Forms.DomainUpDown dudTraitSel;
