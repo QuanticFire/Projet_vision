@@ -23,7 +23,6 @@ namespace seuilAuto
         Bitmap bmp_ref;
         Bitmap bmp_piece;
         ClImage Img;
-        int th_finished = 0; // permet de savoir si le thread à terminé son éxécution
 
         public Form1()
         {
@@ -76,6 +75,12 @@ namespace seuilAuto
                     bmp_piece.UnlockBits(bmpData_piece);
                 }
 
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
+                    labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
+                });
+                
                 // Affichagr de l'image puzzle avec détection de pièce sur l'interface
                 imageSeuillee.Image = bmp_ref_copy;
                 
@@ -143,13 +148,13 @@ namespace seuilAuto
 
                 imageSeuillee.Image = bmp_ref_copy;
             }
-            th_finished = 1;
+            
         }
 
         // Quand on appuie sur le bouton "open file"
         private void buttonOuvrir_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(System.IO.Directory.GetCurrentDirectory());
+            //MessageBox.Show(System.IO.Directory.GetCurrentDirectory());
             labelScore.Hide();
 
             if (ouvrirImage.ShowDialog() == DialogResult.OK)
@@ -199,27 +204,10 @@ namespace seuilAuto
             labelScore.Show();
 
             // Lancement du traitement de la piece. Lancement dans un autre thread, sinon cela plante l'interface et n'affiche pas l'image d'attente
-            th_finished = 0;
             Thread th_trait;
             th_trait = new Thread(new ThreadStart(traitement_bouton_go));
             th_trait.Start();
             
-            // Attente de la fin de l'éxécution des thread précédent par utilisation d'une variable globale
-            while (th_finished != 1)
-            {
-                
-                // Affichage dans les label ne fonctionnent pas quand effectuée dans thread, donc faite ici une fois son execution terminée
-                try
-                {
-                    labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
-                    labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
-                }
-                catch
-                {
-                    break;
-                }
-            }
-            th_finished = 0;
             
         }
 
