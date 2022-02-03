@@ -41,6 +41,8 @@
             this.button_puzzle = new System.Windows.Forms.Button();
             this.dudTraitSel = new System.Windows.Forms.DomainUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.labelScore = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -131,7 +133,7 @@
             // 
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(252, 457);
+            this.pictureBox2.Location = new System.Drawing.Point(307, 457);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(556, 400);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -168,12 +170,32 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Type de traitement";
             // 
+            // labelScore
+            // 
+            this.labelScore.AutoSize = true;
+            this.labelScore.Location = new System.Drawing.Point(1315, 161);
+            this.labelScore.Name = "labelScore";
+            this.labelScore.Size = new System.Drawing.Size(0, 13);
+            this.labelScore.TabIndex = 13;
+            this.labelScore.Click += new System.EventHandler(this.labelScore_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(1211, 161);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(98, 13);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Score de similarité :";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1312, 959);
+            this.ClientSize = new System.Drawing.Size(1367, 959);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelScore);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.imageSeuillee);
             this.Controls.Add(this.button_puzzle);
@@ -194,6 +216,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -211,6 +234,8 @@
         private System.Windows.Forms.Button button_puzzle;
         private System.Windows.Forms.DomainUpDown dudTraitSel;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label labelScore;
+        private System.Windows.Forms.Label label1;
     }
 }
 

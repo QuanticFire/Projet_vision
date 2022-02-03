@@ -36,6 +36,7 @@ namespace seuilAuto
         // Quand on appuie sur le bouton "open file"
         private void buttonOuvrir_Click(object sender, EventArgs e)
         {
+            labelScore.Hide();
             if (ouvrirImage.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -73,6 +74,7 @@ namespace seuilAuto
         // Quand on appuie sur le bouton "go"
         private void seuillageAuto_Click(object sender, EventArgs e)
         {
+            labelScore.Show();
             if (dudTraitSel.Text == "Histogramme")
             {
                 imageSeuillee.Show();
@@ -102,6 +104,8 @@ namespace seuilAuto
                     bmp_ref_copy.UnlockBits(bmpData);
                     bmp_piece.UnlockBits(bmpData_piece);
                 }
+
+                labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
 
                 // Affichagr de l'image puzzle avec détection de pièce sur l'interface
                 imageSeuillee.Image = bmp_ref_copy;
@@ -201,6 +205,11 @@ namespace seuilAuto
         }
 
         private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelScore_Click(object sender, EventArgs e)
         {
 
         }

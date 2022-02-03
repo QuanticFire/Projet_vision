@@ -418,7 +418,7 @@ std::vector<MOMENTS> CImageCouleur::signatures()
 	return mts;
 }
 
-CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece)
+CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece, double* score)
 {
 	// Création de l'image de sortie à partir de l'objet pointé (image de référence)
 	CImageCouleur ref(this->lireHauteur(), this->lireLargeur());
@@ -652,6 +652,8 @@ CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece)
 			index_distance_min = i;
 		}
 	}
+
+	score[0] = distance_min;
 
 	//cout << " verdict : " << index_distance_min + 1;
 
