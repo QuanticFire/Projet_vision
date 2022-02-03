@@ -418,7 +418,7 @@ std::vector<MOMENTS> CImageCouleur::signatures()
 	return mts;
 }
 
-CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece, double* score)
+CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece, double* score, double* score2)
 {
 	// Création de l'image de sortie à partir de l'objet pointé (image de référence)
 	CImageCouleur ref(this->lireHauteur(), this->lireLargeur());
@@ -642,6 +642,7 @@ CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece, double* score)
 		}
 	}
 
+	// Recherche de la plus petite distance ( = verdict)
 	double distance_min = DBL_MAX;
 	int index_distance_min = -1;
 	for (int i = 0; i < 45; i++)
@@ -653,7 +654,32 @@ CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece, double* score)
 		}
 	}
 
+	// Recherche de la deuxième plus petite distance
+	double distance_min_2 = distance_min;
+	int index_distance_min_2 = index_distance_min;
+	if (index_distance_min == 0)
+	{
+		distance_min_2 = total_dist[index_distance_min + 1];
+		index_distance_min_2 = index_distance_min + 1;
+	}
+	else if (index_distance_min != 0)
+	{
+		distance_min_2 = total_dist[index_distance_min - 1];
+		index_distance_min_2 = index_distance_min - 1;
+	}
+
+	for (int i = 0; i < 45; i++)
+	{
+		if ((total_dist[i] > distance_min) && (total_dist[i] < distance_min_2))
+		{
+			index_distance_min_2 = i;
+			distance_min_2 = total_dist[i];
+		}
+	}
+
+	// Renvoi du score  de la plus petite distance
 	score[0] = distance_min;
+	score2[0] = distance_min_2;
 
 	//cout << " verdict : " << index_distance_min + 1;
 
@@ -694,6 +720,49 @@ CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece, double* score)
 		{
 			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[0] = 255;
 			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[1] = 0;
+			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[2] = 0;
+		}
+	}
+
+
+
+	// Création d'un cadre sur la deuxieme piece la plus proche détectée
+	pos_hauteur = int(floor(index_distance_min_2 / 9));
+	pos_largeur = (index_distance_min_2) % 9;
+
+	for (int i = pos_hauteur*pas_hauteur; i < (pos_hauteur + 1)*pas_hauteur; i++)
+	{
+		// Côté gauche
+		for (int shift = 1; shift < 10; shift++)
+		{
+			ref(i, pos_largeur*pas_largeur + shift)[0] = 255;
+			ref(i, pos_largeur*pas_largeur + shift)[1] = 128;
+			ref(i, pos_largeur*pas_largeur + shift)[2] = 0;
+		}
+
+		// Côté droit
+		for (int shift = 1; shift < 10; shift++)
+		{
+			ref(i, (pos_largeur + 1)*pas_largeur - shift)[0] = 255;
+			ref(i, (pos_largeur + 1)*pas_largeur - shift)[1] = 128;
+			ref(i, (pos_largeur + 1)*pas_largeur - shift)[2] = 0;
+		}
+	}
+	for (int i = pos_largeur*pas_largeur; i < (pos_largeur + 1)*pas_largeur; i++)
+	{
+		// Côté haut
+		for (int shift = 1; shift < 10; shift++)
+		{
+			ref(pos_hauteur*pas_hauteur + shift, i)[0] = 255;
+			ref(pos_hauteur*pas_hauteur + shift, i)[1] = 128;
+			ref(pos_hauteur*pas_hauteur + shift, i)[2] = 0;
+		}
+
+		// Côté bas
+		for (int shift = 1; shift < 10; shift++)
+		{
+			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[0] = 255;
+			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[1] = 128;
 			ref((pos_hauteur + 1)*pas_hauteur - shift, i)[2] = 0;
 		}
 	}

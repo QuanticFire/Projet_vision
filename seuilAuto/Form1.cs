@@ -97,7 +97,7 @@ namespace seuilAuto
 
                     // Appel du wrapper pour traitement dans la dll
                     // Passage des données pour l'image puzzle de référence ET pour l'image piece
-                    Img.traitementTestPtr(1, bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
+                    Img.traitementTestPtr(2, bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
 
                     // ancien commentaire : 1 champ texte retour C++, le seuil auto
                     // Traitement terminé, libération des images
@@ -106,6 +106,7 @@ namespace seuilAuto
                 }
 
                 labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
+                labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
 
                 // Affichagr de l'image puzzle avec détection de pièce sur l'interface
                 imageSeuillee.Image = bmp_ref_copy;

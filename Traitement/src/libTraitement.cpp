@@ -178,8 +178,10 @@ void ClibTraitement::Traitement2(int nbChamps, byte * data, int stride, int nbLi
 	// Appel à la fonction detection piece qui a partir de detection_ref et piece2 renvoie une image du puzzle avec un cadre rouge au niveau de la détection
 	CImageCouleur detection_ref; // déclaration de l'image qui sera renvoyée par notre fonction de détection
 	double score = -1; // déclaration d'une valeur de score de similarité qui sera modifiée par pointeur
-	detection_ref = this->imgPt->detection_piece(piece2, &score);
+	double score2 = -1; // score de la deuxième image la plus proche
+	detection_ref = this->imgPt->detection_piece(piece2, &score, &score2);
 	this->dataFromImg.at(0) = floor(exp(3*(0-score))*100); // écriture du score
+	this->dataFromImg.at(1) = floor(exp(3 * (0 - score2)) * 100);
 
 	// Copie de l'image résultante dans out pour renvoyer au C#
 	for (int i = 0; i < detection_ref.lireNbPixels(); i++)
