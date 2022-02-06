@@ -110,7 +110,7 @@ namespace Traitement
                 largeur = ptab[1];
                 stride = ptab[2];
             }
-            Bitmap imgout = new Bitmap(largeur, hauteur,stride, System.Drawing.Imaging.PixelFormat.Format24bppRgb, data);
+            Bitmap imgout = new Bitmap(largeur, hauteur, stride, System.Drawing.Imaging.PixelFormat.Format24bppRgb, data);
             return imgout;
         }
     }

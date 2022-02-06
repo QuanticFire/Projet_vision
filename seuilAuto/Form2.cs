@@ -80,7 +80,16 @@ namespace seuilAuto
 
             // Affichagr de l'image puzzle avec détection de pièce sur l'interface
             imageSeuillee.Image = bmp_ref_copy;
-            pbRogne.Image = bmp_piece;
+
+            ClImage clImageRogne = new ClImage();
+            Bitmap testRogne;
+            unsafe
+            {
+                BitmapData bmpImageRogne = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                testRogne = clImageRogne.imgFromClImage(bmpImageRogne.Scan0);
+                bmp_piece.UnlockBits(bmpImageRogne);
+            }
+            pbRogne.Image = testRogne;
             
         }
 
