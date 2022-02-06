@@ -106,13 +106,13 @@ namespace seuilAuto
                     bmp_piece.UnlockBits(bmpData_piece);
                 }
                 // Lecture des coordonnées auxquelles l'algo de pattern matching détecte l'image
-                //double coord_x = Img.objetLibValeurChamp(0);
-                //double coord_y = Img.objetLibValeurChamp(1);
-                //MessageBox.Show(coord_x.ToString() + " " + coord_y.ToString());
+                double coord_x = Img.objetLibValeurChamp(0);
+                double coord_y = Img.objetLibValeurChamp(1);
+                MessageBox.Show(coord_x.ToString() + " " + coord_y.ToString());
 
                 // Coordonnées temporaires de détection pour implémentation de l'affichage sur l'interface de la coordonnée détectée
-                double coord_x = 1000;
-                double coord_y = 1000;
+                //double coord_x = 1000;
+                //double coord_y = 1000;
 
                 //MessageBox.Show(coord_x.ToString());
                 //MessageBox.Show(coord_y.ToString());
@@ -129,14 +129,28 @@ namespace seuilAuto
                         {
                             for (int shift = 0; shift < 10; shift++)
                             {
-                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
-                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
+                                if ((coord_x + i + shift < bmp_ref_copy.Width) && (coord_x + i + shift > 0) && (coord_y + j < bmp_ref_copy.Height) && (coord_y + j > 0))
+                                {
+                                    bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
+                                }
+                                if ((coord_x - i - shift > 0) && (coord_x - i - shift < bmp_ref_copy.Width) && (coord_y - j > 0) && (coord_y - j < bmp_ref_copy.Height))
+                                {
+                                    bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
+                                }
+
                             }
 
                             for (int shift = 0; shift < 10; shift++)
                             {
-                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
-                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
+                                if ((coord_x - i + shift > 0) && (coord_x - i + shift < bmp_ref_copy.Width) && (coord_y + j < bmp_ref_copy.Height) && (coord_y + j > 0))
+                                {
+                                    bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
+                                }
+                                if ((coord_x + i - shift > 0) && (coord_x + i - shift < bmp_ref_copy.Width) && (coord_y - j > 0) && (coord_y - j < bmp_ref_copy.Height))
+                                {
+                                    bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
+                                }
+
                             }
 
 
