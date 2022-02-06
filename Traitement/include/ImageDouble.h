@@ -116,7 +116,7 @@ class CImageDouble {
 		// Vecteur gradient
 		_declspec(dllexport) CImageDouble vecteurGradient(const std::string& axe = "norme"); // choix "norme"/"angle"
 
-		// fiktrage
+		// Filtrage : moyen/gaussien
 		_declspec(dllexport) CImageDouble filtrage(const std::string & methode, int N, double sigma);
 
 		_declspec(dllexport) std::vector<CImageDouble> pyramide(int hauteur, int tailleFiltre, double sigma);

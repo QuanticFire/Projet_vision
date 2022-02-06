@@ -1074,6 +1074,84 @@ CImageDouble CImageDouble::conv(const CImageDouble& kernel)
 	return out;
 }
 
+/*
+CImageDouble CImageDouble::convfast(const CImageDouble& kernel) 
+{
+	CImageDouble out(this->lireHauteur(), this->lireLargeur());
+	double *pucPix, *pucPix2;
+	double *pucDepOut, *pucDepKernel;
+	int centerk, centerl;
+	int kMin, kMax;
+	int lMin, lMax;
+	int hauteurC, largeurC;
+	
+	//cas noyaux non centrés
+
+	if ((kernel.lireHauteur() % 2 == 0) && (kernel.lireLargeur() % 2 == 0)) 
+	{
+		hauteurC = kernel.lireHauteur() - 1;
+		largeurC = kernel.lireLargeur() - 1;
+	}
+	else if ((kernel.lireHauteur() % 2 == 0) && (kernel.lireLargeur() % 2 != 0))
+	{
+		hauteurC = kernel.lireHauteur() - 1;
+		largeurC = kernel.lireLargeur();
+	}
+	else if ((kernel.lireHauteur() % 2 != 0) && (kernel.lireLargeur() % 2 == 0))
+	{
+		hauteurC = kernel.lireHauteur();
+		largeurC = kernel.lireLargeur() - 1;
+	}
+	else
+	{
+		hauteurC = kernel.lireHauteur();
+		largeurC = kernel.lireLargeur();
+	}
+
+	CImageDouble kernelC(hauteurC, largeurC);
+	for (int i = 0; i < hauteurC; i++)
+		for (int j = 0; j < largeurC; j++)
+			kernelC(i, j) = kernel(i, j);
+
+	centerk = kernelC.lireHauteur() >> 1;
+	centerl = kernelC.lireLargeur() >> 1;
+	pucPix = pucPix2 = m_pucPixel + (m_iLargeur*centerk + centerl);
+	pucDepOut = out.m_pucPixel;
+	pucDepKernel = kernelC.m_pucPixel;
+
+	for (int i = 0; i < m_iHauteur; i++)
+	{
+		kMax = i + centerk;
+		kMin = i - m_iHauteur + centerk;
+		for (int j = 0; j < m_iLargeur; j++)
+		{
+			lMax = j + centerl;
+			lMin = j - m_iLargeur + centerl;
+			*pucDepOut = 0;
+
+			for (int k = 0; k < kernelC.m_iHauteur; k++)
+			{
+				if (k <= kMax && k > kMin)
+				{
+					for (int l = 0; l < kernelC.m_iLargeur; l++)
+					{
+						if (l <= lMax && l > lMin)
+							*pucDepOut += *(pucPix - l)* *pucDepKernel;
+						++pucDepKernel;
+					}
+				}
+				else
+					pucDepKernel += kernelC.m_iLargeur;
+				pucPix -= m_iLargeur;
+			}
+			pucDepKernel = kernelC.m_pucPixel;
+			pucPix = ++pucPix2;
+			++pucDepOut;
+		}
+	}
+	return out;
+}*/																
+
 // convolution avec fft, n'est important que pour avoir un temps de traitement plus raisonnable
 CImageDouble CImageDouble::convfft(const CImageDouble& kernel)
 {
@@ -1207,5 +1285,32 @@ CImageDouble CImageDouble::NormCorr(const CImageDouble & scene)
 	}
 	return out;
 }
+/*
+//création d'une comatrice
+CImageDouble graycomatrix(const CImageNdg& im,unsigned char quantif,unsigned int distance, double angle) 
+{
+	CImageDouble comatrice(quantif, quantif);
+	for (int i = 0; i < im.lireHauteur(); i++)
+	{
+		for (int j = 0; j < im.lireLargeur(); j++)
+		{
+			unsigned char val1 = im(i, j);
 
+			int lig = i + (int)(cos(angle)*distance + 0.5); //+0.5 pour être sur de pas faire d'erreurs à cause du cos
+			int col = j + (int)(cos(angle)*distance + 0.5);
+			
+			if ((lig >= 0) && (lig < im.lireHauteur()) &&
+				(col >= 0) && (col < im.lireHauteur()))
+			{
+				int val2 = im(lig, col);
+				if (val1 >= 0 && val1 < quantif && val2 >= 0 && val2 < quantif)
+				{
+					comatrice(val1, val2)++;
+				}
+			}
+		}
+	}
+	return comatrice;
+}
+*/
 #undef PICS
