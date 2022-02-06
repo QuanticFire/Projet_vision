@@ -45,6 +45,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.labelScore2 = new System.Windows.Forms.Label();
+            this.butForm2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -209,12 +210,23 @@
             this.labelScore2.Size = new System.Drawing.Size(0, 13);
             this.labelScore2.TabIndex = 16;
             // 
+            // butForm2
+            // 
+            this.butForm2.Location = new System.Drawing.Point(0, 0);
+            this.butForm2.Name = "butForm2";
+            this.butForm2.Size = new System.Drawing.Size(186, 23);
+            this.butForm2.TabIndex = 17;
+            this.butForm2.Text = "Traitement image non rognées";
+            this.butForm2.UseVisualStyleBackColor = true;
+            this.butForm2.Click += new System.EventHandler(this.butForm2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1420, 959);
+            this.Controls.Add(this.butForm2);
             this.Controls.Add(this.labelScore2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -261,6 +273,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label labelScore2;
+        private System.Windows.Forms.Button butForm2;
     }
 }
 

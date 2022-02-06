@@ -108,6 +108,7 @@ namespace seuilAuto
                 // Lecture des coordonnées auxquelles l'algo de pattern matching détecte l'image
                 //double coord_x = Img.objetLibValeurChamp(0);
                 //double coord_y = Img.objetLibValeurChamp(1);
+                //MessageBox.Show(coord_x.ToString() + " " + coord_y.ToString());
 
                 // Coordonnées temporaires de détection pour implémentation de l'affichage sur l'interface de la coordonnée détectée
                 double coord_x = 1000;
@@ -248,6 +249,13 @@ namespace seuilAuto
         private void labelScore_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void butForm2_Click(object sender, EventArgs e)
+        {
+            var form2 = new Form2(this);
+            form2.Show();
+            this.Hide();
         }
     }
 }
