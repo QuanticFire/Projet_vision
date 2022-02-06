@@ -35,7 +35,7 @@ namespace seuilAuto
         // Fonction d'affichage de l'image d'attente. Exécution dans thread
         private void affiche_wait_image()
         {
-            Image wait = Image.FromFile("wait.bmp");
+            Image wait = Image.FromFile(@"..\\..\\wait.jpg");
             Bitmap bmp_wait = new Bitmap(wait);
             imageSeuillee.Image = bmp_wait;
         }

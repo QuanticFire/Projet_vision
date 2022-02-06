@@ -99,7 +99,7 @@ class CImageCouleur {
 
 		// signatures
 		_declspec(dllexport) std::vector<MOMENTS> signatures();
-
+		//rognage avec choix de la méthode ("automatique" ou "manuel"), du plan à seuiller (voir fct plan) et si besoin d'une conversion au préalable ("HSV" ou "non")
 		_declspec(dllexport) CImageCouleur rognageSigComposante(const std::string & methode, int seuilB, int seuilH, int plan, const std::string & conversion);
 
 		// Fonction de detection piece pour le projet Vision IPSI3
