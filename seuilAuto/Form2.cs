@@ -32,9 +32,56 @@ namespace seuilAuto
             form1_ = form1;
         }
 
+        // Fonction d'affichage de l'image d'attente. Exécution dans thread
+        private void affiche_wait_image()
+        {
+            Image wait = Image.FromFile("wait.bmp");
+            Bitmap bmp_wait = new Bitmap(wait);
+            imageSeuillee.Image = bmp_wait;
+        }
+
+        // Fonction de détection de piece puzzle. Est éxécutée dans un thread
         private void traitement_bouton_go()
         {
+            
+            //imageSeuillee.Show();
+            //valeurSeuilAuto.Show();
 
+
+            Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
+            Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
+
+            // affectation des paramètres (a supprimer en faisant attention aux changement wrapper et dll, ne sert a rien)
+            double[] parametres = { 0 }; // = new double[parametersTextBox.Lines.Length];
+                                            //for (int i = 0; i < parametersTextBox.Lines.Length; i++)
+                                            //   parametres[i] = Convert.ToDouble(parametersTextBox.Lines[i]);
+
+            unsafe
+            {
+                // Génération d'objets permettant de passer les data des images au wrapper
+                BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                // Appel du wrapper pour traitement dans la dll
+                // Passage des données pour l'image puzzle de référence ET pour l'image piece
+                Img.traitementRognePtr(2, bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
+
+                // ancien commentaire : 1 champ texte retour C++, le seuil auto
+                // Traitement terminé, libération des images
+                bmp_ref_copy.UnlockBits(bmpData);
+                bmp_piece.UnlockBits(bmpData_piece);
+            }
+
+            this.Invoke((MethodInvoker)delegate ()
+            {
+                labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
+                labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
+            });
+
+            // Affichagr de l'image puzzle avec détection de pièce sur l'interface
+            imageSeuillee.Image = bmp_ref_copy;
+            pbRogne.Image = bmp_piece;
+            
         }
 
         private void butForm1_Click(object sender, EventArgs e)
@@ -84,38 +131,17 @@ namespace seuilAuto
 
         private void bSeuillageAuto_Click(object sender, EventArgs e)
         {
-            Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
-            Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
+            // Affichage de l'image d'attente. Utilisation d'un thread sinon ne fonctionne pas
+            Thread th;
+            th = new Thread(new ThreadStart(affiche_wait_image));
+            th.Start();
 
-            // affectation des paramètres (a supprimer en faisant attention aux changement wrapper et dll, ne sert a rien)
-            double[] parametres = { 0 }; // = new double[parametersTextBox.Lines.Length];
-                                         //for (int i = 0; i < parametersTextBox.Lines.Length; i++)
-                                         //   parametres[i] = Convert.ToDouble(parametersTextBox.Lines[i]);
+            labelScore.Show();
 
-            unsafe
-            {
-                // Génération d'objets permettant de passer les data des images au wrapper
-                BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-
-                // Appel du wrapper pour traitement dans la dll
-                // Passage des données pour l'image puzzle de référence ET pour l'image piece
-                Img.traitementTestPtr(2, bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
-
-                // ancien commentaire : 1 champ texte retour C++, le seuil auto
-                // Traitement terminé, libération des images
-                bmp_ref_copy.UnlockBits(bmpData);
-                bmp_piece.UnlockBits(bmpData_piece);
-            }
-
-            this.Invoke((MethodInvoker)delegate ()
-            {
-                labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
-                labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
-            });
-
-            // Affichagr de l'image puzzle avec détection de pièce sur l'interface
-            imageSeuillee.Image = bmp_ref_copy;
+            // Lancement du traitement de la piece. Lancement dans un autre thread, sinon cela plante l'interface et n'affiche pas l'image d'attente
+            Thread th_trait;
+            th_trait = new Thread(new ThreadStart(traitement_bouton_go));
+            th_trait.Start();
         }
 
         private void button_puzzle_Click(object sender, EventArgs e)

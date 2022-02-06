@@ -61,6 +61,18 @@ namespace Traitement
             return ClPtr;
         }
 
+        // Appel de la méthode traitementRogne
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr traitementRogne(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, double[] parametres, int nbChamps_p, IntPtr data_p, int stride_p, int nbLig_p, int nbCol_p);
+
+        public IntPtr traitementRognePtr(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, double[] parametres, int nbChamps_p, IntPtr data_p, int stride_p, int nbLig_p, int nbCol_p)
+        {
+            // nbChamps, data, stride, nbLig, NbCol, parametres : correspondent à l'image puzzle de référence
+            // les autres paramètres concernent l'image piece puzzle à détecter
+            ClPtr = traitementRogne(nbChamps, data, stride, nbLig, nbCol, parametres, nbChamps_p, data_p, stride_p, nbLig_p, nbCol_p);
+            return ClPtr;
+        }
+
         //Appel du traitement par PattermMatching
         [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr PatternMatching(IntPtr data, int stride, int nbLig, int nbCol, IntPtr data_p, int stride_p, int nbLig_p, int nbCol_p);

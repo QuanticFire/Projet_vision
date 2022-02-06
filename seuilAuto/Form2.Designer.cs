@@ -74,10 +74,12 @@
             // 
             this.imageDepart.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.imageDepart.Cursor = System.Windows.Forms.Cursors.Default;
+            this.imageDepart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.imageDepart.ImageLocation = "";
-            this.imageDepart.Location = new System.Drawing.Point(-1, -1);
+            this.imageDepart.Location = new System.Drawing.Point(0, 0);
             this.imageDepart.Name = "imageDepart";
-            this.imageDepart.Size = new System.Drawing.Size(270, 350);
+            this.imageDepart.Size = new System.Drawing.Size(268, 348);
+            this.imageDepart.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imageDepart.TabIndex = 0;
             this.imageDepart.TabStop = false;
             // 
@@ -210,10 +212,12 @@
             // 
             this.pbRogne.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.pbRogne.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pbRogne.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pbRogne.ImageLocation = "";
-            this.pbRogne.Location = new System.Drawing.Point(-1, -1);
+            this.pbRogne.Location = new System.Drawing.Point(0, 0);
             this.pbRogne.Name = "pbRogne";
-            this.pbRogne.Size = new System.Drawing.Size(270, 350);
+            this.pbRogne.Size = new System.Drawing.Size(268, 348);
+            this.pbRogne.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRogne.TabIndex = 0;
             this.pbRogne.TabStop = false;
             // 
@@ -255,7 +259,6 @@
 
         private System.Windows.Forms.Button butForm1;
         private System.Windows.Forms.OpenFileDialog ouvrirImage;
-        private System.Windows.Forms.PictureBox imageDepart;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button buttonOuvrir;
         private System.Windows.Forms.Button button_puzzle;
@@ -270,5 +273,6 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panelRogne;
         private System.Windows.Forms.PictureBox pbRogne;
+        public System.Windows.Forms.PictureBox imageDepart;
     }
 }
