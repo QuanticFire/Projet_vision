@@ -106,8 +106,8 @@ namespace seuilAuto
                     bmp_piece.UnlockBits(bmpData_piece);
                 }
                 // Lecture des coordonnées auxquelles l'algo de pattern matching détecte l'image
-                double coord_x = Img.objetLibValeurChamp(0);
-                double coord_y = Img.objetLibValeurChamp(1);
+                double coord_x = Img.objetLibValeurChamp(1);
+                double coord_y = Img.objetLibValeurChamp(0);
                 MessageBox.Show(coord_x.ToString() + " " + coord_y.ToString());
 
                 // Coordonnées temporaires de détection pour implémentation de l'affichage sur l'interface de la coordonnée détectée
@@ -121,42 +121,61 @@ namespace seuilAuto
                 Color myRgbColor = new Color();
                 myRgbColor = Color.Red;
 
-                for (int i = 0; i < 50; i++)
+                for (int i = -50; i < 50; i++)
                 {
-                    for (int j = 0; j < 50; j++)
+                    for (int j = -50; j < 50; j++)
                     {
-                        if (i == j)
+
+                        for (int shift = -10; shift < 10; shift++)
                         {
-                            for (int shift = 0; shift < 10; shift++)
+                            if ((coord_x + i > 0) && (coord_x + i < bmp_ref_copy.Width) && (coord_y + shift > 0) && (coord_y + shift < bmp_ref_copy.Height))
                             {
-                                if ((coord_x + i + shift < bmp_ref_copy.Width) && (coord_x + i + shift > 0) && (coord_y + j < bmp_ref_copy.Height) && (coord_y + j > 0))
-                                {
-                                    bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
-                                }
-                                if ((coord_x - i - shift > 0) && (coord_x - i - shift < bmp_ref_copy.Width) && (coord_y - j > 0) && (coord_y - j < bmp_ref_copy.Height))
-                                {
-                                    bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
-                                }
-
+                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i), Convert.ToInt32(coord_y + shift), myRgbColor);
                             }
-
-                            for (int shift = 0; shift < 10; shift++)
-                            {
-                                if ((coord_x - i + shift > 0) && (coord_x - i + shift < bmp_ref_copy.Width) && (coord_y + j < bmp_ref_copy.Height) && (coord_y + j > 0))
-                                {
-                                    bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
-                                }
-                                if ((coord_x + i - shift > 0) && (coord_x + i - shift < bmp_ref_copy.Width) && (coord_y - j > 0) && (coord_y - j < bmp_ref_copy.Height))
-                                {
-                                    bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
-                                }
-
-                            }
-
-
-                            //bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i), Convert.ToInt32(coord_y - j), myRgbColor);
-                            //bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i), Convert.ToInt32(coord_y + j), myRgbColor);
+                            
                         }
+                            
+                        for (int shift = -10; shift < 10; shift++)
+                        {
+                            if ((coord_x + shift > 0) && (coord_x + shift < bmp_ref_copy.Width) && (coord_y + j > 0) && (coord_y + j  < bmp_ref_copy.Height))
+                            {
+                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + shift), Convert.ToInt32(coord_y + j), myRgbColor);
+                            }
+                        }
+
+
+                        //if (i == j)
+                        //{
+                        //    for (int shift = 0; shift < 10; shift++)
+                        //    {
+                        //        if ((coord_x + i + shift < bmp_ref_copy.Width) && (coord_x + i + shift > 0) && (coord_y + j < bmp_ref_copy.Height) && (coord_y + j > 0))
+                        //        {
+                        //            bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
+                        //        }
+                        //        if ((coord_x - i - shift > 0) && (coord_x - i - shift < bmp_ref_copy.Width) && (coord_y - j > 0) && (coord_y - j < bmp_ref_copy.Height))
+                        //        {
+                        //            bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
+                        //        }
+
+                        //    }
+
+                        //    for (int shift = 0; shift < 10; shift++)
+                        //    {
+                        //        if ((coord_x - i + shift > 0) && (coord_x - i + shift < bmp_ref_copy.Width) && (coord_y + j < bmp_ref_copy.Height) && (coord_y + j > 0))
+                        //        {
+                        //            bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i + shift), Convert.ToInt32(coord_y + j), myRgbColor);
+                        //        }
+                        //        if ((coord_x + i - shift > 0) && (coord_x + i - shift < bmp_ref_copy.Width) && (coord_y - j > 0) && (coord_y - j < bmp_ref_copy.Height))
+                        //        {
+                        //            bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i - shift), Convert.ToInt32(coord_y - j), myRgbColor);
+                        //        }
+
+                        //    }
+
+
+                        //    //bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i), Convert.ToInt32(coord_y - j), myRgbColor);
+                        //    //bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x - i), Convert.ToInt32(coord_y + j), myRgbColor);
+                        //}
 
                     }
                 }
