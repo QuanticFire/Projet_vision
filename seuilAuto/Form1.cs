@@ -79,14 +79,26 @@ namespace seuilAuto
                 {
                     labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
                     labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
+                    labelScore.Show();
+                    labelScore2.Show();
                 });
                 
                 // Affichagr de l'image puzzle avec détection de pièce sur l'interface
                 imageSeuillee.Image = bmp_ref_copy;
+
+                // Affichage du score
                 
+
             }
             else if (dudTraitSel.Text == "Pattern matching")
             {
+                // On efface les scores potentiellement sur l'interface
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    labelScore.Hide();
+                    labelScore2.Hide();
+                });
+
                 //imageSeuillee.Show();
                 Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
                 Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
@@ -191,7 +203,7 @@ namespace seuilAuto
         private void buttonOuvrir_Click(object sender, EventArgs e)
         {
             //MessageBox.Show(System.IO.Directory.GetCurrentDirectory());
-            labelScore.Hide();
+            //labelScore.Hide();
 
             if (ouvrirImage.ShowDialog() == DialogResult.OK)
             {
@@ -218,6 +230,8 @@ namespace seuilAuto
                     // Quand on affiche une nouvelle image, on cache l'ancienne image traitée pour garder une cohérence visuelle sur l'interface
                     //imageSeuillee.Hide();
                     imageSeuillee.Image = null;
+                    labelScore.Hide();
+                    labelScore2.Hide();
                     //valeurSeuilAuto.Hide();
                 }
                 catch
@@ -236,8 +250,6 @@ namespace seuilAuto
             Thread th;
             th = new Thread(new ThreadStart(affiche_wait_image));
             th.Start();
-
-            labelScore.Show();
 
             // Lancement du traitement de la piece. Lancement dans un autre thread, sinon cela plante l'interface et n'affiche pas l'image d'attente
             Thread th_trait;
