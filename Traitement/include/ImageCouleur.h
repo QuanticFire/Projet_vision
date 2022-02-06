@@ -100,6 +100,8 @@ class CImageCouleur {
 		// signatures
 		_declspec(dllexport) std::vector<MOMENTS> signatures();
 
+		_declspec(dllexport) CImageCouleur rognageSigComposante(const std::string & methode, int seuilB, int seuilH, int plan, const std::string & conversion);
+
 		// Fonction de detection piece pour le projet Vision IPSI3
 		_declspec(dllexport) CImageCouleur detection_piece(CImageCouleur piece, double* score, double* score2);
 				

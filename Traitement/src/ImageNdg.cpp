@@ -888,7 +888,6 @@ CImageNdg CImageNdg::rognageSigComposante(const std::string& methode, int seuilB
 			for (int i = 0; i<imgFinale.lireHauteur(); i++)
 				for (int j = 0; j < imgFinale.lireLargeur(); j++)
 					imgFinale(i, j) = imgRogne(i + Hi, j + Gj);
-			printf("test");
 			return imgFinale;
 		}
 
