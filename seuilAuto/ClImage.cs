@@ -44,7 +44,7 @@ namespace Traitement
 
         public IntPtr objetLibDataImgPtr(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol)
         {
-            ClPtr = objetLibDataImg(nbChamps,data, stride, nbLig, nbCol);
+            ClPtr = objetLibDataImg(nbChamps, data, stride, nbLig, nbCol);
             return ClPtr;
         }
 
@@ -92,6 +92,26 @@ namespace Traitement
         public double objetLibValeurChamp(int i)
         {
             return valeurChamp(ClPtr, i);
+        }
+
+        // Appel méthode propriétés, renvoie un IntPtr des différentes valeurs utiles pour recréer l'image (hauteur, largeur, stride)
+
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern unsafe int* proprietes(IntPtr pImg, IntPtr data);
+        public Bitmap imgFromClImage(IntPtr data)
+        {
+            int hauteur;
+            int largeur;
+            int stride;
+            unsafe
+            {
+                int* ptab = proprietes(ClPtr, data);
+                hauteur = ptab[0];
+                largeur = ptab[1];
+                stride = ptab[2];
+            }
+            Bitmap imgout = new Bitmap(largeur, hauteur,stride, System.Drawing.Imaging.PixelFormat.Format24bppRgb, data);
+            return imgout;
         }
     }
 }

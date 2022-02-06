@@ -330,6 +330,27 @@ void ClibTraitement::TraitementRognage(int nbChamps, byte * data, int stride, in
 	
 }
 
+int * ClibTraitement::props(byte * data)
+{
+	int* pProps = new int[3];
+	pProps[0] = this->imgData()->lireHauteur;
+	pProps[1] = this->imgData()->lireLargeur;
+	pProps[2] = 3;//stride par défaut
+
+	byte* pixPtr = (byte*)data;
+	for (int y = 0; y < pProps[0]; y++)
+	{
+		for (int x = 0; x < pProps[1]; x++)	//rvb
+		{
+			pixPtr[3 * x + 2] = this->imgData()->operator()(y, x)[0];
+			pixPtr[3 * x + 1] = this->imgData()->operator()[1];
+			pixPtr[3 * x] = this->imgData()->operator()[2];
+		}
+		pixPtr += pProps[2]; // largeur une seule ligne gestion multiple 32 bits
+	}
+	return pProps;
+}
+
 void ClibTraitement::TraitementMatching(byte * data, int stride, int nbLig, int nbCol, byte * data_p, int stride_p, int nbLig_p, int nbCol_p)
 {
 	// --------------------------- Construction de l'image ClibTraitement ----------------------------------
