@@ -17,8 +17,8 @@
 
 typedef struct  {
 	double  moyenne;
-	int     min;
-	int     max;
+	int     mini;
+	int     maxi;
 	int     surface;
 } SIGNATURE_Ndg;
 
@@ -40,6 +40,26 @@ typedef struct {
 	int			rectEnglob_Bj;
 	float		perimetre; // au sens V8
 } SIGNATURE_Forme;
+
+typedef struct {
+	float		centreGravite_i;
+	float		centreGravite_j;
+	int			surface;
+	std::string codeFreeman; // au sens V8
+	int			premierPt_i; // premier point rencontré sens de parcours avant
+	int			premierPt_j;
+	int			rectEnglob_Hi; // coins supérieur gauche et inférieur droit
+	int			rectEnglob_Hj;
+	int			rectEnglob_Bi;
+	int			rectEnglob_Bj;
+	float		perimetre; // au sens V8
+	double		lambda1; // + grande valeur propre
+	double		lambda2; // + petite valeur propre
+	double		V1x; // vecteur propre principal
+	double		V1y;
+	double		V2x; // vecteur propre secondaire
+	double		V2y; 
+} SIGNATURE_Forme_VP;
 
 typedef struct {
 	int     surface;
@@ -139,6 +159,10 @@ class CImageClasse {
 		_declspec(dllexport) CImageCouleur affichage(const std::vector<SIGNATURE_Ndg>& tab, int R=255, int G=0, int B=0);
 		_declspec(dllexport) CImageCouleur affichage(const std::vector<SIGNATURE_Couleur>& tab, const std::string& methode = "moyenne");
 
+		// affichage chaque région -> sa valeur moyenne
+		_declspec(dllexport) CImageCouleur affichageMoyenne(const CImageCouleur& img, bool fondAPart = true);
+		_declspec(dllexport) CImageNdg affichageMoyenne(const CImageNdg& img, bool fondAPart = true);
+		
 		// sélection 
 		_declspec(dllexport) CImageClasse selection(const std::string& methode = "selection", int classe=0);
 
@@ -151,6 +175,7 @@ class CImageClasse {
 		                                                                                                                                    // choix "maxiLocaux" sur voisinage tMin x tMax
 		// signatures forme pour Image_Ndg et Image_Couleur
 		_declspec(dllexport) std::vector<SIGNATURE_Forme> signatures(bool enregistrementCSV = false);
+		_declspec(dllexport) std::vector<SIGNATURE_Forme_VP> sigVP(bool enregistrementCSV = false);
 
 		// cellules de Voronoï
 		_declspec(dllexport) CImageClasse cellules(); // cellules de Voronoï
@@ -158,4 +183,4 @@ class CImageClasse {
 
 };
 
-#endif
+#endif _IMAGE_CLASSE_
