@@ -1078,19 +1078,19 @@ CImageDouble CImageDouble::conv(const CImageDouble& kernel)
 CImageDouble CImageDouble::convfft(const CImageDouble& kernel)
 {
 	//padding supplémentaire pour eviter les effets de bord
-	int hauteur = (this->lireHauteur() + kernel.lireHauteur() + 2) / 2;
-	int largeur = (this->lireLargeur() + kernel.lireLargeur() + 2) / 2;
-	CImageDouble out(this->lireHauteur() + kernel.lireHauteur() - 1, this->lireLargeur() + kernel.lireLargeur() - 1);
-	double* outdata = new double[4 * hauteur*largeur]; //approximation en taille de la convolution réelle
+	int hauteur = this->lireHauteur() + kernel.lireHauteur() - 1;
+	int largeur = this->lireLargeur() + kernel.lireLargeur() - 1;
+	CImageDouble out(hauteur, largeur);
+	double* outdata = new double[hauteur*largeur]; //approximation en taille de la convolution réelle
 
-													   //padding sur les images pour éviter le cyclique
-	CImageDouble thispad(hauteur * 2, largeur * 2);
-	CImageDouble kernelpad(hauteur * 2, largeur * 2);
+	//padding sur les images pour éviter le cyclique
+	CImageDouble thispad(hauteur, largeur);
+	CImageDouble kernelpad(hauteur, largeur);
 
-	int	offsetthisi = (hauteur * 2 - this->lireHauteur()) / 2;
-	int offsetthisj = (largeur * 2 - this->lireLargeur()) / 2;
-	int offsetkerneli = (hauteur * 2 - kernel.lireHauteur()) / 2;
-	int offsetkernelj = (largeur * 2 - kernel.lireLargeur()) / 2;
+	int	offsetthisi = (hauteur - this->lireHauteur()) / 2;
+	int offsetthisj = (largeur - this->lireLargeur()) / 2;
+	int offsetkerneli = (hauteur - kernel.lireHauteur()) / 2;
+	int offsetkernelj = (largeur - kernel.lireLargeur()) / 2;
 
 	for (int i = 0; i < this->lireHauteur(); i++)
 		for (int j = 0; j < this->lireLargeur(); j++)
@@ -1101,60 +1101,43 @@ CImageDouble CImageDouble::convfft(const CImageDouble& kernel)
 
 	// DFTs avec fftw
 	fftw_complex *thisdft, *kerneldft, *outdft;
-	fftw_plan thisplan, kernelplan, outplan;
+	fftw_plan thisplan, kernelplan,outplan;
 	// allocation de cette façon car passage réel complexe donne une dimension h*(l/2+1)
-	thisdft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * 2 * hauteur*(largeur + 1));
-	kerneldft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * 2 * hauteur*(largeur + 1));
-	outdft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * 2 * hauteur*(largeur + 1));
-
-	CImageDouble test(this->lireHauteur() + kernel.lireHauteur() - 1, this->lireLargeur() + kernel.lireLargeur() - 1);
+	thisdft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * hauteur*(largeur / 2 + 1));
+	kerneldft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * hauteur*(largeur / 2 + 1));
+	outdft = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * hauteur*(largeur / 2 + 1));
 
 	// une estimantion suffit généralement.
-	thisplan = fftw_plan_dft_r2c_2d(2 * hauteur, 2 * largeur, thispad.m_pucPixel, thisdft, FFTW_ESTIMATE);
-	kernelplan = fftw_plan_dft_r2c_2d(2 * hauteur, 2 * largeur, kernelpad.m_pucPixel, kerneldft, FFTW_ESTIMATE);
+	thisplan = fftw_plan_dft_r2c_2d(hauteur, largeur, thispad.m_pucPixel, thisdft, FFTW_ESTIMATE);
+	kernelplan = fftw_plan_dft_r2c_2d(hauteur, largeur, kernelpad.m_pucPixel, kerneldft, FFTW_ESTIMATE);
 
 	fftw_execute(thisplan);
 	fftw_execute(kernelplan);
-
+	
 	//convolution au sens fft
-	for (int n = 0; n < 2 * hauteur*(largeur + 1); n++)
+	for (int n = 0; n < hauteur*(largeur / 2 + 1); n++)
 	{
 		outdft[n][0] = thisdft[n][0] * kerneldft[n][0] - thisdft[n][1] * kerneldft[n][1];
 		outdft[n][1] = thisdft[n][0] * kerneldft[n][1] + thisdft[n][1] * kerneldft[n][0];
 	}
 
 	//transformée inverse
-	outplan = fftw_plan_dft_c2r_2d(2 * hauteur, 2 * largeur, outdft, outdata, FFTW_ESTIMATE);
+	outplan = fftw_plan_dft_c2r_2d(hauteur, largeur, outdft, outdata , FFTW_ESTIMATE);
 	fftw_execute(outplan);
 
 	int x, y;
-	int paddingx = (2 * hauteur - out.lireHauteur());
-	int paddingy = (2 * largeur - out.lireLargeur());
-
-	//normalisation et suppression du padding
-	for (int i = 0; i < out.lireHauteur(); i++)
-		for (int j = 0; j < out.lireLargeur(); j++)
-		{
-			x = i;
-			y = j;
-			if (i <= hauteur - paddingx && j < largeur - paddingy) { x = i; y = j; }
-			if (i > hauteur - paddingx && j < largeur - paddingy) { x = i + paddingx; y = j; }
-			if (i <= hauteur - paddingx && j >= largeur - paddingy) { x = i; y = j + paddingy; }
-			if (i > hauteur - paddingx && j >= largeur - paddingy) { x = i + paddingx; y = j + paddingy; }
-			test(i, j) = outdata[y + 2 * largeur*x] / (4 * hauteur*largeur);
-		}
-
+	
 	// centrage
 	for (int i = 0; i < out.lireHauteur(); i++)
 		for (int j = 0; j < out.lireLargeur(); j++)
 		{
 			x = i;
 			y = j;
-			if (i<out.m_iHauteur / 2 && j<out.m_iLargeur / 2) { x = i + out.m_iHauteur / 2; y = j + out.m_iLargeur / 2; }
+			if (i<out.m_iHauteur/2 && j<out.m_iLargeur / 2) { x = i + out.m_iHauteur / 2; y = j + out.m_iLargeur / 2; }
 			if (i >= out.m_iHauteur / 2 && j<out.m_iLargeur / 2) { x = i - out.m_iHauteur / 2; y = j + out.m_iLargeur / 2; }
 			if (i<out.m_iHauteur / 2 && j >= out.m_iLargeur / 2) { x = i + out.m_iHauteur / 2; y = j - out.m_iLargeur / 2; }
 			if (i >= out.m_iHauteur / 2 && j >= out.m_iLargeur / 2) { x = i - out.m_iHauteur / 2; y = j - out.m_iLargeur / 2; }
-			out(i, j) = test(x, y);
+			out(i, j) = outdata[y+largeur*x]/(largeur*hauteur);
 		}
 
 	//libération
@@ -1169,6 +1152,7 @@ CImageDouble CImageDouble::convfft(const CImageDouble& kernel)
 
 	return out;
 }
+
 
 CImageDouble CImageDouble::NormCorr(const CImageDouble & scene)
 {

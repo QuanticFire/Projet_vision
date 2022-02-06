@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "ImageNdg.h"
+#include "ImageClasse.h"
 
 #define PI 3.14159265358979323846
 #define MAGIC_NUMBER_BMP ('B'+('M'<<8)) // signature bitmap windows
@@ -357,6 +358,10 @@ CImageNdg CImageNdg::operation(const CImageNdg& im, const std::string& methode) 
 			for (int i=0;i<this->lireNbPixels();i++)
 				out(i) = this->operator()(i) || im(i);
 		}
+			if (methode.compare("-") == 0) {
+				for (int i = 0; i<this->lireNbPixels(); i++)
+					out(i) = this->operator()(i) - im(i); // vigilance sur les images opérérées !
+			}
 
 return out;
 }
@@ -661,6 +666,30 @@ CImageNdg CImageNdg::morphologie(const std::string& methode, const std::string& 
 	return out;
 }
 
+CImageNdg CImageNdg::bouchageTrous()
+{
+	CImageNdg ImgOut = CImageNdg(this->lireHauteur(), this->lireLargeur());
+	ImgOut.m_bBinaire = true;
+	CImageNdg ImExp = CImageNdg(this->lireHauteur() + 2, this->lireLargeur() + 2, 0);
+	ImExp.m_bBinaire = true;
+	CImageNdg ImCompl = CImageNdg(this->lireHauteur() + 2, this->lireLargeur() + 2, 255);
+	CImageClasse ImgFill;
+	std::vector<int> LUT = std::vector<int>(256, 1);
+
+	for (int i = 0; i < this->lireLargeur(); i++)
+	{
+		for (int j = 0; j < this->lireLargeur(); j++)
+		{
+			ImExp(i + 1, j + 1) = this->operator()(i, j);
+			ImCompl(i + 1, j + 1) -= this->operator()(i, j);
+
+
+		}
+	}
+	return ImgOut;
+}
+
+
 // filtrage : moyennage ou median
 CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj) {
 		
@@ -729,50 +758,138 @@ CImageNdg CImageNdg::filtrage(const std::string& methode, int Ni, int Nj) {
 	return out;
 }
 
-CImageNdg CImageNdg::rotation(float angle, const std::string& taille)
+CImageNdg CImageNdg::rotation(float angle,const std::string& taille) 
 {
-	int iout, jout;
-	float icenter, jcenter, icenterbase, jcenterbase;
-	float costhe = (float)cos(PI*angle / 180);
-	float sinthe = (float)sin(PI*angle / 180);
-	float tant = (float)tan(PI*angle / 360);
-	//taille des images intermédiaires
-	int diam = (int)(sqrt(this->lireHauteur() ^ 2 + this->lireLargeur() ^ 2));
+	int ithis, jthis;
+	float icenter, jcenter;
+	float costhe = (float)cos(-PI*angle / 180);
+	float sinthe = (float)sin(-PI*angle / 180);
 
 	if (taille.compare("idem") == 0) {
-		CImageNdg out(this->lireHauteur(), this->lireLargeur(), this->operator()(0)); //on prend la valeur "approchée" du fond
+		CImageNdg out(this->lireHauteur(), this->lireLargeur(),this->operator()(0)); //on prend la valeur "approchée" du fond
 		out.ecrireNom(this->lireNom() + "Rot");
-		CImageNdg transvec1(diam, diam), transvec2(diam, diam);
 
 		//centrage de l'image d'origine
-		icenterbase = (float)(this->lireHauteur() / 2.0);
-		jcenterbase = (float)(this->lireLargeur() / 2.0);
+		icenter = (float)(this->lireHauteur() / 2.0);
+		jcenter = (float)(this->lireLargeur() / 2.0);
 
-		//premiere transvection
-		icenter = (float)(this->lireHauteur() / 2.0);
-		jcenter = (float)(this->lireLargeur() / 2.0);
 		for (int i = 0; i < this->lireHauteur(); i++)
 			for (int j = 0; j < this->lireLargeur(); j++)
 			{
-				iout = (int)((i - icenterbase) - tant*(j - jcenter) + icenter);
-				jout = (int)((j - jcenterbase)*costhe);
-				if (iout >= 0 && iout < out.lireHauteur() && jout >= 0 && jout < out.lireLargeur())
-					out(iout, jout) = this->operator()(i, j);
-			}
-		//deuxieme
-		icenter = (float)(this->lireHauteur() / 2.0);
-		jcenter = (float)(this->lireLargeur() / 2.0);
-		for (int i = 0; i < this->lireHauteur(); i++)
-			for (int j = 0; j < this->lireLargeur(); j++)
-			{
-				iout = (int)((i - icenterbase) - tant*(j - jcenter) + icenter);
-				jout = (int)((j - jcenterbase)*costhe);
-				if (iout >= 0 && iout < out.lireHauteur() && jout >= 0 && jout < out.lireLargeur())
-					out(iout, jout) = this->operator()(i, j);
+				ithis = (int)(costhe*(i - icenter) + sinthe*(j - jcenter)+icenter);
+				jthis = (int)(-sinthe*(i - icenter) + costhe*(j - jcenter) + jcenter);
+				if (ithis >= 0 && ithis < out.lireHauteur() && jthis >= 0 && jthis < out.lireLargeur())
+					out(i, j) = this->operator()(ithis, jthis);
 			}
 		return out;
 	}
 	CImageNdg vide;
 	vide.ecrireNom("Taille non bien définie!");
 	return vide;
+}
+
+CImageNdg CImageNdg::rognageSigComposante(const std::string& methode, int seuilBas, int seuilHaut)
+{
+	//
+	//labellisation si plusieurs pièces après
+	//CImageClasse imgLab(img_seuil,"V8");
+	//std::vector<SIGNATURE_Forme> sig = imgLab.sigComposantesConnexes(false);
+
+	////recherche du plus gros blob
+	//int indmax = 0;
+	//for (unsigned int i = 0; i < sig.size(); i++)
+	//	if (indmax < sig[i].surface)
+	//		indmax = i;
+	//SIGNATURE_Forme sigPiece = sig[indmax];
+
+	//rectangle englobant seul sur image seuillée en supposant une unique pièce
+	CImageNdg img_seuil = this->seuillage(methode, seuilBas, seuilHaut);
+	img_seuil = img_seuil.morphologie("erosion", "V8").morphologie("dilatation", "V8");
+	
+	SIGNATURE_Forme sigPiece = { 0,0,0,"0",0,0,0,0,0,0,0};
+	int n = 0;
+	int trouveHj = false;
+	int trouveBj = false;
+	int trouveHi = false;
+	int trouveBi = false;
+	while (n<img_seuil.lireNbPixels() && (!trouveBj || !trouveHj || !trouveBi || !trouveHi))
+	{
+		if (!trouveHi && img_seuil(n))
+		{
+			sigPiece.rectEnglob_Hi = n / img_seuil.lireLargeur();
+			trouveHi = true;
+		}
+		if (!trouveBi && img_seuil(img_seuil.lireNbPixels() - 1 - n))
+		{
+			sigPiece.rectEnglob_Bi = (img_seuil.lireNbPixels() - 1 - n) / img_seuil.lireLargeur();
+			trouveBi = true;
+		}
+		if (!trouveHj && img_seuil(n%img_seuil.lireHauteur(), n / img_seuil.lireHauteur()))
+		{
+			sigPiece.rectEnglob_Hj = n / img_seuil.lireHauteur();
+			trouveHj = true;
+		}
+		if (!trouveBj && img_seuil((img_seuil.lireNbPixels() - 1 - n) % img_seuil.lireHauteur(), (img_seuil.lireNbPixels() - 1 - n) / img_seuil.lireHauteur()))
+		{
+			sigPiece.rectEnglob_Bj = (img_seuil.lireNbPixels() - 1 - n) / img_seuil.lireHauteur();
+			trouveBj = true;
+		}
+		n++;
+	}
+
+	//Detection de la pièce dans l'espace
+	CImageNdg imgRogne(sigPiece.rectEnglob_Bi - sigPiece.rectEnglob_Hi, sigPiece.rectEnglob_Bj - sigPiece.rectEnglob_Hj);
+
+	for (int i = 0; i<imgRogne.lireHauteur(); i++)
+		for (int j = 0; j < imgRogne.lireLargeur(); j++)
+			imgRogne(i, j) = this->operator()(i + sigPiece.rectEnglob_Hi, j + sigPiece.rectEnglob_Hj);
+
+
+	/* pas sûr unsafe je connais pas le comportement*/
+		if (imgRogne.lireHauteur() > 350 || imgRogne.lireLargeur() > 300)
+		{
+			CImageNdg img_seuilRogne = imgRogne.seuillage(methode, seuilBas, seuilHaut);
+			
+			int Gh = img_seuilRogne.lireHauteur() / 3;
+			int Gb = 2 * img_seuilRogne.lireHauteur() / 3;
+			int Dh = img_seuilRogne.lireHauteur() / 3;
+			int Db = 2 * img_seuilRogne.lireHauteur() / 3;
+			bool tGh = false, tGb = false, tDh = false, tDb = false;
+			int Ghj, Gbj, Dhj, Dbj;
+			int j = 0;
+			while ((!tGb || !tGh || !tDh || !tDb) && j<img_seuilRogne.lireLargeur()){
+				if (!tGb && img_seuilRogne(Gb, j)){	tGb = true;	Gbj = j;}
+				if (!tGh && img_seuilRogne(Gh, j)){	tGh = true;	Ghj = j;}
+				if (!tDb && img_seuilRogne(Db, img_seuilRogne.lireLargeur() - 1 - j)){	tDb = true;	Dbj = img_seuilRogne.lireLargeur() - 1 - j;}
+				if (!tDh && img_seuilRogne(Dh, img_seuilRogne.lireLargeur() - 1 - j)){	tDh = true;	Dhj = img_seuilRogne.lireLargeur() - 1 - j;}
+				j++;
+			}
+			
+			int Hg = img_seuilRogne.lireLargeur() / 3;
+			int Hd = 2 * img_seuilRogne.lireLargeur() / 3;
+			int Bg = img_seuilRogne.lireLargeur() / 3;
+			int Bd = 2 * img_seuilRogne.lireLargeur() / 3;
+			bool tHg = false, tHd = false, tBg = false, tBd = false;
+			int Hgi, Hdi, Bgi, Bdi;
+			int i = 0;
+			while ((!tHd || !tHg || !tBg || !tBd) && i<img_seuilRogne.lireHauteur()){
+				if (!tHd && img_seuilRogne(i, Hd)) { tHd = true;	Hdi = i; }
+				if (!tHg && img_seuilRogne(i, Hg)) { tHg = true;	Hgi = i; }
+				if (!tBd && img_seuilRogne(img_seuilRogne.lireHauteur() - 1 - i, Bd)) { tBd = true;	Bdi = img_seuilRogne.lireHauteur() - 1 - i; }
+				if (!tBg && img_seuilRogne(img_seuilRogne.lireHauteur() - 1 - i, Bg)) { tBg = true;	Bgi = img_seuilRogne.lireHauteur() - 1 - i; }
+				i++;
+			}
+			int Gj = max(Gbj, Ghj);
+			int Dj = min(Dbj, Dhj);
+			int Hi = max(Hdi, Hgi);
+			int Bi = min(Bdi, Bgi);
+	
+			CImageNdg imgFinale(abs(Hi - Bi), abs(Dj - Gj));
+			for (int i = 0; i<imgFinale.lireHauteur(); i++)
+				for (int j = 0; j < imgFinale.lireLargeur(); j++)
+					imgFinale(i, j) = imgRogne(i + Hi, j + Gj);
+			return imgFinale;
+		}
+
+	return imgRogne;
 }

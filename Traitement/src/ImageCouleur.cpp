@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "ImageCouleur.h"
+#include "ImageClasse.h"
 
 #define MAGIC_NUMBER_BMP ('B'+('M'<<8)) // signature bitmap windows
 
@@ -416,6 +417,113 @@ std::vector<MOMENTS> CImageCouleur::signatures()
 	}
 
 	return mts;
+}
+
+CImageCouleur CImageCouleur::rognageSigComposante(const std::string & methode, int seuilB, int seuilH, int plan, const std::string & conversion)
+{
+	CImageNdg img_seuil;
+	if (conversion.compare("HSV") == 0)
+		img_seuil = this->conversion().plan(plan).seuillage(methode, seuilB, seuilH);
+	else
+		img_seuil = this->plan(plan).seuillage(methode, seuilB, seuilH);
+
+	img_seuil = img_seuil.morphologie("erosion", "V8").morphologie("dilatation", "V8");
+
+	SIGNATURE_Forme sigPiece = { 0,0,0,"0",0,0,0,0,0,0,0};
+	int n = 0;
+	int trouveHj = false;
+	int trouveBj = false;
+	int trouveHi = false;
+	int trouveBi = false;
+	while (n < img_seuil.lireNbPixels() && (!trouveBj || !trouveHj || !trouveBi || !trouveHi))
+	{
+		if (!trouveHi && img_seuil(n))
+		{
+			sigPiece.rectEnglob_Hi = n / img_seuil.lireLargeur();
+			trouveHi = true;
+		}
+		if (!trouveBi && img_seuil(img_seuil.lireNbPixels() - 1 - n))
+		{
+			sigPiece.rectEnglob_Bi = (img_seuil.lireNbPixels() - 1 - n) / img_seuil.lireLargeur();
+			trouveBi = true;
+		}
+		if (!trouveHj && img_seuil(n%img_seuil.lireHauteur(), n / img_seuil.lireHauteur()))
+		{
+			sigPiece.rectEnglob_Hj = n / img_seuil.lireHauteur();
+			trouveHj = true;
+		}
+		if (!trouveBj && img_seuil((img_seuil.lireNbPixels() - 1 - n) % img_seuil.lireHauteur(), (img_seuil.lireNbPixels() - 1 - n) / img_seuil.lireHauteur()))
+		{
+			sigPiece.rectEnglob_Bj = (img_seuil.lireNbPixels() - 1 - n) / img_seuil.lireHauteur();
+			trouveBj = true;
+		}
+		n++;
+	}
+
+	//Detection de la pièce dans l'espace
+	CImageCouleur imgRogne(sigPiece.rectEnglob_Bi - sigPiece.rectEnglob_Hi, sigPiece.rectEnglob_Bj - sigPiece.rectEnglob_Hj);
+
+	for (int i = 0; i < imgRogne.lireHauteur(); i++)
+		for (int j = 0; j < imgRogne.lireLargeur(); j++) {
+			imgRogne(i, j)[0] = this->operator()(i + sigPiece.rectEnglob_Hi, j + sigPiece.rectEnglob_Hj)[0];
+			imgRogne(i, j)[1] = this->operator()(i + sigPiece.rectEnglob_Hi, j + sigPiece.rectEnglob_Hj)[1];
+			imgRogne(i, j)[2] = this->operator()(i + sigPiece.rectEnglob_Hi, j + sigPiece.rectEnglob_Hj)[2];
+		}
+
+	/* pas sûr unsafe je connais pas le comportement*/
+	if (imgRogne.lireHauteur() > 350 || imgRogne.lireLargeur() > 300)
+	{
+		CImageNdg img_seuilRogne;
+		if (conversion.compare("HSV") == 0)
+			img_seuilRogne = imgRogne.conversion().plan(plan).seuillage(methode, seuilB, seuilH);
+		else
+			img_seuilRogne = imgRogne.plan(plan).seuillage(methode, seuilB, seuilH);
+
+		int Gh = img_seuilRogne.lireHauteur() / 3;
+		int Gb = 2 * img_seuilRogne.lireHauteur() / 3;
+		int Dh = img_seuilRogne.lireHauteur() / 3;
+		int Db = 2 * img_seuilRogne.lireHauteur() / 3;
+		bool tGh = false, tGb = false, tDh = false, tDb = false;
+		int Ghj, Gbj, Dhj, Dbj;
+		int j = 0;
+		while ((!tGb || !tGh || !tDh || !tDb) && j<img_seuilRogne.lireLargeur()) {
+			if (!tGb && img_seuilRogne(Gb, j)) { tGb = true;	Gbj = j; }
+			if (!tGh && img_seuilRogne(Gh, j)) { tGh = true;	Ghj = j; }
+			if (!tDb && img_seuilRogne(Db, img_seuilRogne.lireLargeur() - 1 - j)) { tDb = true;	Dbj = img_seuilRogne.lireLargeur() - 1 - j; }
+			if (!tDh && img_seuilRogne(Dh, img_seuilRogne.lireLargeur() - 1 - j)) { tDh = true;	Dhj = img_seuilRogne.lireLargeur() - 1 - j; }
+			j++;
+		}
+
+		int Hg = img_seuilRogne.lireLargeur() / 3;
+		int Hd = 2 * img_seuilRogne.lireLargeur() / 3;
+		int Bg = img_seuilRogne.lireLargeur() / 3;
+		int Bd = 2 * img_seuilRogne.lireLargeur() / 3;
+		bool tHg = false, tHd = false, tBg = false, tBd = false;
+		int Hgi, Hdi, Bgi, Bdi;
+		int i = 0;
+		while ((!tHd || !tHg || !tBg || !tBd) && i<img_seuilRogne.lireHauteur()) {
+			if (!tHd && img_seuilRogne(i, Hd)) { tHd = true;	Hdi = i; }
+			if (!tHg && img_seuilRogne(i, Hg)) { tHg = true;	Hgi = i; }
+			if (!tBd && img_seuilRogne(img_seuilRogne.lireHauteur() - 1 - i, Bd)) { tBd = true;	Bdi = img_seuilRogne.lireHauteur() - 1 - i; }
+			if (!tBg && img_seuilRogne(img_seuilRogne.lireHauteur() - 1 - i, Bg)) { tBg = true;	Bgi = img_seuilRogne.lireHauteur() - 1 - i; }
+			i++;
+		}
+		int Gj = max(Gbj, Ghj);
+		int Dj = min(Dbj, Dhj);
+		int Hi = max(Hdi, Hgi);
+		int Bi = min(Bdi, Bgi);
+
+		CImageCouleur imgFinale(abs(Hi - Bi), abs(Dj - Gj));
+		for (int i = 0; i<imgFinale.lireHauteur(); i++)
+			for (int j = 0; j < imgFinale.lireLargeur(); j++) {
+				imgFinale(i, j)[0] = imgRogne(i + Hi, j + Gj)[0];
+				imgFinale(i, j)[1] = imgRogne(i + Hi, j + Gj)[1];
+				imgFinale(i, j)[2] = imgRogne(i + Hi, j + Gj)[2];
+			}
+		return imgFinale;
+	}
+
+	return imgRogne;
 }
 
 CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece, double* score, double* score2)

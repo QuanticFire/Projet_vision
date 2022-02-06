@@ -748,18 +748,18 @@ std::vector<SIGNATURE_Ndg> CImageClasse::signatures(const CImageNdg& img, bool e
 		
 		for (int k=0;k<(int)tab.size();k++) {
 			tab[k].moyenne = 0;
-			tab[k].min = 255;
-			tab[k].max = 0;
+			tab[k].mini = 255;
+			tab[k].maxi = 0;
 			tab[k].surface = 0;
 		}
 
 		for (int i=0;i<this->lireHauteur();i++)
 			for (int j=0;j<this->lireLargeur();j++) {
 				tab[this->operator()(i,j)].moyenne += (double)img(i,j);
-				if (tab[this->operator()(i, j)].min > img(i, j))
-					tab[this->operator()(i, j)].min = img(i, j);
-				if (tab[this->operator()(i, j)].max < img(i, j))
-					tab[this->operator()(i, j)].max = img(i, j);
+				if (tab[this->operator()(i, j)].mini > img(i, j))
+					tab[this->operator()(i, j)].mini = img(i, j);
+				if (tab[this->operator()(i, j)].maxi < img(i, j))
+					tab[this->operator()(i, j)].maxi = img(i, j);
 				tab[this->operator()(i,j)].surface += 1;
 				}
 
@@ -777,7 +777,7 @@ std::vector<SIGNATURE_Ndg> CImageClasse::signatures(const CImageNdg& img, bool e
 			else {
 				f << "Objet; Surface; Min; Max; Moyenne_Ndg " << std::endl;
 				for (int k=0;k<(int)tab.size();k++)
-					f << k << ";" << tab[k].surface << " ; " << tab[k].min << " ; " << tab[k].max << " ; " << tab[k].moyenne << std::endl;
+					f << k << ";" << tab[k].surface << " ; " << tab[k].mini << " ; " << tab[k].maxi << " ; " << tab[k].moyenne << std::endl;
 			}
 			f.close();
 		}
@@ -896,6 +896,56 @@ CImageCouleur CImageClasse::affichage(const std::vector<SIGNATURE_Couleur>& tab,
 			out(i)[1] = (int)tab[this->operator()(i)].moyenne[1];
 			out(i)[2] = (int)tab[this->operator()(i)].moyenne[2];
 		}
+	}
+
+	return out;
+}
+
+CImageCouleur CImageClasse::affichageMoyenne(const CImageCouleur & img, bool fondAPart)
+{
+	CImageCouleur out(this->lireHauteur(), this->lireLargeur(), 0, 0, 0);
+	out.ecrireNom(this->lireNom() + "_Moyenne");
+
+	std::vector<SIGNATURE_Couleur> tab = this->signatures(img, false);
+
+
+	if (!fondAPart) {
+		for (int i = 0; i < this->lireNbPixels(); i++) {
+			out(i)[0] = (int)tab[this->operator()(i)].moyenne[0];
+			out(i)[1] = (int)tab[this->operator()(i)].moyenne[1];
+			out(i)[2] = (int)tab[this->operator()(i)].moyenne[2];
+		}
+	}
+	else {
+		for (int i = 0; i < this->lireNbPixels(); i++)
+			if (this->operator()(i))
+			{
+				out(i)[0] = (int)tab[this->operator()(i)].moyenne[0];
+				out(i)[1] = (int)tab[this->operator()(i)].moyenne[1];
+				out(i)[2] = (int)tab[this->operator()(i)].moyenne[2];
+			}
+	}
+
+	return out;
+}
+
+CImageNdg CImageClasse::affichageMoyenne(const CImageNdg & img, bool fondAPart)
+{
+	CImageNdg out(this->lireHauteur(), this->lireLargeur(), 0);
+	out.choixPalette("grise");
+	out.ecrireNom(this->lireNom() + "_Moyenne");
+
+	std::vector<SIGNATURE_Ndg> tab = this->signatures(img, false);
+
+	if (!fondAPart) {
+		for (int i = 0; i < this->lireNbPixels(); i++)
+			out(i) = (int)tab[this->operator()(i)].moyenne;
+
+	}
+	else {
+		for (int i = 0; i < this->lireNbPixels(); i++)
+			if (this->operator()(i))
+				out(i) = (int)tab[this->operator()(i)].moyenne;
 	}
 
 	return out;
@@ -1250,6 +1300,279 @@ std::vector<SIGNATURE_Forme> CImageClasse::signatures(bool enregistrementCSV) {
 				f << "Objet; CG_i; CG_j; Surface; codeFreeman ; RE_Hi ; RE_Hj ; RE_Bi ; RE_Bj ; perimetre" << std::endl;
 				for (int k=0;k<(int)tab.size();k++)
 					f << k << ";" << tab[k].centreGravite_i << ";" << tab[k].centreGravite_j << ";" << tab[k].surface << ";" << tab[k].codeFreeman << " ; " << tab[k].rectEnglob_Hi << " ; " << tab[k].rectEnglob_Hj << " ; " << tab[k].rectEnglob_Bi << " ; " << tab[k].rectEnglob_Bj << " ; " << tab[k].perimetre << std::endl;
+			}
+			f.close();
+		}
+	}
+
+	return tab;
+}
+
+std::vector<SIGNATURE_Forme_VP> CImageClasse::sigVP(bool enregistrementCSV) {
+
+	std::vector<SIGNATURE_Forme_VP> tab;
+
+	if (this->lireNbRegions() > 0) {
+		tab.resize(this->lireNbRegions() + 1); // gestion de l'"objet" fond
+
+		for (int k = 0; k<(int)tab.size(); k++) {
+			tab[k].centreGravite_i = 0;
+			tab[k].centreGravite_j = 0;
+			tab[k].surface = 0;
+			tab[k].premierPt_i = -1;
+			tab[k].premierPt_j = -1;
+			tab[k].codeFreeman = "";
+			tab[k].perimetre = 0;
+			tab[k].rectEnglob_Bi = 0;
+			tab[k].rectEnglob_Bj = 0;
+			tab[k].rectEnglob_Hi = this->lireHauteur() - 1;
+			tab[k].rectEnglob_Hj = this->lireLargeur() - 1;
+		}
+
+		for (int i = 0; i<this->lireHauteur(); i++)
+			for (int j = 0; j<this->lireLargeur(); j++) {
+				tab[this->operator()(i, j)].centreGravite_i += i;
+				tab[this->operator()(i, j)].centreGravite_j += j;
+				tab[this->operator()(i, j)].surface += 1;
+				if (tab[this->operator()(i, j)].premierPt_i == -1)
+					tab[this->operator()(i, j)].premierPt_i = i;
+				if (tab[this->operator()(i, j)].premierPt_j == -1)
+					tab[this->operator()(i, j)].premierPt_j = j;
+				tab[this->operator()(i, j)].rectEnglob_Bi = max(tab[this->operator()(i, j)].rectEnglob_Bi, i);
+				tab[this->operator()(i, j)].rectEnglob_Bj = max(tab[this->operator()(i, j)].rectEnglob_Bj, j);
+				tab[this->operator()(i, j)].rectEnglob_Hi = min(tab[this->operator()(i, j)].rectEnglob_Hi, i);
+				tab[this->operator()(i, j)].rectEnglob_Hj = min(tab[this->operator()(i, j)].rectEnglob_Hj, j);
+			}
+
+		for (int k = 0; k<(int)tab.size(); k++)
+			if (tab[k].surface > 0) {
+				tab[k].centreGravite_i /= tab[k].surface;
+				tab[k].centreGravite_j /= tab[k].surface;
+			}
+
+
+		CImageClasse agrandie(this->lireHauteur() + 2, this->lireLargeur() + 2); // bords à 0 pour bonne gestion des contours des objets
+		agrandie.ecrireNbRegions(this->lireNbRegions());
+		CImageClasse copie(this->lireHauteur(), this->lireLargeur());
+		copie.ecrireNbRegions(this->lireNbRegions());
+
+		// presence objets/bord ou ND
+		std::vector<unsigned long> surface;
+		surface.resize(this->lireNbRegions() + 1, 0);
+
+		for (int i = 0; i<this->lireNbPixels(); i++)
+			surface[this->operator()(i)] += 1;
+
+		// gestion du coeur
+		for (int i = 0; i<this->lireHauteur(); i++)
+			for (int j = 0; j<this->lireLargeur(); j++) {
+				agrandie(i + 1, j + 1) = this->operator()(i, j);
+				copie(i, j) = this->operator()(i, j);
+			}
+
+		if (surface[0] > 0) { // cas objets/fond  
+			for (int i = 1; i<agrandie.lireHauteur() - 1; i++)
+				for (int j = 1; j<agrandie.lireLargeur() - 1; j++)
+					if (this->operator()(i - 1, j - 1) != 0) {
+						int minH = min(agrandie(i, j - 1), agrandie(i, j + 1));
+						int minV = min(agrandie(i - 1, j), agrandie(i + 1, j));
+						int minV4 = min(minH, minV);
+						copie(i - 1, j - 1) = minV4;
+					}
+
+			for (int pix = 0; pix<lireNbPixels(); pix++)
+				copie(pix) = this->operator()(pix) - copie(pix);
+		}
+		else { // cas ND
+			for (int i = 1; i<agrandie.lireHauteur() - 1; i++)
+				for (int j = 1; j<agrandie.lireLargeur() - 1; j++) {
+					int minH = min(agrandie(i, j - 1), agrandie(i, j + 1));
+					int maxH = max(agrandie(i, j - 1), agrandie(i, j + 1));
+					int minV = min(agrandie(i - 1, j), agrandie(i + 1, j));
+					int maxV = max(agrandie(i - 1, j), agrandie(i + 1, j));
+					int minV4 = min(minH, minV);
+					int maxV4 = max(maxH, maxV);
+					if (!((agrandie(i, j) == minV4) && (agrandie(i, j) == maxV4))) // pixel différent de ses voisins
+						copie(i - 1, j - 1) = 0;
+				}
+
+			for (int pix = 0; pix<lireNbPixels(); pix++)
+				copie(pix) = this->operator()(pix) - copie(pix);
+		}
+		// 	copie -> image des bords intérieurs des objets
+
+		// parcours dans sens jusqu'à rejoindre point initial ou "stabilisation" au même point
+		// vigilance -> adapté sur contours normaux, sans "barbules" par exemple
+
+		for (int num = 1; num <= this->lireNbRegions(); num++) {
+			int pIniti = tab[num].premierPt_i;
+			int pInitj = tab[num].premierPt_j;
+
+			int pi = pIniti;
+			int pj = pInitj;
+
+			bool retour = false;
+
+			while (!retour) {
+
+				int pi_encours = pi;
+				int pj_encours = pj;
+
+				if ((pj != copie.lireLargeur() - 1) && (copie(pi, pj + 1) == num)) {
+					tab[num].codeFreeman += "0";
+					copie(pi, pj + 1) = 0;
+					pj = pj + 1;
+				}
+				else
+					if ((pi != copie.lireHauteur() - 1) && (pj != copie.lireLargeur() - 1) && (copie(pi + 1, pj + 1) == num)) {
+						tab[num].codeFreeman += "7";
+						copie(pi + 1, pj + 1) = 0;
+						pi = pi + 1;
+						pj = pj + 1;
+					}
+					else
+						if ((pi != copie.lireHauteur() - 1) && (copie(pi + 1, pj) == num)) {
+							tab[num].codeFreeman += "6";
+							copie(pi + 1, pj) = 0;
+							pi = pi + 1;
+						}
+						else
+							if ((pi != copie.lireHauteur() - 1) && (pj != 0) && (copie(pi + 1, pj - 1) == num)) {
+								tab[num].codeFreeman += "5";
+								copie(pi + 1, pj - 1) = 0;
+								pi = pi + 1;
+								pj = pj - 1;
+							}
+							else
+								if ((pj != 0) && (copie(pi, pj - 1) == num)) {
+									tab[num].codeFreeman += "4";
+									copie(pi, pj - 1) = 0;
+									pj = pj - 1;
+								}
+								else
+									if ((pi != 0) && (pj != 0) && (copie(pi - 1, pj - 1) == num)) {
+										tab[num].codeFreeman += "3";
+										copie(pi - 1, pj - 1) = 0;
+										pi = pi - 1;
+										pj = pj - 1;
+									}
+									else
+										if ((pi != 0) && (copie(pi - 1, pj) == num)) {
+											tab[num].codeFreeman += "2";
+											copie(pi - 1, pj) = 0;
+											pi = pi - 1;
+										}
+										else
+											if ((pi != 0) && (pj != copie.lireLargeur() - 1) && (copie(pi - 1, pj + 1) == num)) {
+												tab[num].codeFreeman += "1";
+												copie(pi - 1, pj + 1) = 0;
+												pi = pi - 1;
+												pj = pj + 1;
+											}
+
+				if ((((pi == pIniti) && (pj == pInitj))) || ((pi == pi_encours) && (pj == pj_encours)))
+					retour = true;
+			}
+		}
+
+		// calcul du périmètre
+
+		for (int num = 1; num <= this->lireNbRegions(); num++) {
+			for (int code = 0; code<(int)tab[num].codeFreeman.size(); code++) {
+				if ((tab[num].codeFreeman[code] == '0') || (tab[num].codeFreeman[code] == '2') || (tab[num].codeFreeman[code] == '4') || (tab[num].codeFreeman[code] == '6'))
+					tab[num].perimetre += 1;
+				else
+					tab[num].perimetre += (float)sqrt(2);
+			}
+		}
+
+
+		// ACP
+
+		for (int num = 1; num <= this->lireNbRegions(); num++) { // optimisable sans souci avec un seul parcours plutôt que num
+			double somme_x, somme_y, somme_x2, somme_y2, somme_xy, n;
+
+			double *x = (double*)calloc(tab[num].surface, sizeof(double));
+			double *y = (double*)calloc(tab[num].surface, sizeof(double));
+			int nb = 0;
+
+			somme_x = 0.;
+			somme_y = 0.;
+			somme_x2 = 0.;
+			somme_y2 = 0.;
+			somme_xy = 0.;
+			n = 0;
+
+			for (int i = 0; i < this->lireHauteur(); i++)
+				for (int j = 0; j < this->lireLargeur(); j++)
+					if (this->operator()(i, j) == num) {
+						x[nb] = i;
+						y[nb] = j;
+						somme_x += x[nb];
+						somme_y += y[nb];
+						somme_x2 += x[nb] * x[nb];
+						somme_y2 += y[nb] * y[nb];
+						somme_xy += x[nb] * y[nb];
+						nb += 1;
+						n += 1;
+					}
+
+			somme_x /= n;
+			somme_y /= n;
+			somme_x2 /= n;
+			somme_y2 /= n;
+			somme_xy /= n;
+
+			double COVxx = somme_x2 - somme_x*somme_x;
+			double COVyy = somme_y2 - somme_y*somme_y;
+			double COVxy = somme_xy - somme_x*somme_y;
+
+			// matrice de covariance 
+			// | a b |   | COVxx COVxy |
+			// | c d | = | COVxy COVyy |
+			double a = COVxx, b = COVxy, c = COVxy, d = COVyy;
+
+			double T = a + d;
+			double Det = a*d - b*c;
+
+			// valeurs propres L1,L2 = racines du polynôme caractéristique
+			double sqrtt = std::sqrt(T*T - 4 * Det);
+			double L1 = 0.5 * (T + sqrtt);
+			double L2 = 0.5 * (T - sqrtt);
+
+			// vecteurs propres => A.v = L.v, soit: 
+			// (a-L).vx +     b.vy = 0
+			//     c.vx + (d-L).vy = 0
+			double V1x, V1y, V2x, V2y, EPSILON = 1E-8;
+			if (std::abs(b) < EPSILON && std::abs(c) < EPSILON) {
+				V1x = 1.0; V1y = 0.0;
+				V2x = 0.0; V2y = 1.0;
+			}
+			else {
+				V1x = b; V1y = L1 - a;
+				V2x = b; V2y = L2 - a;
+			}
+
+			// signatures ACP
+			tab[num].V1x = V1x;
+			tab[num].V1y = V1y;
+			tab[num].V2x = V2x;
+			tab[num].V2y = V2y;
+			tab[num].lambda1 = L1;
+			tab[num].lambda2 = L2;
+		}
+
+		// enregistrement
+		if (enregistrementCSV) {
+			std::string fichier = "res/" + this->lireNom() + "_SForme.csv";
+			std::ofstream f(fichier.c_str());
+
+			if (!f.is_open())
+				std::cout << "Impossible d'ouvrir le fichier en ecriture !" << std::endl;
+			else {
+				f << "Objet; CG_i; CG_j; Surface; codeFreeman ; RE_Hi ; RE_Hj ; RE_Bi ; RE_Bj ; perimetre ; valP1; valP2 " << std::endl;
+				for (int k = 1; k < (int)tab.size(); k++)
+					f << k << ";" << tab[k].centreGravite_i << ";" << tab[k].centreGravite_j << ";" << tab[k].surface << ";" << tab[k].codeFreeman << " ; " << tab[k].rectEnglob_Hi << " ; " << tab[k].rectEnglob_Hj << " ; " << tab[k].rectEnglob_Bi << " ; " << tab[k].rectEnglob_Bj << " ; " << tab[k].perimetre << " ; " << tab[k].lambda1 << " ; " << tab[k].lambda2 << std::endl;
 			}
 			f.close();
 		}

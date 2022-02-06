@@ -189,7 +189,7 @@ class CImageNdg {
 		_declspec(dllexport) MOMENTS signatures(const std::vector<unsigned long>& h);
 		_declspec(dllexport) MOMENTS signatures();
 
-		// opérations ensemblistes pour images binaires
+		// opérations ensemblistes pour images binaires "et" / "ou" / "-"
 		_declspec(dllexport) CImageNdg operation(const CImageNdg& im, const std::string& methode = "et"); // choix  "et" / "ou"
 
 		// seuillage
@@ -199,14 +199,20 @@ class CImageNdg {
 		_declspec(dllexport) CImageNdg transformation(const std::string& methode = "complement", int vMinOut = 0, int vMaxOut = 255); // choix "complement" / "expansion" / "egalisation"
 		// sortie sur [vMinOut,vMaxOut] pour expansion notamment
 
-		// morphologie
+		// morphologie "erosion" ou "dilatation"
 		_declspec(dllexport) CImageNdg morphologie(const std::string& methode = "erosion", const std::string& eltStructurant = "V8"); // choix "erosion" / "dilatation", "V8"/"V4"
 
-		// filtrage
+		// bouchage des trous dans les objets
+		_declspec(dllexport) CImageNdg bouchageTrous();
+
+		// filtrage "moyennage" / "gaussien"
 		_declspec(dllexport) CImageNdg filtrage(const std::string& methode = "moyennage", int Ni = 3, int Nj = 3); // choix "moyennage" / "median"
 
-		_declspec(dllexport) CImageNdg rotation(float angle, const std::string & taille);
+		// rotation d'une image ndg
+		_declspec(dllexport) CImageNdg rotation(float angle, const std::string & taille = "idem");
 
+		// renvoie de l'image rognée en Ndg selon un unique élément structurant
+		_declspec(dllexport) CImageNdg rognageSigComposante(const std::string & methode, int seuilBas, int seuilHaut);
 };
 
 #endif 
