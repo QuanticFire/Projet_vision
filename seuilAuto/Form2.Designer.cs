@@ -253,7 +253,7 @@
             this.groupBox2.Controls.Add(this.panelRogne);
             this.groupBox2.Location = new System.Drawing.Point(634, 42);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(807, 892);
+            this.groupBox2.Size = new System.Drawing.Size(827, 892);
             this.groupBox2.TabIndex = 32;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Sorties";
@@ -281,7 +281,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1458, 949);
+            this.ClientSize = new System.Drawing.Size(1473, 949);
             this.Controls.Add(this.bSeuillageAuto);
             this.Controls.Add(this.labelScore2);
             this.Controls.Add(this.label2);
