@@ -268,7 +268,7 @@ void ClibTraitement::TraitementRognage(int nbChamps, byte * data, int stride, in
 	}
 
 	CImageCouleur piece_rognee = piece2.rognageSigComposante("manuel", 80, 255, 2, "HSV");
-
+	
 
 	/*********************************************************************************************************************
 
@@ -326,15 +326,25 @@ void ClibTraitement::TraitementRognage(int nbChamps, byte * data, int stride, in
 		pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
 	}
 
-	
+	pixPtr_p2 = (byte*)data_p;
+	for (int y = 0; y < nbLig_p; y++)
+	{
+		for (int x = 0; x < nbCol_p; x++)
+		{
+			pixPtr_p2[3 * x + 2] = piece2(y, x)[0];
+			pixPtr_p2[3 * x + 1] = piece2(y, x)[1];
+			pixPtr_p2[3 * x] = piece2(y, x)[2];
+		}
+		pixPtr_p2 += stride_p;
+	}
 	
 }
 
 int * ClibTraitement::props(byte * data)
 {
 	int* pProps = new int[3];
-	pProps[0] = this->imgData()->lireHauteur;
-	pProps[1] = this->imgData()->lireLargeur;
+	pProps[0] = this->imgData()->lireHauteur();
+	pProps[1] = this->imgData()->lireLargeur();
 	pProps[2] = 3;//stride par défaut
 
 	byte* pixPtr = (byte*)data;
@@ -343,8 +353,8 @@ int * ClibTraitement::props(byte * data)
 		for (int x = 0; x < pProps[1]; x++)	//rvb
 		{
 			pixPtr[3 * x + 2] = this->imgData()->operator()(y, x)[0];
-			pixPtr[3 * x + 1] = this->imgData()->operator()[1];
-			pixPtr[3 * x] = this->imgData()->operator()[2];
+			pixPtr[3 * x + 1] = this->imgData()->operator()(y, x)[1];
+			pixPtr[3 * x] = this->imgData()->operator()(y, x)[2];
 		}
 		pixPtr += pProps[2]; // largeur une seule ligne gestion multiple 32 bits
 	}

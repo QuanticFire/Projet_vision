@@ -110,6 +110,8 @@ namespace seuilAuto
                 double coord_y = Img.objetLibValeurChamp(0);
                 MessageBox.Show(coord_x.ToString() + " " + coord_y.ToString());
 
+                
+
                 // Coordonnées temporaires de détection pour implémentation de l'affichage sur l'interface de la coordonnée détectée
                 //double coord_x = 1000;
                 //double coord_y = 1000;
