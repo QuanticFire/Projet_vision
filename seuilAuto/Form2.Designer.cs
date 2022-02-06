@@ -45,6 +45,10 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panelRogne = new System.Windows.Forms.Panel();
             this.pbRogne = new System.Windows.Forms.PictureBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -53,15 +57,17 @@
             this.panel2.SuspendLayout();
             this.panelRogne.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRogne)).BeginInit();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // butForm1
             // 
             this.butForm1.Location = new System.Drawing.Point(-1, 0);
             this.butForm1.Name = "butForm1";
-            this.butForm1.Size = new System.Drawing.Size(141, 23);
+            this.butForm1.Size = new System.Drawing.Size(221, 23);
             this.butForm1.TabIndex = 0;
-            this.butForm1.Text = "Traitement image rognées";
+            this.butForm1.Text = "Retour vers traitement image non rognées";
             this.butForm1.UseVisualStyleBackColor = true;
             this.butForm1.Click += new System.EventHandler(this.butForm1_Click);
             // 
@@ -87,14 +93,14 @@
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.imageDepart);
-            this.panel1.Location = new System.Drawing.Point(74, 57);
+            this.panel1.Location = new System.Drawing.Point(154, 43);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(270, 350);
             this.panel1.TabIndex = 19;
             // 
             // buttonOuvrir
             // 
-            this.buttonOuvrir.Location = new System.Drawing.Point(128, 413);
+            this.buttonOuvrir.Location = new System.Drawing.Point(213, 399);
             this.buttonOuvrir.Name = "buttonOuvrir";
             this.buttonOuvrir.Size = new System.Drawing.Size(144, 35);
             this.buttonOuvrir.TabIndex = 17;
@@ -104,9 +110,9 @@
             // 
             // button_puzzle
             // 
-            this.button_puzzle.Location = new System.Drawing.Point(189, 880);
+            this.button_puzzle.Location = new System.Drawing.Point(213, 846);
             this.button_puzzle.Name = "button_puzzle";
-            this.button_puzzle.Size = new System.Drawing.Size(181, 40);
+            this.button_puzzle.Size = new System.Drawing.Size(144, 40);
             this.button_puzzle.TabIndex = 23;
             this.button_puzzle.Text = "Ouvrir puzzle";
             this.button_puzzle.UseVisualStyleBackColor = true;
@@ -116,7 +122,7 @@
             // 
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(36, 474);
+            this.pictureBox2.Location = new System.Drawing.Point(18, 440);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(556, 400);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -125,9 +131,9 @@
             // 
             // bSeuillageAuto
             // 
-            this.bSeuillageAuto.Location = new System.Drawing.Point(497, 163);
+            this.bSeuillageAuto.Location = new System.Drawing.Point(564, 148);
             this.bSeuillageAuto.Name = "bSeuillageAuto";
-            this.bSeuillageAuto.Size = new System.Drawing.Size(95, 75);
+            this.bSeuillageAuto.Size = new System.Drawing.Size(136, 75);
             this.bSeuillageAuto.TabIndex = 21;
             this.bSeuillageAuto.Text = "Go";
             this.bSeuillageAuto.UseVisualStyleBackColor = true;
@@ -136,7 +142,7 @@
             // labelScore2
             // 
             this.labelScore2.AutoSize = true;
-            this.labelScore2.Location = new System.Drawing.Point(1342, 579);
+            this.labelScore2.Location = new System.Drawing.Point(1416, 553);
             this.labelScore2.Name = "labelScore2";
             this.labelScore2.Size = new System.Drawing.Size(0, 13);
             this.labelScore2.TabIndex = 28;
@@ -145,7 +151,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.label2.Location = new System.Drawing.Point(1180, 579);
+            this.label2.Location = new System.Drawing.Point(1254, 553);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(158, 13);
             this.label2.TabIndex = 27;
@@ -155,7 +161,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.Green;
-            this.label1.Location = new System.Drawing.Point(1179, 549);
+            this.label1.Location = new System.Drawing.Point(1253, 523);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(127, 13);
             this.label1.TabIndex = 26;
@@ -164,7 +170,7 @@
             // labelScore
             // 
             this.labelScore.AutoSize = true;
-            this.labelScore.Location = new System.Drawing.Point(1310, 551);
+            this.labelScore.Location = new System.Drawing.Point(1384, 525);
             this.labelScore.Name = "labelScore";
             this.labelScore.Size = new System.Drawing.Size(0, 13);
             this.labelScore.TabIndex = 25;
@@ -172,12 +178,14 @@
             // imageSeuillee
             // 
             this.imageSeuillee.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.imageSeuillee.Location = new System.Drawing.Point(617, 474);
+            this.imageSeuillee.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.imageSeuillee.Location = new System.Drawing.Point(0, 0);
             this.imageSeuillee.Name = "imageSeuillee";
             this.imageSeuillee.Size = new System.Drawing.Size(556, 400);
             this.imageSeuillee.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imageSeuillee.TabIndex = 18;
             this.imageSeuillee.TabStop = false;
+            this.imageSeuillee.Click += new System.EventHandler(this.imageSeuillee_Click);
             // 
             // pictureBox1
             // 
@@ -193,8 +201,9 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.imageSeuillee);
             this.panel2.Controls.Add(this.pictureBox1);
-            this.panel2.Location = new System.Drawing.Point(617, 474);
+            this.panel2.Location = new System.Drawing.Point(57, 440);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(556, 400);
             this.panel2.TabIndex = 20;
@@ -203,7 +212,7 @@
             // 
             this.panelRogne.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelRogne.Controls.Add(this.pbRogne);
-            this.panelRogne.Location = new System.Drawing.Point(715, 57);
+            this.panelRogne.Location = new System.Drawing.Point(194, 44);
             this.panelRogne.Name = "panelRogne";
             this.panelRogne.Size = new System.Drawing.Size(270, 350);
             this.panelRogne.TabIndex = 30;
@@ -220,25 +229,67 @@
             this.pbRogne.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRogne.TabIndex = 0;
             this.pbRogne.TabStop = false;
+            this.pbRogne.Click += new System.EventHandler(this.pbRogne_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.button_puzzle);
+            this.groupBox1.Controls.Add(this.buttonOuvrir);
+            this.groupBox1.Controls.Add(this.panel1);
+            this.groupBox1.Controls.Add(this.pictureBox2);
+            this.groupBox1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.groupBox1.Location = new System.Drawing.Point(13, 42);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(615, 892);
+            this.groupBox1.TabIndex = 31;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Entrées";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.panel2);
+            this.groupBox2.Controls.Add(this.panelRogne);
+            this.groupBox2.Location = new System.Drawing.Point(634, 42);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(807, 892);
+            this.groupBox2.TabIndex = 32;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Sorties";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(274, 28);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(112, 13);
+            this.label3.TabIndex = 31;
+            this.label3.Text = "Rognage automatique";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(301, 421);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(71, 13);
+            this.label4.TabIndex = 32;
+            this.label4.Text = "Image verdict";
             // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1420, 959);
-            this.Controls.Add(this.panelRogne);
-            this.Controls.Add(this.imageSeuillee);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.buttonOuvrir);
-            this.Controls.Add(this.button_puzzle);
-            this.Controls.Add(this.pictureBox2);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(1458, 949);
             this.Controls.Add(this.bSeuillageAuto);
             this.Controls.Add(this.labelScore2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.labelScore);
             this.Controls.Add(this.butForm1);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.groupBox2);
             this.Name = "Form2";
             this.Text = "Form2";
             this.Load += new System.EventHandler(this.Form2_Load);
@@ -250,6 +301,9 @@
             this.panel2.ResumeLayout(false);
             this.panelRogne.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbRogne)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -274,5 +328,9 @@
         private System.Windows.Forms.Panel panelRogne;
         private System.Windows.Forms.PictureBox pbRogne;
         public System.Windows.Forms.PictureBox imageDepart;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
     }
 }

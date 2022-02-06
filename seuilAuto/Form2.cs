@@ -171,5 +171,14 @@ namespace seuilAuto
 
         }
 
+        private void imageSeuillee_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pbRogne_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
