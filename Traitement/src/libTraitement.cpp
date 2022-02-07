@@ -94,6 +94,9 @@ ClibTraitement::ClibTraitement(int nbChamps, byte* data, int stride, int nbLig, 
 
 ClibTraitement::ClibTraitement(byte* datain, int stride, int nbLig, int nbCol, int seuilB, int seuilH) {
 
+	this->nbDataImg = 0;
+	this->dataFromImg.resize(0);
+
 	CImageCouleur in(nbLig, nbCol);
 
 	// byte* data est la donnée des images
@@ -392,9 +395,9 @@ void ClibTraitement::TraitementRognage(int nbChamps, byte * data, int stride, in
 	
 }
 
-byte* ClibTraitement::copydata()
+void ClibTraitement::copydata(byte* data, int stride)
 {
-	byte* pixPtr = new byte[this->imgData()->lireHauteur()*this->imgData()->lireLargeur()*3];
+	byte* pixPtr = (byte*)data;
 	for (int y = 0; y < this->imgData()->lireHauteur(); y++)
 	{
 		for (int x = 0; x < this->imgData()->lireLargeur(); x++)	//rvb
@@ -403,9 +406,8 @@ byte* ClibTraitement::copydata()
 			pixPtr[3 * x + 1] = this->imgData()->operator()(y, x)[1];
 			pixPtr[3 * x] = this->imgData()->operator()(y, x)[2];
 		}
-		pixPtr += 3; // largeur une seule ligne gestion multiple 32 bits
+		pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
 	}
-	return pixPtr;
 }
 
 void ClibTraitement::TraitementMatching(byte * data, int stride, int nbLig, int nbCol, byte * data_p, int stride_p, int nbLig_p, int nbCol_p)
