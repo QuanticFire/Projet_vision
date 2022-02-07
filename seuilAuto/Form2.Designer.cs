@@ -49,6 +49,8 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.gbTraitement = new System.Windows.Forms.GroupBox();
+            this.dudTraitSel = new System.Windows.Forms.DomainUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -59,6 +61,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbRogne)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.gbTraitement.SuspendLayout();
             this.SuspendLayout();
             // 
             // butForm1
@@ -93,14 +96,14 @@
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.imageDepart);
-            this.panel1.Location = new System.Drawing.Point(154, 43);
+            this.panel1.Location = new System.Drawing.Point(18, 28);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(270, 350);
             this.panel1.TabIndex = 19;
             // 
             // buttonOuvrir
             // 
-            this.buttonOuvrir.Location = new System.Drawing.Point(213, 399);
+            this.buttonOuvrir.Location = new System.Drawing.Point(73, 384);
             this.buttonOuvrir.Name = "buttonOuvrir";
             this.buttonOuvrir.Size = new System.Drawing.Size(144, 35);
             this.buttonOuvrir.TabIndex = 17;
@@ -131,9 +134,9 @@
             // 
             // bSeuillageAuto
             // 
-            this.bSeuillageAuto.Location = new System.Drawing.Point(564, 148);
+            this.bSeuillageAuto.Location = new System.Drawing.Point(587, 148);
             this.bSeuillageAuto.Name = "bSeuillageAuto";
-            this.bSeuillageAuto.Size = new System.Drawing.Size(136, 75);
+            this.bSeuillageAuto.Size = new System.Drawing.Size(90, 75);
             this.bSeuillageAuto.TabIndex = 21;
             this.bSeuillageAuto.Text = "Go";
             this.bSeuillageAuto.UseVisualStyleBackColor = true;
@@ -212,7 +215,7 @@
             // 
             this.panelRogne.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelRogne.Controls.Add(this.pbRogne);
-            this.panelRogne.Location = new System.Drawing.Point(194, 44);
+            this.panelRogne.Location = new System.Drawing.Point(201, 44);
             this.panelRogne.Name = "panelRogne";
             this.panelRogne.Size = new System.Drawing.Size(270, 350);
             this.panelRogne.TabIndex = 30;
@@ -226,13 +229,14 @@
             this.pbRogne.Location = new System.Drawing.Point(0, 0);
             this.pbRogne.Name = "pbRogne";
             this.pbRogne.Size = new System.Drawing.Size(268, 348);
-            this.pbRogne.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbRogne.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbRogne.TabIndex = 0;
             this.pbRogne.TabStop = false;
             this.pbRogne.Click += new System.EventHandler(this.pbRogne_Click);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.gbTraitement);
             this.groupBox1.Controls.Add(this.button_puzzle);
             this.groupBox1.Controls.Add(this.buttonOuvrir);
             this.groupBox1.Controls.Add(this.panel1);
@@ -261,7 +265,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(274, 28);
+            this.label3.Location = new System.Drawing.Point(281, 28);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(112, 13);
             this.label3.TabIndex = 31;
@@ -275,6 +279,26 @@
             this.label4.Size = new System.Drawing.Size(71, 13);
             this.label4.TabIndex = 32;
             this.label4.Text = "Image verdict";
+            // 
+            // gbTraitement
+            // 
+            this.gbTraitement.Controls.Add(this.dudTraitSel);
+            this.gbTraitement.Location = new System.Drawing.Point(316, 106);
+            this.gbTraitement.Name = "gbTraitement";
+            this.gbTraitement.Size = new System.Drawing.Size(173, 75);
+            this.gbTraitement.TabIndex = 24;
+            this.gbTraitement.TabStop = false;
+            this.gbTraitement.Text = "Type de traitement";
+            // 
+            // dudTraitSel
+            // 
+            this.dudTraitSel.Items.Add("Sans rotation");
+            this.dudTraitSel.Items.Add("Avec rotation");
+            this.dudTraitSel.Location = new System.Drawing.Point(6, 32);
+            this.dudTraitSel.Name = "dudTraitSel";
+            this.dudTraitSel.Size = new System.Drawing.Size(128, 20);
+            this.dudTraitSel.TabIndex = 10;
+            this.dudTraitSel.Text = "(Selection Traitement)";
             // 
             // Form2
             // 
@@ -304,6 +328,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.gbTraitement.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -332,5 +357,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.GroupBox gbTraitement;
+        private System.Windows.Forms.DomainUpDown dudTraitSel;
     }
 }

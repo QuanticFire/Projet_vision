@@ -48,6 +48,10 @@
             this.butForm2 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.panelOrientation = new System.Windows.Forms.Panel();
+            this.pbOrientation = new System.Windows.Forms.PictureBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -57,6 +61,8 @@
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.panelOrientation.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbOrientation)).BeginInit();
             this.SuspendLayout();
             // 
             // ouvrirImage
@@ -102,7 +108,7 @@
             // 
             this.panel2.Controls.Add(this.pictureBox1);
             this.panel2.Controls.Add(this.imageSeuillee);
-            this.panel2.Location = new System.Drawing.Point(72, 65);
+            this.panel2.Location = new System.Drawing.Point(54, 428);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(556, 400);
             this.panel2.TabIndex = 3;
@@ -175,9 +181,9 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.dudTraitSel);
-            this.groupBox1.Location = new System.Drawing.Point(337, 173);
+            this.groupBox1.Location = new System.Drawing.Point(337, 176);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(173, 71);
+            this.groupBox1.Size = new System.Drawing.Size(173, 75);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Type de traitement";
@@ -185,7 +191,7 @@
             // labelScore
             // 
             this.labelScore.AutoSize = true;
-            this.labelScore.Location = new System.Drawing.Point(366, 485);
+            this.labelScore.Location = new System.Drawing.Point(380, 836);
             this.labelScore.Name = "labelScore";
             this.labelScore.Size = new System.Drawing.Size(0, 13);
             this.labelScore.TabIndex = 13;
@@ -195,7 +201,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.Green;
-            this.label1.Location = new System.Drawing.Point(235, 483);
+            this.label1.Location = new System.Drawing.Point(249, 834);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(127, 13);
             this.label1.TabIndex = 14;
@@ -205,7 +211,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.label2.Location = new System.Drawing.Point(236, 513);
+            this.label2.Location = new System.Drawing.Point(250, 864);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(158, 13);
             this.label2.TabIndex = 15;
@@ -214,7 +220,7 @@
             // labelScore2
             // 
             this.labelScore2.AutoSize = true;
-            this.labelScore2.Location = new System.Drawing.Point(398, 513);
+            this.labelScore2.Location = new System.Drawing.Point(412, 864);
             this.labelScore2.Name = "labelScore2";
             this.labelScore2.Size = new System.Drawing.Size(0, 13);
             this.labelScore2.TabIndex = 16;
@@ -241,6 +247,9 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label4);
+            this.groupBox3.Controls.Add(this.label3);
+            this.groupBox3.Controls.Add(this.panelOrientation);
             this.groupBox3.Controls.Add(this.panel2);
             this.groupBox3.Controls.Add(this.labelScore2);
             this.groupBox3.Controls.Add(this.label2);
@@ -248,10 +257,51 @@
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Location = new System.Drawing.Point(636, 29);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(662, 561);
+            this.groupBox3.Size = new System.Drawing.Size(662, 894);
             this.groupBox3.TabIndex = 19;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Sortie";
+            this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
+            // 
+            // panelOrientation
+            // 
+            this.panelOrientation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelOrientation.Controls.Add(this.pbOrientation);
+            this.panelOrientation.Location = new System.Drawing.Point(205, 31);
+            this.panelOrientation.Name = "panelOrientation";
+            this.panelOrientation.Size = new System.Drawing.Size(270, 350);
+            this.panelOrientation.TabIndex = 17;
+            // 
+            // pbOrientation
+            // 
+            this.pbOrientation.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pbOrientation.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pbOrientation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pbOrientation.ImageLocation = "";
+            this.pbOrientation.Location = new System.Drawing.Point(0, 0);
+            this.pbOrientation.Name = "pbOrientation";
+            this.pbOrientation.Size = new System.Drawing.Size(268, 348);
+            this.pbOrientation.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbOrientation.TabIndex = 0;
+            this.pbOrientation.TabStop = false;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(233, 15);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(212, 13);
+            this.label3.TabIndex = 19;
+            this.label3.Text = "Bonne Orientation (si algorithme de rotation)";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(304, 412);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(72, 13);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "Image Verdict";
             // 
             // Form1
             // 
@@ -281,6 +331,8 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.panelOrientation.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbOrientation)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -306,6 +358,10 @@
         private System.Windows.Forms.Button butForm2;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Panel panelOrientation;
+        private System.Windows.Forms.PictureBox pbOrientation;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
     }
 }
 

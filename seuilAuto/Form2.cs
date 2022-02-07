@@ -44,59 +44,68 @@ namespace seuilAuto
         // Fonction de détection de piece puzzle. Est éxécutée dans un thread
         private void traitement_bouton_go()
         {
-            
-            //imageSeuillee.Show();
-            //valeurSeuilAuto.Show();
-
-
-            Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
-            Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
-
-            // affectation des paramètres (a supprimer en faisant attention aux changement wrapper et dll, ne sert a rien)
-            double[] parametres = { 0 }; // = new double[parametersTextBox.Lines.Length];
-                                            //for (int i = 0; i < parametersTextBox.Lines.Length; i++)
-                                            //   parametres[i] = Convert.ToDouble(parametersTextBox.Lines[i]);
-
-            unsafe
+            if (dudTraitSel.Text == "Sans rotation")
             {
-                // Génération d'objets permettant de passer les data des images au wrapper
-                BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                //imageSeuillee.Show();
+                //valeurSeuilAuto.Show();
 
-                // Appel du wrapper pour traitement dans la dll
-                // Passage des données pour l'image puzzle de référence ET pour l'image piece
-                Img.traitementRognePtr(2, bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
 
-                // ancien commentaire : 1 champ texte retour C++, le seuil auto
-                // Traitement terminé, libération des images
-                bmp_ref_copy.UnlockBits(bmpData);
-                bmp_piece.UnlockBits(bmpData_piece);
+                Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
+                Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
+
+                // affectation des paramètres (a supprimer en faisant attention aux changement wrapper et dll, ne sert a rien)
+                double[] parametres = { 0 }; // = new double[parametersTextBox.Lines.Length];
+                                             //for (int i = 0; i < parametersTextBox.Lines.Length; i++)
+                                             //   parametres[i] = Convert.ToDouble(parametersTextBox.Lines[i]);
+
+                unsafe
+                {
+                    // Génération d'objets permettant de passer les data des images au wrapper
+                    BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                    // Appel du wrapper pour traitement dans la dll
+                    // Passage des données pour l'image puzzle de référence ET pour l'image piece
+                    Img.traitementRognePtr(2, bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
+
+                    // ancien commentaire : 1 champ texte retour C++, le seuil auto
+                    // Traitement terminé, libération des images
+                    bmp_ref_copy.UnlockBits(bmpData);
+                    bmp_piece.UnlockBits(bmpData_piece);
+                }
+
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
+                    labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
+                    labelScore.Show();
+                });
+
+                // Affichagr de l'image puzzle avec détection de pièce sur l'interface
+                imageSeuillee.Image = bmp_ref_copy;
+
+                // Traitement d'images
+                ClImage clImageRogne = new ClImage();
+                unsafe
+                {
+                    BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    clImageRogne.RognagePtr(bmpData_piece.Scan0, bmpData_piece.Stride, bmp_piece.Height, bmp_piece.Width, 80, 255);
+                    int Height = clImageRogne.getImgHauteur();
+                    int Width = clImageRogne.getImgLargeur();
+                    bmp_rogne = new Bitmap(Width, Height, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_rogne = bmp_rogne.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    clImageRogne.getImgdata(bmpData_rogne.Scan0, bmpData_rogne.Stride);
+                    bmp_rogne.UnlockBits(bmpData_rogne);
+                    bmp_piece.UnlockBits(bmpData_piece);
+                }
+                pbRogne.Image = bmp_rogne;
+                
+            }
+            else if (dudTraitSel.Text == "Avec rotation")
+            {
+                int a = 0;
             }
 
-            this.Invoke((MethodInvoker)delegate ()
-            {
-                labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
-                labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
-            });
-
-            // Affichagr de l'image puzzle avec détection de pièce sur l'interface
-            imageSeuillee.Image = bmp_ref_copy;
-
-            ClImage clImageRogne = new ClImage();
-            unsafe
-            {
-                BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                clImageRogne.RognagePtr(bmpData_piece.Scan0, bmpData_piece.Stride, bmp_piece.Height, bmp_piece.Width, 80, 255);
-                int Height = clImageRogne.getImgHauteur();
-                int Width = clImageRogne.getImgLargeur();
-                bmp_rogne = new Bitmap(Width, Height, PixelFormat.Format24bppRgb);
-                BitmapData bmpData_rogne = bmp_rogne.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                clImageRogne.getImgdata(bmpData_rogne.Scan0,bmpData_rogne.Stride);
-                bmp_rogne.UnlockBits(bmpData_rogne);
-                bmp_piece.UnlockBits(bmpData_piece);
-            }
-            pbRogne.Image = bmp_rogne;
-            
         }
 
         private void butForm1_Click(object sender, EventArgs e)
@@ -107,8 +116,9 @@ namespace seuilAuto
 
         private void buttonOuvrir_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show(System.IO.Directory.GetCurrentDirectory());
+            // On cache les scores
             labelScore.Hide();
+            labelScore2.Hide();
 
             if (ouvrirImage.ShowDialog() == DialogResult.OK)
             {
@@ -135,6 +145,7 @@ namespace seuilAuto
                     // Quand on affiche une nouvelle image, on cache l'ancienne image traitée pour garder une cohérence visuelle sur l'interface
                     //imageSeuillee.Hide();
                     imageSeuillee.Image = null;
+                    pbRogne.Image = null;
                     //valeurSeuilAuto.Hide();
                 }
                 catch
@@ -147,16 +158,18 @@ namespace seuilAuto
         private void bSeuillageAuto_Click(object sender, EventArgs e)
         {
             // Affichage de l'image d'attente. Utilisation d'un thread sinon ne fonctionne pas
-            Thread th;
-            th = new Thread(new ThreadStart(affiche_wait_image));
-            th.Start();
-
-            labelScore.Show();
+            if ((dudTraitSel.Text == "Sans rotation") || (dudTraitSel.Text == "Avec rotation"))
+            {
+                Thread th;
+                th = new Thread(new ThreadStart(affiche_wait_image));
+                th.Start();
+            }
 
             // Lancement du traitement de la piece. Lancement dans un autre thread, sinon cela plante l'interface et n'affiche pas l'image d'attente
             Thread th_trait;
             th_trait = new Thread(new ThreadStart(traitement_bouton_go));
             th_trait.Start();
+            
         }
 
         private void button_puzzle_Click(object sender, EventArgs e)

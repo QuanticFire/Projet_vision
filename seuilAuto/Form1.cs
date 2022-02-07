@@ -266,7 +266,11 @@ namespace seuilAuto
                 // Stockage des scores pour chaque orientation et les images verdict associées
                 double[] scores = new double[4] { ImgRot0.objetLibValeurChamp(0), ImgRot90.objetLibValeurChamp(0), ImgRot180.objetLibValeurChamp(0), ImgRot270.objetLibValeurChamp(0) };
                 Bitmap[] images_ref = new Bitmap[4] { bmp_ref_rot0, bmp_ref_rot90, bmp_ref_rot180, bmp_ref_rot270 };
+                Bitmap[] images_pieces = new Bitmap[4] { bmp_piece_rot0, bmp_piece_rot90, bmp_piece_rot180, bmp_piece_rot270 };
+                ClImage[] images_cl = new ClImage[4] { ImgRot0, ImgRot90, ImgRot180, ImgRot270 };
                 Bitmap verdict_final;
+                Bitmap bonne_orientation;
+                ClImage imgcl_finale;
 
                 // Recherche du max
                 double max = -1;
@@ -280,17 +284,19 @@ namespace seuilAuto
                     }
                 }
                 verdict_final = images_ref[indice_max];
+                bonne_orientation = images_pieces[indice_max];
+                imgcl_finale = images_cl[indice_max];
 
-                //this.Invoke((MethodInvoker)delegate ()
-                //{
-                //    labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
-                //    labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
-                //    labelScore.Show();
-                //    labelScore2.Show();
-                //});
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    labelScore.Text = imgcl_finale.objetLibValeurChamp(0).ToString() + " %";
+                    labelScore2.Text = imgcl_finale.objetLibValeurChamp(1).ToString() + " %";
+                    labelScore.Show();
+                    labelScore2.Show();
+                });
 
                 imageSeuillee.Image = verdict_final;
-
+                pbOrientation.Image = bonne_orientation;
             }
         }
 
@@ -325,6 +331,7 @@ namespace seuilAuto
                     // Quand on affiche une nouvelle image, on cache l'ancienne image traitée pour garder une cohérence visuelle sur l'interface
                     //imageSeuillee.Hide();
                     imageSeuillee.Image = null;
+                    pbOrientation = null;
                     labelScore.Hide();
                     labelScore2.Hide();
                     //valeurSeuilAuto.Hide();
@@ -342,10 +349,14 @@ namespace seuilAuto
             //imageSeuillee.Show();
 
             // Affichage de l'image d'attente. Utilisation d'un thread sinon ne fonctionne pas
-            Thread th;
-            th = new Thread(new ThreadStart(affiche_wait_image));
-            th.Start();
-
+            // et uniquement si mode de traitement sélectionné
+            if ((dudTraitSel.Text == "Histogramme") || (dudTraitSel.Text == "Pattern matching") || (dudTraitSel.Text == "Histo rotation"))
+            {
+                Thread th;
+                th = new Thread(new ThreadStart(affiche_wait_image));
+                th.Start();
+            }
+            
             // Lancement du traitement de la piece. Lancement dans un autre thread, sinon cela plante l'interface et n'affiche pas l'image d'attente
             Thread th_trait;
             th_trait = new Thread(new ThreadStart(traitement_bouton_go));
@@ -398,6 +409,16 @@ namespace seuilAuto
             var form2 = new Form2(this);
             form2.Show();
             this.Hide();
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
