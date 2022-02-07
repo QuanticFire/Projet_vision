@@ -24,6 +24,7 @@ namespace seuilAuto
         // Image puzzle et piece en variable globale
         Bitmap bmp_ref;
         Bitmap bmp_piece;
+        Bitmap bmp_rogne;
         ClImage Img;
 
         public Form2(Form form1)
@@ -82,14 +83,22 @@ namespace seuilAuto
             imageSeuillee.Image = bmp_ref_copy;
 
             ClImage clImageRogne = new ClImage();
-            Bitmap testRogne;
             unsafe
             {
-                BitmapData bmpImageRogne = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                testRogne = clImageRogne.imgFromClImage(bmpImageRogne.Scan0);
-                bmp_piece.UnlockBits(bmpImageRogne);
+                BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                clImageRogne.RognagePtr(bmpData_piece.Scan0, bmpData_piece.Stride, bmp_piece.Height, bmp_piece.Width, 80, 255);
+                int Height = clImageRogne.getImgHauteur();
+                int Width = clImageRogne.getImgLargeur();
+                //BitmapData bmpDataRogne = bmp_rogne.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                //testRogne = clImageRogne.imgFromClImage(bmpImageRogne.Scan0);
+                //IntPtr dataRogne = clImageRogne.getImgdata();
+                //bmp_rogne = new Bitmap(Width, Height,bmpData_piece.Stride, PixelFormat.Format24bppRgb,clImageRogne.getImgdata());
+                BitmapData bmpData_rogne = bmp_rogne.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                bmpData_rogne.Scan0 = clImageRogne.getImgdata();
+                bmp_rogne.UnlockBits(bmpData_rogne);
+                bmp_piece.UnlockBits(bmpData_piece);
             }
-            pbRogne.Image = testRogne;
+            pbRogne.Image = bmp_rogne;
             
         }
 

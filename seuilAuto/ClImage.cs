@@ -94,24 +94,43 @@ namespace Traitement
             return valeurChamp(ClPtr, i);
         }
 
+        // Appel rognage
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr Rognage(IntPtr datain, int stride, int nbLig, int nbCol, int seuilB, int seuilH);
+
+        public IntPtr RognagePtr(IntPtr datain, int stride, int nbLig, int nbCol, int seuilB, int seuilH)
+        {
+            ClPtr = Rognage(datain, stride, nbLig, nbCol, seuilB, seuilH);
+            return ClPtr;
+        }
+
         // Appel méthode propriétés, renvoie un IntPtr des différentes valeurs utiles pour recréer l'image (hauteur, largeur, stride)
 
         [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern unsafe int* proprietes(IntPtr pImg, IntPtr data);
-        public Bitmap imgFromClImage(IntPtr data)
-        {
-            int hauteur;
-            int largeur;
-            int stride;
-            unsafe
-            {
-                int* ptab = proprietes(ClPtr, data);
-                hauteur = ptab[0];
-                largeur = ptab[1];
-                stride = ptab[2];
-            }
-            Bitmap imgout = new Bitmap(largeur, hauteur, stride, System.Drawing.Imaging.PixelFormat.Format24bppRgb, data);
-            return imgout;
+        public static extern IntPtr dataFromImg(IntPtr pImg);
+
+        public IntPtr getImgdata(){
+            return dataFromImg(ClPtr);
         }
+
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int imgHauteur(IntPtr pImg);
+
+        public int getImgHauteur(){
+            return imgHauteur(ClPtr);
+        }
+
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int imgLargeur(IntPtr pImg);
+
+        public int getImgLargeur(){
+            return imgLargeur(ClPtr);
+        }
+
+        //public Bitmap imgFromClImage(IntPtr data)
+        //{
+        //    Bitmap imgout = new Bitmap(imgLargeur(ClPtr), imgHauteur(ClPtr), 3, System.Drawing.Imaging.PixelFormat.Format24bppRgb, data);
+        //    return imgout;
+        //}
     }
 }

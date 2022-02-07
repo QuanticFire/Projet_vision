@@ -31,6 +31,8 @@ public:
 
 	_declspec(dllexport) ClibTraitement(int nbChamps, byte* data, int stride, int nbLig, int nbCol); // par image format bmp C#
 
+	_declspec(dllexport) ClibTraitement(byte * datain, int stride, int nbLig, int nbCol, int seuilB, int seuilH); // création d'une image rognée
+
 	_declspec(dllexport) ~ClibTraitement();
 
 	// get et set 
@@ -51,7 +53,7 @@ public:
 	_declspec(dllexport) void Traitement2(int nbChamps, byte* data, int stride, int nbLig, int nbCol, double parametres[10], int nbChamps_p, byte * data_p, int stride_p, int nbLig_p, int nbCol_p); //nouvelle méthode de traitement test
 	_declspec(dllexport) void TraitementMatching(byte * data, int stride, int nbLig, int nbCol, byte * data_p, int stride_p, int nbLig_p, int nbCol_p);
 	_declspec(dllexport) void ClibTraitement::TraitementRognage(int nbChamps, byte * data, int stride, int nbLig, int nbCol, double parametres[10], int nbChamps_p, byte * data_p, int stride_p, int nbLig_p, int nbCol_p);
-	_declspec(dllexport) int* props(byte* data);
+	_declspec(dllexport) byte* copydata();
 };
 
 /****************************************************************************************************************
@@ -72,6 +74,12 @@ extern "C" _declspec(dllexport) ClibTraitement* objetLib()
 extern "C" _declspec(dllexport) ClibTraitement* objetLibDataImg(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
 {
 	ClibTraitement* pImg = new ClibTraitement(nbChamps,data,stride,nbLig,nbCol);
+	return pImg;
+}
+
+// constructeur de d'image rognée
+extern "C" _declspec(dllexport) ClibTraitement* Rognage(byte* datain, int stride, int nbLig, int nbCol, int seuilB, int seuilH) {
+	ClibTraitement* pImg = new ClibTraitement(datain, stride, nbLig, nbCol, seuilB, seuilH);
 	return pImg;
 }
 
@@ -103,9 +111,20 @@ extern "C" _declspec(dllexport) double valeurChamp(ClibTraitement* pImg, int i)
 	return pImg->lireChamp(i);
 }
 
-// cherche les propriétés de l'image c'est un pointeur à supprimer en c#
-extern "C" _declspec(dllexport) int* proprietes(ClibTraitement* pImg, byte* data) {
-	return pImg->props(data);
+// cherche les données de l'image dans ClImage
+extern "C" _declspec(dllexport) byte* dataFromImg(ClibTraitement* pImg) {
+	byte* data = pImg->copydata();
+	return data;
+}
+
+//cherche la largeur et la hauteur
+
+extern "C" _declspec(dllexport) int imgHauteur(ClibTraitement* pImg) {
+	return pImg->imgData()->lireHauteur();
+}
+
+extern "C" _declspec(dllexport) int imgLargeur(ClibTraitement* pImg) {
+	return pImg->imgData()->lireLargeur();
 }
 
 /****************************************************************************************************************
