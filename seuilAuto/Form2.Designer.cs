@@ -291,7 +291,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Name = "Form2";
-            this.Text = "Form2";
+            this.Text = "Projet Vision Oui-Oui";
             this.Load += new System.EventHandler(this.Form2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).EndInit();
             this.panel1.ResumeLayout(false);
