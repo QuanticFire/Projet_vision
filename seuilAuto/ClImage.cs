@@ -107,10 +107,11 @@ namespace Traitement
         // Appel méthode propriétés, renvoie un IntPtr des différentes valeurs utiles pour recréer l'image (hauteur, largeur, stride)
 
         [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr dataFromImg(IntPtr pImg);
+        public static extern void dataFromImg(IntPtr pImg, IntPtr scan0, int stride);
 
-        public IntPtr getImgdata(){
-            return dataFromImg(ClPtr);
+        public IntPtr getImgdata(IntPtr scan0, int stride){
+            dataFromImg(ClPtr, scan0, stride);
+            return scan0;
         }
 
         [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -127,10 +128,11 @@ namespace Traitement
             return imgLargeur(ClPtr);
         }
 
-        //public Bitmap imgFromClImage(IntPtr data)
-        //{
-        //    Bitmap imgout = new Bitmap(imgLargeur(ClPtr), imgHauteur(ClPtr), 3, System.Drawing.Imaging.PixelFormat.Format24bppRgb, data);
-        //    return imgout;
-        //}
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr testconstruct(int nbLig, int nbCol, int stride);
+
+        public IntPtr test(int nbLig, int nbCol, int stride){
+            return testconstruct(nbLig, nbCol, stride);
+        }
     }
 }
