@@ -120,7 +120,7 @@ namespace seuilAuto
                 // Lecture des coordonnées auxquelles l'algo de pattern matching détecte l'image
                 double coord_x = Img.objetLibValeurChamp(1);
                 double coord_y = Img.objetLibValeurChamp(0);
-                MessageBox.Show(coord_x.ToString() + " " + coord_y.ToString());
+                //MessageBox.Show(coord_x.ToString() + " " + coord_y.ToString());
 
                 
 
@@ -196,7 +196,102 @@ namespace seuilAuto
 
                 imageSeuillee.Image = bmp_ref_copy;
             }
-            
+            else if (dudTraitSel.Text == "Histo rotation")
+            {
+                // On efface les scores potentiellement sur l'interface
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    labelScore.Hide();
+                    labelScore2.Hide();
+                });
+
+                Bitmap bmp_ref_rot0 = new Bitmap(bmp_ref);
+                Bitmap bmp_ref_rot90 = new Bitmap(bmp_ref);
+                Bitmap bmp_ref_rot180 = new Bitmap(bmp_ref);
+                Bitmap bmp_ref_rot270 = new Bitmap(bmp_ref);
+
+                Bitmap bmp_piece_rot0 = new Bitmap(bmp_piece);
+                Bitmap bmp_piece_rot90 = new Bitmap(bmp_piece);
+                Bitmap bmp_piece_rot180 = new Bitmap(bmp_piece);
+                Bitmap bmp_piece_rot270 = new Bitmap(bmp_piece);
+                bmp_piece_rot90.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                bmp_piece_rot180.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                bmp_piece_rot270.RotateFlip(RotateFlipType.Rotate270FlipNone);
+
+                ClImage ImgRot0 = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
+                ClImage ImgRot90 = new ClImage();
+                ClImage ImgRot180 = new ClImage();
+                ClImage ImgRot270 = new ClImage();
+
+                double[] parametres = { 0 };                      
+
+                unsafe
+                {
+                    // Génération d'objets permettant de passer les data des images au wrapper
+                    BitmapData bmpDataRot0 = bmp_ref_rot0.LockBits(new Rectangle(0, 0, bmp_ref_rot0.Width, bmp_ref_rot0.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_piece_rot0 = bmp_piece_rot0.LockBits(new Rectangle(0, 0, bmp_piece_rot0.Width, bmp_piece_rot0.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                    BitmapData bmpDataRot90 = bmp_ref_rot90.LockBits(new Rectangle(0, 0, bmp_ref_rot90.Width, bmp_ref_rot90.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_piece_rot90 = bmp_piece_rot90.LockBits(new Rectangle(0, 0, bmp_piece_rot90.Width, bmp_piece_rot90.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                    BitmapData bmpDataRot180 = bmp_ref_rot180.LockBits(new Rectangle(0, 0, bmp_ref_rot180.Width, bmp_ref_rot180.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_piece_rot180 = bmp_piece_rot180.LockBits(new Rectangle(0, 0, bmp_piece_rot180.Width, bmp_piece_rot180.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                    BitmapData bmpDataRot270 = bmp_ref_rot270.LockBits(new Rectangle(0, 0, bmp_ref_rot270.Width, bmp_ref_rot270.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_piece_rot270 = bmp_piece_rot270.LockBits(new Rectangle(0, 0, bmp_piece_rot270.Width, bmp_piece_rot270.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+
+                    // Appel du wrapper pour traitement dans la dll
+                    // Passage des données pour l'image puzzle de référence ET pour l'image piece
+                    ImgRot0.traitementTestPtr(2, bmpDataRot0.Scan0, bmpDataRot0.Stride, bmpDataRot0.Height, bmpDataRot0.Width, parametres, 1, bmpData_piece_rot0.Scan0, bmpData_piece_rot0.Stride, bmpData_piece_rot0.Height, bmpData_piece_rot0.Width);
+                    ImgRot90.traitementTestPtr(2, bmpDataRot90.Scan0, bmpDataRot90.Stride, bmpDataRot90.Height, bmpDataRot90.Width, parametres, 1, bmpData_piece_rot90.Scan0, bmpData_piece_rot90.Stride, bmpData_piece_rot90.Height, bmpData_piece_rot90.Width);
+                    ImgRot180.traitementTestPtr(2, bmpDataRot180.Scan0, bmpDataRot180.Stride, bmpDataRot180.Height, bmpDataRot180.Width, parametres, 1, bmpData_piece_rot180.Scan0, bmpData_piece_rot180.Stride, bmpData_piece_rot180.Height, bmpData_piece_rot180.Width);
+                    ImgRot270.traitementTestPtr(2, bmpDataRot270.Scan0, bmpDataRot270.Stride, bmpDataRot270.Height, bmpDataRot270.Width, parametres, 1, bmpData_piece_rot270.Scan0, bmpData_piece_rot270.Stride, bmpData_piece_rot270.Height, bmpData_piece_rot270.Width);
+
+
+                    // Traitement terminé, libération des images
+                    bmp_ref_rot0.UnlockBits(bmpDataRot0);
+                    bmp_piece_rot0.UnlockBits(bmpData_piece_rot0);
+
+                    bmp_ref_rot90.UnlockBits(bmpDataRot90);
+                    bmp_piece_rot90.UnlockBits(bmpData_piece_rot90);
+
+                    bmp_ref_rot180.UnlockBits(bmpDataRot180);
+                    bmp_piece_rot180.UnlockBits(bmpData_piece_rot180);
+
+                    bmp_ref_rot270.UnlockBits(bmpDataRot270);
+                    bmp_piece_rot270.UnlockBits(bmpData_piece_rot270);
+                }
+
+                // Stockage des scores pour chaque orientation et les images verdict associées
+                double[] scores = new double[4] { ImgRot0.objetLibValeurChamp(0), ImgRot90.objetLibValeurChamp(0), ImgRot180.objetLibValeurChamp(0), ImgRot270.objetLibValeurChamp(0) };
+                Bitmap[] images_ref = new Bitmap[4] { bmp_ref_rot0, bmp_ref_rot90, bmp_ref_rot180, bmp_ref_rot270 };
+                Bitmap verdict_final;
+
+                // Recherche du max
+                double max = -1;
+                int indice_max = -1;
+                for (int i = 0; i < 4; i++)
+                {
+                    if (scores[i] > max)
+                    {
+                        max = scores[i];
+                        indice_max = i;
+                    }
+                }
+                verdict_final = images_ref[indice_max];
+
+                //this.Invoke((MethodInvoker)delegate ()
+                //{
+                //    labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
+                //    labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
+                //    labelScore.Show();
+                //    labelScore2.Show();
+                //});
+
+                imageSeuillee.Image = verdict_final;
+
+            }
         }
 
         // Quand on appuie sur le bouton "open file"

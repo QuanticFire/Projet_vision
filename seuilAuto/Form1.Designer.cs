@@ -74,7 +74,7 @@
             this.imageDepart.Location = new System.Drawing.Point(0, 0);
             this.imageDepart.Name = "imageDepart";
             this.imageDepart.Size = new System.Drawing.Size(268, 348);
-            this.imageDepart.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.imageDepart.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imageDepart.TabIndex = 0;
             this.imageDepart.TabStop = false;
             // 
@@ -165,6 +165,7 @@
             // 
             this.dudTraitSel.Items.Add("Histogramme");
             this.dudTraitSel.Items.Add("Pattern matching");
+            this.dudTraitSel.Items.Add("Histo rotation");
             this.dudTraitSel.Location = new System.Drawing.Point(6, 32);
             this.dudTraitSel.Name = "dudTraitSel";
             this.dudTraitSel.Size = new System.Drawing.Size(128, 20);
