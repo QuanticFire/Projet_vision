@@ -92,6 +92,58 @@ ClibTraitement::ClibTraitement(int nbChamps, byte* data, int stride, int nbLig, 
 	}
 }
 
+ClibTraitement::ClibTraitement(byte* datain, int stride, int nbLig, int nbCol, int seuilB, int seuilH) {
+
+	CImageCouleur in(nbLig, nbCol);
+
+	// byte* data est la donnée des images
+
+	byte* pixPtr = (byte*)datain;
+
+	for (int y = 0; y < nbLig; y++)
+	{
+		for (int x = 0; x < nbCol; x++)	//rvb
+		{
+			in(y, x)[0] = pixPtr[3 * x + 2];
+			in(y, x)[1] = pixPtr[3 * x + 1];
+			in(y, x)[2] = pixPtr[3 * x];
+		}
+		pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
+	}
+
+	//CImageNdg imgsauv;
+	//imgsauv = this->imgPt->plan();
+	//imgsauv.sauvegarde("test")
+
+
+
+	/*********************************************************************************************************************
+
+	DEBUT DE L'ALGORITHME DE TRAITEMENT
+
+	**********************************************************************************************************************/
+
+	this->imgPt = new CImageCouleur(in.rognageSigComposante("manuel", seuilB, seuilH, 0, "non"));
+
+	/*********************************************************************************************************************
+
+	FIN DU TRAITEMENT,
+	AFFICHAGE RETOUR VERS LE C#
+
+	**********************************************************************************************************************/
+
+	//pixPtr = (byte*)dataout;
+	//for (int y = 0; y < this->imgData()->lireHauteur(); y++)
+	//{
+	//	for (int x = 0; x < this->imgData()->lireLargeur(); x++)
+	//	{
+	//		pixPtr[3 * x + 2] = this->imgData()->operator()(y, x)[0];
+	//		pixPtr[3 * x + 1] = this->imgData()->operator()(y, x)[1];
+	//		pixPtr[3 * x] = this->imgData()->operator()(y, x)[2];
+	//	}
+	//	pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
+	//}
+}
 
 ClibTraitement::~ClibTraitement() {
 	
@@ -340,25 +392,20 @@ void ClibTraitement::TraitementRognage(int nbChamps, byte * data, int stride, in
 	
 }
 
-int * ClibTraitement::props(byte * data)
+byte* ClibTraitement::copydata()
 {
-	int* pProps = new int[3];
-	pProps[0] = this->imgData()->lireHauteur();
-	pProps[1] = this->imgData()->lireLargeur();
-	pProps[2] = 3;//stride par défaut
-
-	byte* pixPtr = (byte*)data;
-	for (int y = 0; y < pProps[0]; y++)
+	byte* pixPtr = new byte[this->imgData()->lireHauteur()*this->imgData()->lireLargeur()*3];
+	for (int y = 0; y < this->imgData()->lireHauteur(); y++)
 	{
-		for (int x = 0; x < pProps[1]; x++)	//rvb
+		for (int x = 0; x < this->imgData()->lireLargeur(); x++)	//rvb
 		{
 			pixPtr[3 * x + 2] = this->imgData()->operator()(y, x)[0];
 			pixPtr[3 * x + 1] = this->imgData()->operator()(y, x)[1];
 			pixPtr[3 * x] = this->imgData()->operator()(y, x)[2];
 		}
-		pixPtr += pProps[2]; // largeur une seule ligne gestion multiple 32 bits
+		pixPtr += 3; // largeur une seule ligne gestion multiple 32 bits
 	}
-	return pProps;
+	return pixPtr;
 }
 
 void ClibTraitement::TraitementMatching(byte * data, int stride, int nbLig, int nbCol, byte * data_p, int stride_p, int nbLig_p, int nbCol_p)
