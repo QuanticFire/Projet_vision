@@ -89,12 +89,9 @@ namespace seuilAuto
                 clImageRogne.RognagePtr(bmpData_piece.Scan0, bmpData_piece.Stride, bmp_piece.Height, bmp_piece.Width, 80, 255);
                 int Height = clImageRogne.getImgHauteur();
                 int Width = clImageRogne.getImgLargeur();
-                //BitmapData bmpDataRogne = bmp_rogne.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                //testRogne = clImageRogne.imgFromClImage(bmpImageRogne.Scan0);
-                //IntPtr dataRogne = clImageRogne.getImgdata();
-                //bmp_rogne = new Bitmap(Width, Height,bmpData_piece.Stride, PixelFormat.Format24bppRgb,clImageRogne.getImgdata());
+                bmp_rogne = new Bitmap(Width, Height, PixelFormat.Format24bppRgb);
                 BitmapData bmpData_rogne = bmp_rogne.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                bmpData_rogne.Scan0 = clImageRogne.getImgdata();
+                clImageRogne.getImgdata(bmpData_rogne.Scan0,bmpData_rogne.Stride);
                 bmp_rogne.UnlockBits(bmpData_rogne);
                 bmp_piece.UnlockBits(bmpData_piece);
             }

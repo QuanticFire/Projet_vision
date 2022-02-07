@@ -53,7 +53,7 @@ public:
 	_declspec(dllexport) void Traitement2(int nbChamps, byte* data, int stride, int nbLig, int nbCol, double parametres[10], int nbChamps_p, byte * data_p, int stride_p, int nbLig_p, int nbCol_p); //nouvelle méthode de traitement test
 	_declspec(dllexport) void TraitementMatching(byte * data, int stride, int nbLig, int nbCol, byte * data_p, int stride_p, int nbLig_p, int nbCol_p);
 	_declspec(dllexport) void ClibTraitement::TraitementRognage(int nbChamps, byte * data, int stride, int nbLig, int nbCol, double parametres[10], int nbChamps_p, byte * data_p, int stride_p, int nbLig_p, int nbCol_p);
-	_declspec(dllexport) byte* copydata();
+	_declspec(dllexport) void copydata(byte* data, int stride);
 };
 
 /****************************************************************************************************************
@@ -112,9 +112,8 @@ extern "C" _declspec(dllexport) double valeurChamp(ClibTraitement* pImg, int i)
 }
 
 // cherche les données de l'image dans ClImage
-extern "C" _declspec(dllexport) byte* dataFromImg(ClibTraitement* pImg) {
-	byte* data = pImg->copydata();
-	return data;
+extern "C" _declspec(dllexport) void dataFromImg(ClibTraitement* pImg, byte* scan0, int stride) {
+	pImg->copydata(scan0, stride);
 }
 
 //cherche la largeur et la hauteur
@@ -126,6 +125,7 @@ extern "C" _declspec(dllexport) int imgHauteur(ClibTraitement* pImg) {
 extern "C" _declspec(dllexport) int imgLargeur(ClibTraitement* pImg) {
 	return pImg->imgData()->lireLargeur();
 }
+
 
 /****************************************************************************************************************
 
