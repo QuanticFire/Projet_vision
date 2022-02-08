@@ -283,7 +283,7 @@ namespace seuilAuto
                         indice_max = i;
                     }
                 }
-                MessageBox.Show(indice_max.ToString());
+                
                 verdict_final = new Bitmap(images_ref[indice_max]);
                 bonne_orientation = new Bitmap(images_pieces[indice_max]);
                 imgcl_finale = images_cl[indice_max];
@@ -333,7 +333,7 @@ namespace seuilAuto
                     // Quand on affiche une nouvelle image, on cache l'ancienne image traitée pour garder une cohérence visuelle sur l'interface
                     //imageSeuillee.Hide();
                     imageSeuillee.Image = null;
-                    //pbOrientation = null;
+                    pbOrientation.Image = null;
                     labelScore.Hide();
                     labelScore2.Hide();
                     //valeurSeuilAuto.Hide();

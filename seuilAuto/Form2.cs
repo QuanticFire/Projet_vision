@@ -79,6 +79,7 @@ namespace seuilAuto
                     labelScore.Text = Img.objetLibValeurChamp(0).ToString() + " %";
                     labelScore2.Text = Img.objetLibValeurChamp(1).ToString() + " %";
                     labelScore.Show();
+                    labelScore2.Show();
                 });
 
                 // Affichagr de l'image puzzle avec détection de pièce sur l'interface
@@ -117,8 +118,7 @@ namespace seuilAuto
         private void buttonOuvrir_Click(object sender, EventArgs e)
         {
             // On cache les scores
-            labelScore.Hide();
-            labelScore2.Hide();
+            
 
             if (ouvrirImage.ShowDialog() == DialogResult.OK)
             {
@@ -147,6 +147,8 @@ namespace seuilAuto
                     imageSeuillee.Image = null;
                     pbRogne.Image = null;
                     //valeurSeuilAuto.Hide();
+                    labelScore.Hide();
+                    labelScore2.Hide();
                 }
                 catch
                 {
