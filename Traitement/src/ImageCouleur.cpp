@@ -470,7 +470,7 @@ CImageCouleur CImageCouleur::rognageSigComposante(const std::string & methode, i
 			imgRogne(i, j)[2] = this->operator()(i + sigPiece.rectEnglob_Hi, j + sigPiece.rectEnglob_Hj)[2];
 		}
 
-	
+
 	if (imgRogne.lireHauteur() > 350 || imgRogne.lireLargeur() > 300)
 	{
 		CImageNdg img_seuilRogne;
