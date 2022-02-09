@@ -534,7 +534,7 @@ CImageCouleur CImageCouleur::rotation(float angle)
 	float costhe = (float)cos(-PI*angle / 180);
 	float sinthe = (float)sin(-PI*angle / 180);
 
-	CImageCouleur out(this->lireHauteur(), this->lireLargeur()); //on prend la valeur "approchée" du fond
+	CImageCouleur out(this->lireHauteur(), this->lireLargeur(), this->operator()(0)[0], this->operator()(0)[1], this->operator()(0)[2]); //on prend la valeur "approchée" du fond
 	out.ecrireNom(this->lireNom() + "Rot");
 
 	//centrage de l'image d'origine

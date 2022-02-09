@@ -292,19 +292,19 @@ MOMENTS CImageNdg::signatures(const std::vector<unsigned long>& h) {
 	int i=0;
 	while ((i < (int)h.size()) && (h[i] == 0))
 		i++;
-	globales.min = i;
+	globales.minNdg = i;
 		
 	// max
 	i=h.size()-1;
 	while ((i > 0) && (h[i] == 0))
 		i--;
-	globales.max = i;
+	globales.maxNdg = i;
 
 	// mediane
 
 	int moitPop = this->lireNbPixels()/2;
 
-	i=globales.min;
+	i=globales.minNdg;
 	int somme = h[i];
 	while (somme < moitPop) {
 		i += 1;
@@ -315,7 +315,7 @@ MOMENTS CImageNdg::signatures(const std::vector<unsigned long>& h) {
 
 	// moyenne et écart-type
 	double moy=0,sigma=0;
-	for (i=globales.min;i<=globales.max;i++) {
+	for (i=globales.minNdg;i<=globales.maxNdg;i++) {
 		moy += ((double)h[i])*i;
 		sigma += ((double)h[i])*i*i;
 	}
@@ -367,92 +367,196 @@ return out;
 }
 
 
+// ancien seuillage
+//CImageNdg CImageNdg::seuillage(const std::string& methode, int& seuilBas, int& seuilHaut) {
+//	
+//	if (!this->m_bBinaire) {
+//		CImageNdg out(this->lireHauteur(),this->lireLargeur());
+//		out.m_sNom     = this->lireNom()+"S";
+//		out.choixPalette("binaire"); // palette binaire par défaut
+//		out.m_bBinaire = true;
+//		seuilBas = 128;
+//		seuilHaut = 255;
+//
+//		// création lut pour optimisation calcul
+//		std::vector<int> lut;
+//		lut.resize(256);
+//
+//		// recherche valeur seuil
+//		// cas "manuel" -> seuil reste celui passé en paramètre
+//
+//		if (methode.compare("automatique") == 0) 
+//		{
+//			std::vector<unsigned long> hist = this->histogramme();
+//			std::vector<unsigned long> histC; // histogramme cumulé
+//			histC.resize(256,0);
+//			histC[0] = hist[0];
+//			for (int i=1;i<(int)hist.size();i++) 
+//				histC[i] = histC[i-1]+hist[i];
+//
+//			MOMENTS globales = this->signatures(hist);
+//			int min = globales.min,
+//				max = globales.max;
+//
+//			// f(s)
+//			std::vector<double> tab;
+//			tab.resize(256,0);
+//		
+//			double M1,M2;
+//		
+//			// initialisation
+//			M1 = (double)min;
+//			double nb=0;
+//			M2=0;
+//			for (int i=min+1;i<=max;i++) {
+//				M2 += (double)hist[i]*i;
+//				nb += (double)hist[i];
+//			}
+//			if (nb > 0)
+//				M2 /= nb;
+//			tab[min] = fabs(min - (M1 + M2)/2);
+//		
+//			// parcours
+//			for (int i=min+1;i<=max;i++) {
+//				M1 = ( (double)histC[i-1]*M1 + hist[i]*i ) / histC[i];
+//				M2 = ( (double)(histC[max]-histC[i-1])*M2 - hist[i]*i) / (histC[max]-histC[i]);
+//				tab[i] = fabs(i - (M1 + M2)/2);
+//			}
+//
+//			// recherche s
+//			seuilBas = min;
+//			seuilHaut = 255;
+//			for (int i=min+1;i<=max;i++)
+//				if (tab[i] < tab[seuilBas])
+//					seuilBas = i;
+//		}
+//
+//		// fin recherche valeur seuil 
+//
+//		// génération lut
+//		for (int i = 0; i < seuilBas; i++)
+//			lut[i] =  0; 
+//		for (int i = seuilBas; i <= seuilHaut; i++)
+//			lut[i] = 1;
+//		for (int i = seuilHaut+1; i <= 255; i++)
+//			lut[i] = 0;
+//
+//		// création image seuillée
+//		std::cout << "Seuillage des pixels entre " << seuilBas << " et " << seuilHaut << std::endl;
+//		for (int i=0; i < out.lireNbPixels(); i++) 
+//			out(i) = lut[this->operator ()(i)]; 
+//
+//		return out;
+//		}
+//	else {
+//		std::cout << "Seuillage image binaire impossible" << std::endl;
+//		return (*this);
+//	}
+//}
+
 // seuillage
-CImageNdg CImageNdg::seuillage(const std::string& methode, int& seuilBas, int& seuilHaut) {
-	
+CImageNdg CImageNdg::seuillage(const std::string& methode, int seuilBas, int seuilHaut) {
+
 	if (!this->m_bBinaire) {
-		CImageNdg out(this->lireHauteur(),this->lireLargeur());
-		out.m_sNom     = this->lireNom()+"S";
+		CImageNdg out(this->lireHauteur(), this->lireLargeur());
 		out.choixPalette("binaire"); // palette binaire par défaut
 		out.m_bBinaire = true;
-		seuilBas = 128;
-		seuilHaut = 255;
 
 		// création lut pour optimisation calcul
 		std::vector<int> lut;
 		lut.resize(256);
 
 		// recherche valeur seuil
-		// cas "manuel" -> seuil reste celui passé en paramètre
-
-		if (methode.compare("automatique") == 0) 
+		// cas "manuel" 
+		if (methode.compare("manuel") == 0)
 		{
-			std::vector<unsigned long> hist = this->histogramme();
-			std::vector<unsigned long> histC; // histogramme cumulé
-			histC.resize(256,0);
-			histC[0] = hist[0];
-			for (int i=1;i<(int)hist.size();i++) 
-				histC[i] = histC[i-1]+hist[i];
-
-			MOMENTS globales = this->signatures(hist);
-			int min = globales.min,
-				max = globales.max;
-
-			// f(s)
-			std::vector<double> tab;
-			tab.resize(256,0);
-		
-			double M1,M2;
-		
-			// initialisation
-			M1 = (double)min;
-			double nb=0;
-			M2=0;
-			for (int i=min+1;i<=max;i++) {
-				M2 += (double)hist[i]*i;
-				nb += (double)hist[i];
-			}
-			if (nb > 0)
-				M2 /= nb;
-			tab[min] = fabs(min - (M1 + M2)/2);
-		
-			// parcours
-			for (int i=min+1;i<=max;i++) {
-				M1 = ( (double)histC[i-1]*M1 + hist[i]*i ) / histC[i];
-				M2 = ( (double)(histC[max]-histC[i-1])*M2 - hist[i]*i) / (histC[max]-histC[i]);
-				tab[i] = fabs(i - (M1 + M2)/2);
-			}
-
-			// recherche s
-			seuilBas = min;
-			seuilHaut = 255;
-			for (int i=min+1;i<=max;i++)
-				if (tab[i] < tab[seuilBas])
-					seuilBas = i;
+			out.m_sNom = this->lireNom() + "SeMa";
 		}
+		else
+			if (methode.compare("otsu") == 0)
+			{
+				out.m_sNom = this->lireNom() + "SeAu";
+				// recherche seuil via Otsu
+				std::vector<unsigned long> hist = this->histogramme();
+				std::vector<unsigned long> histC; // histogramme cumulé
+				histC.resize(256, 0);
+				histC[0] = hist[0];
+				for (int i = 1; i < (int)hist.size(); i++)
+					histC[i] = histC[i - 1] + hist[i];
 
-		// fin recherche valeur seuil 
+				MOMENTS globales = this->signatures(hist);
+				int min = globales.minNdg,
+					max = globales.maxNdg;
 
-		// génération lut
-		for (int i = 0; i < seuilBas; i++)
-			lut[i] =  0; 
-		for (int i = seuilBas; i <= seuilHaut; i++)
-			lut[i] = 1;
-		for (int i = seuilHaut+1; i <= 255; i++)
-			lut[i] = 0;
+				// f(s)
+				std::vector<double> tab;
+				tab.resize(256, 0);
 
-		// création image seuillée
-		std::cout << "Seuillage des pixels entre " << seuilBas << " et " << seuilHaut << std::endl;
-		for (int i=0; i < out.lireNbPixels(); i++) 
-			out(i) = lut[this->operator ()(i)]; 
+				double M1, M2, w1;
 
-		return out;
-		}
+				// initialisation
+				M1 = min;
+				seuilBas = min;
+				seuilHaut = 255;
+
+				w1 = (double)histC[min] / (double)(this->lireNbPixels());
+				M2 = 0;
+				for (int i = min + 1; i <= max; i++)
+					M2 += (double)hist[i] * i;
+				M2 /= (double)(histC[max] - hist[min]);
+				tab[min] = w1*(1 - w1)*(M1 - M2)*(M1 - M2);
+
+				for (int i = min + 1; i < max; i++) {
+					M1 = ((double)histC[i - 1] * M1 + (double)hist[i] * i) / histC[i];
+					M2 = ((double)(histC[255] - histC[i - 1])*M2 - hist[i] * i) / (double)(histC[255] - histC[i]);
+					w1 = (double)histC[i] / (double)(this->lireNbPixels());
+					tab[i] = w1*(1 - w1)*(M1 - M2)*(M1 - M2);
+					if (tab[i] > tab[seuilBas])
+						seuilBas = i;
+				}
+			}
+			else {
+				MOMENTS globales = { 0,0,0,0,0 };
+
+				std::vector<unsigned long> hist;
+				hist = this->histogramme();
+
+				globales = this->signatures(hist);
+				if (methode.compare("moyenne") == 0)
+				{
+					out.m_sNom = this->lireNom() + "SeMo";
+					seuilBas = (int)globales.moyenne;
+				}
+				else
+					if (methode.compare("mediane") == 0)
+					{
+						out.m_sNom = this->lireNom() + "SeMe";
+						seuilBas = globales.mediane;
+					}
+			}
+
+
+			// génération lut
+			for (int i = 0; i < seuilBas; i++)
+				lut[i] = 0;
+			for (int i = seuilBas; i <= seuilHaut; i++)
+				lut[i] = 1;
+			for (int i = seuilHaut + 1; i <= 255; i++)
+				lut[i] = 0;
+
+			// création image seuillée
+			std::cout << "Seuillage des pixels entre " << seuilBas << " et " << seuilHaut << std::endl;
+			for (int i = 0; i < out.lireNbPixels(); i++)
+				out(i) = lut[this->operator ()(i)];
+
+			return out;
+	}
 	else {
-		std::cout << "Seuillage image binaire impossible" << std::endl;
+		throw std::string("Seuillage image binaire impossible");
 		return (*this);
 	}
 }
+
 
 // transformation
 

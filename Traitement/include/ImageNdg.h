@@ -11,8 +11,8 @@
 #include <string>
 
 typedef struct {
-	int		min;
-	int		max;
+	int		minNdg;
+	int		maxNdg;
 	int		mediane;
 	double	moyenne;
 	double	ecartType;
@@ -193,7 +193,7 @@ class CImageNdg {
 		_declspec(dllexport) CImageNdg operation(const CImageNdg& im, const std::string& methode = "et"); // choix  "et" / "ou"
 
 		// seuillage
-		_declspec(dllexport) CImageNdg seuillage(const std::string& methode, int& seuilBas, int& seuilHaut);
+		_declspec(dllexport) CImageNdg seuillage(const std::string& methode, int seuilBas, int seuilHaut);
 
 		// transformation
 		_declspec(dllexport) CImageNdg transformation(const std::string& methode = "complement", int vMinOut = 0, int vMaxOut = 255); // choix "complement" / "expansion" / "egalisation"
