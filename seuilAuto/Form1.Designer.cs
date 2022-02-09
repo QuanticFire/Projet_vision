@@ -48,10 +48,10 @@
             this.butForm2 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.panelOrientation = new System.Windows.Forms.Panel();
             this.pbOrientation = new System.Windows.Forms.PictureBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -263,6 +263,24 @@
             this.groupBox3.Text = "Sortie";
             this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(304, 412);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(72, 13);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "Image Verdict";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(233, 15);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(212, 13);
+            this.label3.TabIndex = 19;
+            this.label3.Text = "Bonne Orientation (si algorithme de rotation)";
+            // 
             // panelOrientation
             // 
             this.panelOrientation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -281,27 +299,9 @@
             this.pbOrientation.Location = new System.Drawing.Point(0, 0);
             this.pbOrientation.Name = "pbOrientation";
             this.pbOrientation.Size = new System.Drawing.Size(268, 348);
-            this.pbOrientation.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbOrientation.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbOrientation.TabIndex = 0;
             this.pbOrientation.TabStop = false;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(233, 15);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(212, 13);
-            this.label3.TabIndex = 19;
-            this.label3.Text = "Bonne Orientation (si algorithme de rotation)";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(304, 412);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(72, 13);
-            this.label4.TabIndex = 20;
-            this.label4.Text = "Image Verdict";
             // 
             // Form1
             // 
