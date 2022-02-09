@@ -12,6 +12,13 @@
 
 #include "ImageNdg.h"
 
+typedef struct pics {
+	int numero;
+	double angles;
+	double rhos;
+	double taille;
+} PICS;
+
 class CImageDouble {
 
 	///////////////////////////////////////
@@ -121,9 +128,11 @@ class CImageDouble {
 
 		_declspec(dllexport) std::vector<CImageDouble> pyramide(int hauteur, int tailleFiltre, double sigma);
 
-		//lignes de hough
+		//image avec lignes de hough détectées
 		_declspec(dllexport) CImageNdg houghExtractionLignes(const CImageNdg & img, const std::string & methode, int N, int M, int dim, int nombre, bool enregistrementCSV);
 
+		// lignes de hough
+		_declspec(dllexport) std::vector<PICS> houghLignes(const CImageNdg & img, int N, int M, int dim, int nombre = 1);
 		//moyenne de l'image
 		_declspec(dllexport) double moyenne() const;
 

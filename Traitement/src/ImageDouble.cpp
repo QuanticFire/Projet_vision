@@ -715,12 +715,6 @@ CImageNdg CImageDouble::houghInverse(const CImageNdg& img) {
 	return(HI);
 }
 
-typedef struct pics {
-	int numero;
-	double angles;
-	double rhos;
-	double taille;
-} PICS;
 
 static bool myTri(PICS p1, PICS p2) {
 	return (p1.taille > p2.taille);
@@ -1043,6 +1037,77 @@ CImageNdg CImageDouble::houghExtractionLignes(const CImageNdg &img, const std::s
 
 }
 
+
+std::vector<PICS> CImageDouble::houghLignes(const CImageNdg &img, int N, int M, int dim, int nombre) {
+	// HOUGH transform
+	double hough_h = std::max(img.lireHauteur() / 2, img.lireLargeur() / 2)*sqrt(2.0);
+	int DIAG = (int)(hough_h * 2);
+	CImageDouble planHough(DIAG, 180);
+
+	planHough.ecrireMin(0);
+	planHough.ecrireMax(0);
+
+	double cx = img.lireHauteur() / 2;
+	double cy = img.lireLargeur() / 2;
+
+	for (int x = 0; x < img.lireHauteur(); x++)
+	{
+		for (int y = 0; y < img.lireLargeur(); y++)
+		{
+			if (img(x, y) > 0)
+			{
+				for (int t = 0; t <= 179; t++)
+				{
+					double r = (((double)x - cx) * cos((double)t * (PI / 180)) + (((double)y - cy) * sin((double)t * (PI / 180))));
+					planHough(int(hough_h + r), t) += 1;
+				}
+			}
+		}
+
+	}
+
+	// filtrage gaussien
+	//planHough = planHough.filtrage("gaussien", 5, 1); // optionnel 
+
+	for (int p = 0; p < planHough.lireNbPixels(); p++)
+		if (planHough(p) > planHough.lireMax())
+			planHough.ecrireMax(planHough(p));
+
+	// extraction maxi locaux
+	CImageDouble mL = planHough.maxiLocaux(N, M);
+
+	// Hough inverse
+	CImageNdg HI(img.lireHauteur(), img.lireLargeur(), 0);
+	HI.ecrireNom(img.lireNom() + "HI");
+	HI.choixPalette("binaire");
+
+		
+	// extraction pics
+	int nbLignes = 1;
+
+	std::vector<PICS> pics;
+
+	for (int r = 0; r < DIAG; r++)
+		for (int a = 0; a <= 179; a++)
+			if ((mL(r, a) > 0) && (planHough(r, a) >= dim)) // base minimale pour comptabiliser une droite
+			{
+				PICS pic;
+				pic.numero = nbLignes;
+				pic.angles = a;
+				pic.rhos = r - hough_h;
+				pic.taille = planHough(r, a);
+				pics.push_back(pic);
+				nbLignes += 1;
+			}
+
+	int nbPics = std::min(nbLignes - 1, nombre); // si pas suffisamment de pics extrait
+													// dépilement pics
+
+	sort(pics.begin(), pics.end(), myTri);
+
+	return(pics);
+
+}
 
 double CImageDouble::moyenne() const
 {

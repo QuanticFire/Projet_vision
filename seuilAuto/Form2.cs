@@ -89,12 +89,13 @@ namespace seuilAuto
                 ClImage clImageRogne = new ClImage();
                 unsafe
                 {
+                    //pas possible d'avoir tout à cause du stride, faut voir comment faire un peu mieux
                     BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                     clImageRogne.RognagePtr(bmpData_piece.Scan0, bmpData_piece.Stride, bmp_piece.Height, bmp_piece.Width, 80, 255);
-                    int Height = clImageRogne.getImgHauteur();
-                    int Width = clImageRogne.getImgLargeur();
-                    bmp_rogne = new Bitmap(Width, Height, PixelFormat.Format24bppRgb);
-                    BitmapData bmpData_rogne = bmp_rogne.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    int Height_rogne = clImageRogne.getImgHauteur();
+                    int Width_rogne = clImageRogne.getImgLargeur();
+                    bmp_rogne = new Bitmap(Width_rogne, Height_rogne, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_rogne = bmp_rogne.LockBits(new Rectangle(0, 0, Width_rogne, Height_rogne), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                     clImageRogne.getImgdata(bmpData_rogne.Scan0, bmpData_rogne.Stride);
                     bmp_rogne.UnlockBits(bmpData_rogne);
                     bmp_piece.UnlockBits(bmpData_piece);

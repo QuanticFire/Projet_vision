@@ -9,6 +9,7 @@
 #include "ImageCouleur.h"
 #include "ImageClasse.h"
 
+#define PI 3.14159265358979323846
 #define MAGIC_NUMBER_BMP ('B'+('M'<<8)) // signature bitmap windows
 
 // Fonction de calcul de l'écart type d'un histogramme sous la forme d'un vector double
@@ -470,7 +471,7 @@ CImageCouleur CImageCouleur::rognageSigComposante(const std::string & methode, i
 			imgRogne(i, j)[2] = this->operator()(i + sigPiece.rectEnglob_Hi, j + sigPiece.rectEnglob_Hj)[2];
 		}
 
-	
+
 	if (imgRogne.lireHauteur() > 350 || imgRogne.lireLargeur() > 300)
 	{
 		CImageNdg img_seuilRogne;
@@ -524,6 +525,35 @@ CImageCouleur CImageCouleur::rognageSigComposante(const std::string & methode, i
 	}
 
 	return imgRogne;
+}
+
+CImageCouleur CImageCouleur::rotation(float angle)
+{
+	int ithis, jthis;
+	float icenter, jcenter;
+	float costhe = (float)cos(-PI*angle / 180);
+	float sinthe = (float)sin(-PI*angle / 180);
+
+	CImageCouleur out(this->lireHauteur(), this->lireLargeur()); //on prend la valeur "approchée" du fond
+	out.ecrireNom(this->lireNom() + "Rot");
+
+	//centrage de l'image d'origine
+	icenter = (float)(this->lireHauteur() / 2.0);
+	jcenter = (float)(this->lireLargeur() / 2.0);
+
+	for (int i = 0; i < this->lireHauteur(); i++)
+		for (int j = 0; j < this->lireLargeur(); j++)
+		{
+			ithis = (int)(costhe*(i - icenter) + sinthe*(j - jcenter) + icenter);
+			jthis = (int)(-sinthe*(i - icenter) + costhe*(j - jcenter) + jcenter);
+			if (ithis >= 0 && ithis < out.lireHauteur() && jthis >= 0 && jthis < out.lireLargeur()) {
+				out(i, j)[0] = this->operator()(ithis, jthis)[0];
+				out(i, j)[1] = this->operator()(ithis, jthis)[1];
+				out(i, j)[2] = this->operator()(ithis, jthis)[2];
+			}
+
+		}
+	return out;
 }
 
 CImageCouleur CImageCouleur::detection_piece(CImageCouleur piece, double* score, double* score2)

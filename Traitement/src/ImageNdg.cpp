@@ -666,26 +666,39 @@ CImageNdg CImageNdg::morphologie(const std::string& methode, const std::string& 
 	return out;
 }
 
+//uniquement image binaires
 CImageNdg CImageNdg::bouchageTrous()
 {
-	CImageNdg ImgOut = CImageNdg(this->lireHauteur(), this->lireLargeur());
+	CImageNdg ImgOut =CImageNdg(this->lireHauteur(), this->lireLargeur());
 	ImgOut.m_bBinaire = true;
-	CImageNdg ImExp = CImageNdg(this->lireHauteur() + 2, this->lireLargeur() + 2, 0);
+	CImageNdg ImExp = CImageNdg(this->lireHauteur()+2, this->lireLargeur()+2,0);
 	ImExp.m_bBinaire = true;
-	CImageNdg ImCompl = CImageNdg(this->lireHauteur() + 2, this->lireLargeur() + 2, 255);
+	CImageNdg ImCompl = CImageNdg(this->lireHauteur()+2, this->lireLargeur()+2, 1);
 	CImageClasse ImgFill;
-	std::vector<int> LUT = std::vector<int>(256, 1);
+	std::vector<int> LUT = std::vector<int>(256,1);
 
-	for (int i = 0; i < this->lireLargeur(); i++)
+	for (int i = 0; i <this->lireLargeur(); i++)
 	{
 		for (int j = 0; j < this->lireLargeur(); j++)
 		{
 			ImExp(i + 1, j + 1) = this->operator()(i, j);
 			ImCompl(i + 1, j + 1) -= this->operator()(i, j);
-
-
 		}
 	}
+
+	ImgFill = CImageClasse(ImCompl,"V8");
+	LUT.at(0) = 0;
+	LUT.at(1) = 0;
+
+	for (int i = 0; i < this->lireHauteur(); i++)
+	{
+		for (int j = 0; j < this->lireLargeur(); j++)
+		{
+			ImgOut(i, j) = LUT.at(ImgFill(i + 1, j + 1));
+		}
+	}
+
+	ImgOut = this->operation(ImgOut, "ou");
 	return ImgOut;
 }
 
