@@ -26,6 +26,7 @@ namespace seuilAuto
         Bitmap bmp_piece;
         Bitmap bmp_rogne;
         ClImage Img;
+        ClImage Img2;
 
         public Form2(Form form1)
         {
@@ -66,7 +67,7 @@ namespace seuilAuto
 
                     // Appel du wrapper pour traitement dans la dll
                     // Passage des données pour l'image puzzle de référence ET pour l'image piece
-                    Img.traitementRognePtr(2, bmpData.Scan0, bmpData.Stride, bmp_ref_copy.Height, bmp_ref_copy.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
+                    Img.traitementRognePtr(2, bmpData.Scan0, bmpData.Stride, bmpData.Height, bmpData.Width, parametres, 1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width);
 
                     // ancien commentaire : 1 champ texte retour C++, le seuil auto
                     // Traitement terminé, libération des images
@@ -101,29 +102,58 @@ namespace seuilAuto
                     bmp_piece.UnlockBits(bmpData_piece);
                 }
                 pbRogne.Image = bmp_rogne;
+
+
                 
             }
             else if (dudTraitSel.Text == "Avec rotation")
             {
                 Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
                 Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
+                Img2 = new ClImage();
+
+                if (true)
+                {
+                    unsafe
+                    {
+                        // Génération d'objets permettant de passer les data des images au wrapper
+                        BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                        BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                        // Appel du wrapper pour traitement dans la dll
+                        Img.traitementRotPtr(1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width, 80, 255);
+
+                        // ancien commentaire : 1 champ texte retour C++, le seuil auto
+                        // Traitement terminé, libération des images
+                        bmp_ref_copy.UnlockBits(bmpData);
+                        bmp_piece.UnlockBits(bmpData_piece);
+                    }
+                }
+
+                Bitmap bmp_piece_rot = new Bitmap(bmp_piece);
+
+                pbRogne.Image = bmp_piece;
+
+                double[] parametres = { 0 };
 
                 unsafe
                 {
                     // Génération d'objets permettant de passer les data des images au wrapper
-                    BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                    BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData2 = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_piece2 = bmp_piece_rot.LockBits(new Rectangle(0, 0, bmp_piece_rot.Width, bmp_piece_rot.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
                     // Appel du wrapper pour traitement dans la dll
-                    Img.traitementRotPtr(1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width, 80, 255);
+                    // Passage des données pour l'image puzzle de référence ET pour l'image piece
+                    Img2.traitementRognePtr(2, bmpData2.Scan0, bmpData2.Stride, bmpData2.Height, bmpData2.Width, parametres, 1, bmpData_piece2.Scan0, bmpData_piece2.Stride, bmpData_piece2.Height, bmpData_piece2.Width);
 
                     // ancien commentaire : 1 champ texte retour C++, le seuil auto
                     // Traitement terminé, libération des images
-                    bmp_ref_copy.UnlockBits(bmpData);
-                    bmp_piece.UnlockBits(bmpData_piece);
+                    bmp_ref_copy.UnlockBits(bmpData2);
+                    bmp_piece_rot.UnlockBits(bmpData_piece2);
                 }
 
-                pbRogne.Image = bmp_piece;
+                // Affichagr de l'image puzzle avec détection de pièce sur l'interface
+                imageSeuillee.Image = bmp_ref_copy;
             }
 
         }
