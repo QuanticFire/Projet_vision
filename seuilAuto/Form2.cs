@@ -105,7 +105,25 @@ namespace seuilAuto
             }
             else if (dudTraitSel.Text == "Avec rotation")
             {
-                int a = 0;
+                Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
+                Img = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
+
+                unsafe
+                {
+                    // Génération d'objets permettant de passer les data des images au wrapper
+                    BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+                    // Appel du wrapper pour traitement dans la dll
+                    Img.traitementRotPtr(0, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width, 80, 255);
+
+                    // ancien commentaire : 1 champ texte retour C++, le seuil auto
+                    // Traitement terminé, libération des images
+                    bmp_ref_copy.UnlockBits(bmpData);
+                    bmp_piece.UnlockBits(bmpData_piece);
+                }
+
+                pbRogne.Image = bmp_piece;
             }
 
         }

@@ -92,6 +92,13 @@ extern "C" _declspec(dllexport) ClibTraitement* traitementTest(int nbChamps, byt
 	return pImg;
 }
 
+extern "C" _declspec(dllexport) ClibTraitement* traitementRot(int nbChamps, byte* data, int stride, int nbLig, int nbCol, int seuilB, int seuilH)
+{
+	ClibTraitement* pImg = new ClibTraitement();
+	pImg->TraitementRotation(nbChamps, data, stride, nbLig, nbCol, seuilB, seuilH);
+	return pImg;
+}
+
 extern "C" _declspec(dllexport) ClibTraitement* traitementRogne(int nbChamps, byte* data, int stride, int nbLig, int nbCol, double parametres[10], int nbChamps_p, byte * data_p, int stride_p, int nbLig_p, int nbCol_p)
 {
 	ClibTraitement* pImg = new ClibTraitement();

@@ -61,6 +61,15 @@ namespace Traitement
             return ClPtr;
         }
 
+        [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr traitementRot(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, int seuilB, int seuilH);
+
+        public IntPtr traitementRotPtr(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, int seuilB, int seuilH)
+        {
+            ClPtr = traitementRot(nbChamps, data, stride, nbLig, nbCol, seuilB, seuilH);
+            return ClPtr;
+        }
+
         // Appel de la méthode traitementRogne
         [DllImport("Traitement.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr traitementRogne(int nbChamps, IntPtr data, int stride, int nbLig, int nbCol, double[] parametres, int nbChamps_p, IntPtr data_p, int stride_p, int nbLig_p, int nbCol_p);
