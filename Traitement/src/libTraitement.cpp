@@ -415,6 +415,9 @@ void ClibTraitement::TraitementRotation(int nbChamps, byte * data, int stride, i
 			this->imgPt->operator()(y, x)[0] = pixPtr[3 * x + 2];
 			this->imgPt->operator()(y, x)[1] = pixPtr[3 * x + 1];
 			this->imgPt->operator()(y, x)[2] = pixPtr[3 * x];
+			out(y, x)[0] = pixPtr[3 * x + 2];
+			out(y, x)[1] = pixPtr[3 * x + 1];
+			out(y, x)[2] = pixPtr[3 * x];
 		}
 		pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
 	}
@@ -432,7 +435,7 @@ void ClibTraitement::TraitementRotation(int nbChamps, byte * data, int stride, i
 	**********************************************************************************************************************/
 
 	CImageNdg seuil = this->imgPt->plan().seuillage("manuel", seuilB, seuilH);
-	seuil = seuil.bouchageTrous();
+	seuil = seuil.morphologie("dilatation").morphologie("erosion").bouchageTrous();
 	CImageDouble imgD(seuil, "cast");
 	CImageDouble edges = imgD.vecteurGradient("norme");
 	int seuilHaut = 255;
@@ -441,15 +444,11 @@ void ClibTraitement::TraitementRotation(int nbChamps, byte * data, int stride, i
 	std::vector<PICS> pics = edges.houghLignes(BW, 100, 5, 150, 1);
 	if (!pics.empty())
 	{
-		if ((0 <= pics.at(0).angles && pics.at(0).angles<=3)|| (87 <= pics.at(0).angles && pics.at(0).angles <= 93)|| (177 <= pics.at(0).angles && pics.at(0).angles <= 180))
-			out = *(this->imgPt);
-		else {
+		if (!((0 <= pics.at(0).angles && pics.at(0).angles<=3)|| (87 <= pics.at(0).angles && pics.at(0).angles <= 93)|| (177 <= pics.at(0).angles && pics.at(0).angles <= 180)))
 			out = this->imgPt->rotation((float)pics.at(0).angles);
-		}
 	}
 	else
 	{
-		out = *(this->imgPt);
 		for (int n = 0; n < out.lireNbPixels(); n++)
 			out(n)[0] = 255;
 	}

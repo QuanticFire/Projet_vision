@@ -472,7 +472,7 @@ CImageCouleur CImageCouleur::rognageSigComposante(const std::string & methode, i
 		}
 
 
-	if (imgRogne.lireHauteur() > 350 || imgRogne.lireLargeur() > 300)
+	if (imgRogne.lireHauteur() > 320 || imgRogne.lireLargeur() > 280)
 	{
 		CImageNdg img_seuilRogne;
 		if (conversion.compare("HSV") == 0)
