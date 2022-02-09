@@ -53,6 +53,7 @@ public:
 	_declspec(dllexport) void Traitement2(int nbChamps, byte* data, int stride, int nbLig, int nbCol, double parametres[10], int nbChamps_p, byte * data_p, int stride_p, int nbLig_p, int nbCol_p); //nouvelle méthode de traitement test
 	_declspec(dllexport) void TraitementMatching(byte * data, int stride, int nbLig, int nbCol, byte * data_p, int stride_p, int nbLig_p, int nbCol_p);
 	_declspec(dllexport) void ClibTraitement::TraitementRognage(int nbChamps, byte * data, int stride, int nbLig, int nbCol, double parametres[10], int nbChamps_p, byte * data_p, int stride_p, int nbLig_p, int nbCol_p);
+	_declspec(dllexport) void TraitementRotation(int nbChamps, byte* data, int stride, int nbLig, int nbCol, int seuilB, int seuilH);
 	_declspec(dllexport) void copydata(byte* data, int stride);
 };
 

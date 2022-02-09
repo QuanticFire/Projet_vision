@@ -395,6 +395,84 @@ void ClibTraitement::TraitementRognage(int nbChamps, byte * data, int stride, in
 	
 }
 
+void ClibTraitement::TraitementRotation(int nbChamps, byte * data, int stride, int nbLig, int nbCol, int seuilB, int seuilH)
+{
+	// affectation des signatures (dataFromImg) et taille (nbChamps)
+	this->nbDataImg = nbChamps;
+	this->dataFromImg.resize(nbChamps);
+
+	this->imgPt = new CImageCouleur(nbLig, nbCol);
+	CImageCouleur out(nbLig, nbCol);
+
+	// byte* data est la donnée des images
+
+	byte* pixPtr = (byte*)data;
+
+	for (int y = 0; y < nbLig; y++)
+	{
+		for (int x = 0; x < nbCol; x++)	//rvb
+		{
+			this->imgPt->operator()(y, x)[0] = pixPtr[3 * x + 2];
+			this->imgPt->operator()(y, x)[1] = pixPtr[3 * x + 1];
+			this->imgPt->operator()(y, x)[2] = pixPtr[3 * x];
+		}
+		pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
+	}
+
+	//CImageNdg imgsauv;
+	//imgsauv = this->imgPt->plan();
+	//imgsauv.sauvegarde("test")
+
+
+
+	/*********************************************************************************************************************
+
+	DEBUT DE L'ALGORITHME DE TRAITEMENT
+
+	**********************************************************************************************************************/
+
+	CImageNdg seuil;
+	CImageCouleur out;
+
+	seuil = this->imgPt->plan().seuillage("manuel", seuilB, seuilH);
+	seuil = seuil.bouchageTrous();
+	CImageDouble imgD(seuil, "cast");
+	CImageDouble edges = imgD.vecteurGradient("norme");
+	int seuilHaut = 255;
+	int seuilBas = 1;
+	CImageNdg BW = edges.toNdg().seuillage("manuel", seuilBas, seuilHaut);
+	std::vector<PICS> pics = edges.houghLignes(BW, 100, 5, 150, 4);
+	if (!pics.empty())
+	{
+		if ((0 <= pics.at(0).angles && pics.at(0).angles<=3)|| (87 <= pics.at(0).angles && pics.at(0).angles <= 93)|| (177 <= pics.at(0).angles && pics.at(0).angles <= 180))
+			out = *(this->imgPt);
+		else
+			out = this->imgPt->rotation((float)pics.at(0).angles);
+	}
+	else
+	{
+		out = *(this->imgPt);
+	}
+	/*********************************************************************************************************************
+
+	FIN DU TRAITEMENT,
+	AFFICHAGE RETOUR VERS LE C#
+
+	**********************************************************************************************************************/
+
+	pixPtr = (byte*)data;
+	for (int y = 0; y < nbLig; y++)
+	{
+		for (int x = 0; x < nbCol; x++)
+		{
+			pixPtr[3 * x + 2] = out(y, x)[0];
+			pixPtr[3 * x + 1] = out(y, x)[1];
+			pixPtr[3 * x] = out(y, x)[2];
+		}
+		pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
+	}
+}
+
 void ClibTraitement::copydata(byte* data, int stride)
 {
 	byte* pixPtr = (byte*)data;
