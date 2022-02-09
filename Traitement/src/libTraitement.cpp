@@ -432,7 +432,6 @@ void ClibTraitement::TraitementRotation(int nbChamps, byte * data, int stride, i
 	**********************************************************************************************************************/
 
 	CImageNdg seuil;
-	CImageCouleur out;
 
 	seuil = this->imgPt->plan().seuillage("manuel", seuilB, seuilH);
 	seuil = seuil.bouchageTrous();
