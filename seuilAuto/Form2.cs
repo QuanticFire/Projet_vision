@@ -115,7 +115,7 @@ namespace seuilAuto
                     BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
                     // Appel du wrapper pour traitement dans la dll
-                    Img.traitementRotPtr(0, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width, 80, 255);
+                    Img.traitementRotPtr(1, bmpData_piece.Scan0, bmpData_piece.Stride, bmpData_piece.Height, bmpData_piece.Width, 80, 255);
 
                     // ancien commentaire : 1 champ texte retour C++, le seuil auto
                     // Traitement terminé, libération des images
