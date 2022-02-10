@@ -117,7 +117,7 @@ namespace seuilAuto
                     unsafe
                     {
                         // Génération d'objets permettant de passer les data des images au wrapper
-                        BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                        //BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                         BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
                         // Appel du wrapper pour traitement dans la dll
@@ -125,7 +125,7 @@ namespace seuilAuto
 
                         // ancien commentaire : 1 champ texte retour C++, le seuil auto
                         // Traitement terminé, libération des images
-                        bmp_ref_copy.UnlockBits(bmpData);
+                        //bmp_ref_copy.UnlockBits(bmpData);
                         bmp_piece.UnlockBits(bmpData_piece);
                     }
                 }
@@ -151,6 +151,14 @@ namespace seuilAuto
                     bmp_ref_copy.UnlockBits(bmpData2);
                     bmp_piece_rot.UnlockBits(bmpData_piece2);
                 }
+
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    labelScore.Text = Img2.objetLibValeurChamp(0).ToString() + " %";
+                    labelScore2.Text = Img2.objetLibValeurChamp(1).ToString() + " %";
+                    labelScore.Show();
+                    labelScore2.Show();
+                });
 
                 // Affichagr de l'image puzzle avec détection de pièce sur l'interface
                 imageSeuillee.Image = bmp_ref_copy;

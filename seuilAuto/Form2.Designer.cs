@@ -46,11 +46,11 @@
             this.panelRogne = new System.Windows.Forms.Panel();
             this.pbRogne = new System.Windows.Forms.PictureBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.gbTraitement = new System.Windows.Forms.GroupBox();
             this.dudTraitSel = new System.Windows.Forms.DomainUpDown();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -60,8 +60,8 @@
             this.panelRogne.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRogne)).BeginInit();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.gbTraitement.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // butForm1
@@ -249,37 +249,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Entrées";
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.panel2);
-            this.groupBox2.Controls.Add(this.panelRogne);
-            this.groupBox2.Location = new System.Drawing.Point(634, 42);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(827, 892);
-            this.groupBox2.TabIndex = 32;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Sorties";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(281, 28);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(112, 13);
-            this.label3.TabIndex = 31;
-            this.label3.Text = "Rognage automatique";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(301, 421);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(71, 13);
-            this.label4.TabIndex = 32;
-            this.label4.Text = "Image verdict";
-            // 
             // gbTraitement
             // 
             this.gbTraitement.Controls.Add(this.dudTraitSel);
@@ -299,6 +268,37 @@
             this.dudTraitSel.Size = new System.Drawing.Size(128, 20);
             this.dudTraitSel.TabIndex = 10;
             this.dudTraitSel.Text = "(Selection Traitement)";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.panel2);
+            this.groupBox2.Controls.Add(this.panelRogne);
+            this.groupBox2.Location = new System.Drawing.Point(634, 42);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(827, 892);
+            this.groupBox2.TabIndex = 32;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Sorties";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(301, 421);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(71, 13);
+            this.label4.TabIndex = 32;
+            this.label4.Text = "Image verdict";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(259, 29);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(157, 13);
+            this.label3.TabIndex = 31;
+            this.label3.Text = "Rognage/Rotation automatique";
             // 
             // Form2
             // 
@@ -326,9 +326,9 @@
             this.panelRogne.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbRogne)).EndInit();
             this.groupBox1.ResumeLayout(false);
+            this.gbTraitement.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.gbTraitement.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
