@@ -90,7 +90,6 @@ namespace seuilAuto
                 ClImage clImageRogne = new ClImage();
                 unsafe
                 {
-                    //pas possible d'avoir tout à cause du stride, faut voir comment faire un peu mieux
                     BitmapData bmpData_piece = bmp_piece.LockBits(new Rectangle(0, 0, bmp_piece.Width, bmp_piece.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
                     clImageRogne.RognagePtr(bmpData_piece.Scan0, bmpData_piece.Stride, bmp_piece.Height, bmp_piece.Width, 80, 255);
                     int Height_rogne = clImageRogne.getImgHauteur();
@@ -161,6 +160,101 @@ namespace seuilAuto
                 });
 
                 // Affichagr de l'image puzzle avec détection de pièce sur l'interface
+                imageSeuillee.Image = bmp_ref_copy;
+            }
+            else if (dudTraitSel.Text == "Avec rotation (Pattern Matching)")
+            {
+                Bitmap bmp_ref_copy = new Bitmap(bmp_ref); // Création d'une copie de l'image puzzle de référence
+                Bitmap bmp_piece_copy = new Bitmap(bmp_piece);
+                Bitmap bmp_rogne180;
+                ClImage clImageRogne = new ClImage(); // Initialisation d'une instance de classe ClImage pour appeller le wrapper
+                ClImage Img1 = new ClImage();
+                ClImage Img2 = new ClImage();
+                ClImage ImgRot = new ClImage();
+                double score1;
+                double score2;
+                unsafe
+                {
+                    // rotation
+                    BitmapData bmpData_piece = bmp_piece_copy.LockBits(new Rectangle(0, 0, bmp_piece_copy.Width, bmp_piece_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    ImgRot.traitementRotPtr(1, bmpData_piece.Scan0, bmpData_piece.Stride, bmp_piece_copy.Height, bmp_piece_copy.Width, 80, 255);
+
+                    // rognage
+                    clImageRogne.RognagePtr(bmpData_piece.Scan0, bmpData_piece.Stride, bmp_piece_copy.Height, bmp_piece_copy.Width, 80, 255);
+                    int Height_rogne = clImageRogne.getImgHauteur();
+                    int Width_rogne = clImageRogne.getImgLargeur();
+                    bmp_rogne = new Bitmap(Width_rogne, Height_rogne, PixelFormat.Format24bppRgb);
+                    BitmapData bmpData_rogne = bmp_rogne.LockBits(new Rectangle(0, 0, Width_rogne, Height_rogne), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    clImageRogne.getImgdata(bmpData_rogne.Scan0, bmpData_rogne.Stride);
+                    bmp_piece_copy.UnlockBits(bmpData_piece);
+                    bmp_rogne.UnlockBits(bmpData_rogne);
+                    if (bmp_rogne.Width > bmp_rogne.Height)
+                        bmp_rogne.RotateFlip(RotateFlipType.Rotate90FlipNone);
+
+                    //Pattern Matching
+                    BitmapData bmpData = bmp_ref_copy.LockBits(new Rectangle(0, 0, bmp_ref_copy.Width, bmp_ref_copy.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    bmpData_rogne = bmp_rogne.LockBits(new Rectangle(0, 0, bmp_rogne.Width, bmp_rogne.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    Img1.PatternMatchingPtr(bmpData.Scan0, bmpData.Stride, bmpData.Height, bmpData.Width, bmpData_rogne.Scan0, bmpData_rogne.Stride, bmpData_rogne.Height, bmpData_rogne.Width);
+                    bmp_rogne.UnlockBits(bmpData_rogne);
+                    score1 = Img1.objetLibValeurChamp(2);
+
+                    bmp_rogne180 = new Bitmap(bmp_rogne);
+                    bmp_rogne180.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                    BitmapData bmpData_rogne180 = bmp_rogne180.LockBits(new Rectangle(0, 0, bmp_rogne180.Width, bmp_rogne180.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                    Img2.PatternMatchingPtr(bmpData.Scan0, bmpData.Stride, bmpData.Height, bmpData.Width, bmpData_rogne180.Scan0, bmpData_rogne180.Stride, bmpData_rogne180.Height, bmpData_rogne180.Width);
+                    bmp_rogne180.UnlockBits(bmpData_rogne180);
+                    bmp_ref_copy.UnlockBits(bmpData);
+                    score2 = Img2.objetLibValeurChamp(2);
+                }
+                // sélection selon le score trouvé
+                double coord_x;
+                double coord_y;
+                double scoreFinal;
+                if (score1 > score2){
+                    coord_x = Img1.objetLibValeurChamp(1);
+                    coord_y = Img1.objetLibValeurChamp(0);
+                    pbRogne.Image = bmp_rogne;
+                    scoreFinal = score1;
+                }
+                else{
+                    coord_x = Img2.objetLibValeurChamp(1);
+                    coord_y = Img2.objetLibValeurChamp(0);
+                    pbRogne.Image = bmp_rogne180;
+                    scoreFinal = score2;
+                }
+
+                // Affichagr de l'image puzzle avec détection de pièce sur l'interface
+                Color myRgbColor = new Color();
+                myRgbColor = Color.Red;
+
+                for (int i = -50; i < 50; i++)
+                {
+                    for (int j = -50; j < 50; j++)
+                    {
+
+                        for (int shift = -10; shift < 10; shift++)
+                        {
+                            if ((coord_x + i > 0) && (coord_x + i < bmp_ref_copy.Width) && (coord_y + shift > 0) && (coord_y + shift < bmp_ref_copy.Height))
+                            {
+                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + i), Convert.ToInt32(coord_y + shift), myRgbColor);
+                            }
+
+                        }
+
+                        for (int shift = -10; shift < 10; shift++)
+                        {
+                            if ((coord_x + shift > 0) && (coord_x + shift < bmp_ref_copy.Width) && (coord_y + j > 0) && (coord_y + j < bmp_ref_copy.Height))
+                            {
+                                bmp_ref_copy.SetPixel(Convert.ToInt32(coord_x + shift), Convert.ToInt32(coord_y + j), myRgbColor);
+                            }
+                        }
+                    }
+                }
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    labelScore.Text = scoreFinal.ToString("N3");
+                    labelScore.Show();
+                });
                 imageSeuillee.Image = bmp_ref_copy;
             }
 

@@ -1290,7 +1290,7 @@ CImageDouble CImageDouble::convfft(const CImageDouble& kernel)
 	fftw_free(thisdft);
 	fftw_free(kerneldft);
 	fftw_free(outdft);
-	free(outdata);
+	delete outdata;
 
 
 	return out;
