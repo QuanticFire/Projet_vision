@@ -46,11 +46,11 @@
             this.panelRogne = new System.Windows.Forms.Panel();
             this.pbRogne = new System.Windows.Forms.PictureBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.gbTraitement = new System.Windows.Forms.GroupBox();
             this.dudTraitSel = new System.Windows.Forms.DomainUpDown();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageDepart)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -60,15 +60,16 @@
             this.panelRogne.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRogne)).BeginInit();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.gbTraitement.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // butForm1
             // 
             this.butForm1.Location = new System.Drawing.Point(-1, 0);
+            this.butForm1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.butForm1.Name = "butForm1";
-            this.butForm1.Size = new System.Drawing.Size(221, 23);
+            this.butForm1.Size = new System.Drawing.Size(295, 28);
             this.butForm1.TabIndex = 0;
             this.butForm1.Text = "Retour vers traitement image non rognées";
             this.butForm1.UseVisualStyleBackColor = true;
@@ -86,8 +87,9 @@
             this.imageDepart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.imageDepart.ImageLocation = "";
             this.imageDepart.Location = new System.Drawing.Point(0, 0);
+            this.imageDepart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.imageDepart.Name = "imageDepart";
-            this.imageDepart.Size = new System.Drawing.Size(268, 348);
+            this.imageDepart.Size = new System.Drawing.Size(357, 428);
             this.imageDepart.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imageDepart.TabIndex = 0;
             this.imageDepart.TabStop = false;
@@ -96,16 +98,18 @@
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.imageDepart);
-            this.panel1.Location = new System.Drawing.Point(18, 28);
+            this.panel1.Location = new System.Drawing.Point(24, 34);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(270, 350);
+            this.panel1.Size = new System.Drawing.Size(359, 430);
             this.panel1.TabIndex = 19;
             // 
             // buttonOuvrir
             // 
-            this.buttonOuvrir.Location = new System.Drawing.Point(73, 384);
+            this.buttonOuvrir.Location = new System.Drawing.Point(97, 473);
+            this.buttonOuvrir.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.buttonOuvrir.Name = "buttonOuvrir";
-            this.buttonOuvrir.Size = new System.Drawing.Size(144, 35);
+            this.buttonOuvrir.Size = new System.Drawing.Size(192, 43);
             this.buttonOuvrir.TabIndex = 17;
             this.buttonOuvrir.Text = "Ouvrir image piece";
             this.buttonOuvrir.UseVisualStyleBackColor = true;
@@ -113,9 +117,10 @@
             // 
             // button_puzzle
             // 
-            this.button_puzzle.Location = new System.Drawing.Point(213, 846);
+            this.button_puzzle.Location = new System.Drawing.Point(284, 1041);
+            this.button_puzzle.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button_puzzle.Name = "button_puzzle";
-            this.button_puzzle.Size = new System.Drawing.Size(144, 40);
+            this.button_puzzle.Size = new System.Drawing.Size(192, 49);
             this.button_puzzle.TabIndex = 23;
             this.button_puzzle.Text = "Ouvrir puzzle";
             this.button_puzzle.UseVisualStyleBackColor = true;
@@ -125,18 +130,20 @@
             // 
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(18, 440);
+            this.pictureBox2.Location = new System.Drawing.Point(24, 542);
+            this.pictureBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(556, 400);
+            this.pictureBox2.Size = new System.Drawing.Size(741, 492);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 22;
             this.pictureBox2.TabStop = false;
             // 
             // bSeuillageAuto
             // 
-            this.bSeuillageAuto.Location = new System.Drawing.Point(587, 148);
+            this.bSeuillageAuto.Location = new System.Drawing.Point(783, 182);
+            this.bSeuillageAuto.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.bSeuillageAuto.Name = "bSeuillageAuto";
-            this.bSeuillageAuto.Size = new System.Drawing.Size(90, 75);
+            this.bSeuillageAuto.Size = new System.Drawing.Size(120, 92);
             this.bSeuillageAuto.TabIndex = 21;
             this.bSeuillageAuto.Text = "Go";
             this.bSeuillageAuto.UseVisualStyleBackColor = true;
@@ -145,18 +152,20 @@
             // labelScore2
             // 
             this.labelScore2.AutoSize = true;
-            this.labelScore2.Location = new System.Drawing.Point(1416, 553);
+            this.labelScore2.Location = new System.Drawing.Point(1888, 681);
+            this.labelScore2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelScore2.Name = "labelScore2";
-            this.labelScore2.Size = new System.Drawing.Size(0, 13);
+            this.labelScore2.Size = new System.Drawing.Size(0, 17);
             this.labelScore2.TabIndex = 28;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.label2.Location = new System.Drawing.Point(1254, 553);
+            this.label2.Location = new System.Drawing.Point(1672, 681);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(158, 13);
+            this.label2.Size = new System.Drawing.Size(213, 17);
             this.label2.TabIndex = 27;
             this.label2.Text = "Score de similarité 2ème image :";
             // 
@@ -164,18 +173,20 @@
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.Green;
-            this.label1.Location = new System.Drawing.Point(1253, 523);
+            this.label1.Location = new System.Drawing.Point(1671, 644);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(127, 13);
+            this.label1.Size = new System.Drawing.Size(170, 17);
             this.label1.TabIndex = 26;
             this.label1.Text = "Score de similarité verict :";
             // 
             // labelScore
             // 
             this.labelScore.AutoSize = true;
-            this.labelScore.Location = new System.Drawing.Point(1384, 525);
+            this.labelScore.Location = new System.Drawing.Point(1845, 646);
+            this.labelScore.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelScore.Name = "labelScore";
-            this.labelScore.Size = new System.Drawing.Size(0, 13);
+            this.labelScore.Size = new System.Drawing.Size(0, 17);
             this.labelScore.TabIndex = 25;
             // 
             // imageSeuillee
@@ -183,8 +194,9 @@
             this.imageSeuillee.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.imageSeuillee.Dock = System.Windows.Forms.DockStyle.Fill;
             this.imageSeuillee.Location = new System.Drawing.Point(0, 0);
+            this.imageSeuillee.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.imageSeuillee.Name = "imageSeuillee";
-            this.imageSeuillee.Size = new System.Drawing.Size(556, 400);
+            this.imageSeuillee.Size = new System.Drawing.Size(741, 492);
             this.imageSeuillee.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.imageSeuillee.TabIndex = 18;
             this.imageSeuillee.TabStop = false;
@@ -195,9 +207,10 @@
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.pictureBox1.ImageLocation = "";
-            this.pictureBox1.Location = new System.Drawing.Point(-535, 21);
+            this.pictureBox1.Location = new System.Drawing.Point(-713, 26);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(270, 350);
+            this.pictureBox1.Size = new System.Drawing.Size(360, 431);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -206,18 +219,20 @@
             // 
             this.panel2.Controls.Add(this.imageSeuillee);
             this.panel2.Controls.Add(this.pictureBox1);
-            this.panel2.Location = new System.Drawing.Point(57, 440);
+            this.panel2.Location = new System.Drawing.Point(76, 542);
+            this.panel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(556, 400);
+            this.panel2.Size = new System.Drawing.Size(741, 492);
             this.panel2.TabIndex = 20;
             // 
             // panelRogne
             // 
             this.panelRogne.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelRogne.Controls.Add(this.pbRogne);
-            this.panelRogne.Location = new System.Drawing.Point(201, 44);
+            this.panelRogne.Location = new System.Drawing.Point(268, 54);
+            this.panelRogne.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panelRogne.Name = "panelRogne";
-            this.panelRogne.Size = new System.Drawing.Size(270, 350);
+            this.panelRogne.Size = new System.Drawing.Size(359, 430);
             this.panelRogne.TabIndex = 30;
             // 
             // pbRogne
@@ -227,8 +242,9 @@
             this.pbRogne.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pbRogne.ImageLocation = "";
             this.pbRogne.Location = new System.Drawing.Point(0, 0);
+            this.pbRogne.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pbRogne.Name = "pbRogne";
-            this.pbRogne.Size = new System.Drawing.Size(268, 348);
+            this.pbRogne.Size = new System.Drawing.Size(357, 428);
             this.pbRogne.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbRogne.TabIndex = 0;
             this.pbRogne.TabStop = false;
@@ -242,50 +258,23 @@
             this.groupBox1.Controls.Add(this.panel1);
             this.groupBox1.Controls.Add(this.pictureBox2);
             this.groupBox1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.groupBox1.Location = new System.Drawing.Point(13, 42);
+            this.groupBox1.Location = new System.Drawing.Point(17, 52);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(615, 892);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Size = new System.Drawing.Size(820, 1098);
             this.groupBox1.TabIndex = 31;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Entrées";
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.panel2);
-            this.groupBox2.Controls.Add(this.panelRogne);
-            this.groupBox2.Location = new System.Drawing.Point(634, 42);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(827, 892);
-            this.groupBox2.TabIndex = 32;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Sorties";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(281, 28);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(112, 13);
-            this.label3.TabIndex = 31;
-            this.label3.Text = "Rognage automatique";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(301, 421);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(71, 13);
-            this.label4.TabIndex = 32;
-            this.label4.Text = "Image verdict";
-            // 
             // gbTraitement
             // 
             this.gbTraitement.Controls.Add(this.dudTraitSel);
-            this.gbTraitement.Location = new System.Drawing.Point(316, 106);
+            this.gbTraitement.Location = new System.Drawing.Point(421, 130);
+            this.gbTraitement.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.gbTraitement.Name = "gbTraitement";
-            this.gbTraitement.Size = new System.Drawing.Size(173, 75);
+            this.gbTraitement.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gbTraitement.Size = new System.Drawing.Size(231, 92);
             this.gbTraitement.TabIndex = 24;
             this.gbTraitement.TabStop = false;
             this.gbTraitement.Text = "Type de traitement";
@@ -294,18 +283,55 @@
             // 
             this.dudTraitSel.Items.Add("Sans rotation");
             this.dudTraitSel.Items.Add("Avec rotation");
-            this.dudTraitSel.Location = new System.Drawing.Point(6, 32);
+            this.dudTraitSel.Items.Add("Avec rotation (Pattern Matching)");
+            this.dudTraitSel.Location = new System.Drawing.Point(8, 39);
+            this.dudTraitSel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dudTraitSel.Name = "dudTraitSel";
-            this.dudTraitSel.Size = new System.Drawing.Size(128, 20);
+            this.dudTraitSel.Size = new System.Drawing.Size(171, 22);
             this.dudTraitSel.TabIndex = 10;
             this.dudTraitSel.Text = "(Selection Traitement)";
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.panel2);
+            this.groupBox2.Controls.Add(this.panelRogne);
+            this.groupBox2.Location = new System.Drawing.Point(845, 52);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Size = new System.Drawing.Size(1103, 1098);
+            this.groupBox2.TabIndex = 32;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Sorties";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(401, 518);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(92, 17);
+            this.label4.TabIndex = 32;
+            this.label4.Text = "Image verdict";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(375, 34);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(148, 17);
+            this.label3.TabIndex = 31;
+            this.label3.Text = "Rognage automatique";
+            // 
             // Form2
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1473, 949);
+            this.ClientSize = new System.Drawing.Size(1924, 1055);
             this.Controls.Add(this.bSeuillageAuto);
             this.Controls.Add(this.labelScore2);
             this.Controls.Add(this.label2);
@@ -314,6 +340,7 @@
             this.Controls.Add(this.butForm1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Form2";
             this.Text = "Projet Vision Oui-Oui";
             this.Load += new System.EventHandler(this.Form2_Load);
@@ -326,9 +353,9 @@
             this.panelRogne.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbRogne)).EndInit();
             this.groupBox1.ResumeLayout(false);
+            this.gbTraitement.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.gbTraitement.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
