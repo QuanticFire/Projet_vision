@@ -496,7 +496,7 @@ void ClibTraitement::TraitementMatching(byte * data, int stride, int nbLig, int 
 {
 	// --------------------------- Construction de l'image ClibTraitement ----------------------------------
 	// affectation des signatures (dataFromImg) et taille (nbChamps)
-	this->nbDataImg = 2;
+	this->nbDataImg = 3;
 	this->dataFromImg.resize(this->nbDataImg);
 
 	this->imgPt = new CImageCouleur(nbLig, nbCol);
@@ -549,6 +549,7 @@ void ClibTraitement::TraitementMatching(byte * data, int stride, int nbLig, int 
 	// renvoi des coordonées trouvées dans le C#
 	this->dataFromImg.at(0) = i;
 	this->dataFromImg.at(1) = j;
+	this->dataFromImg.at(2) = img_corr.lireMax();
 
 	//// Copie de l'image résultante dans out pour renvoyer au C#
 	//for (int i = 0; i < img_corr.lireNbPixels(); i++)
